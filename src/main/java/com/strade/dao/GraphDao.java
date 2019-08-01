@@ -15,7 +15,7 @@ public class GraphDao {
 		graphTraversalSource = EmptyGraph.instance().traversal().withRemote(DriverRemoteConnection.using(readCluster));
 	}
 
-	public static void testGraph() throws Exception {
+	public static void testGraph() {
 		Vertex v = graphTraversalSource.V().next();
 	}
 }

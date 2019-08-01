@@ -17,6 +17,46 @@ public class App {
 			path("/", () -> {
 				post(GraphService::aboutPage);
 			});
+			path("graph", () -> {
+				path("textbook", () -> {
+					path(":textbook", () -> {
+						path("add", () -> {
+							post(GraphService::addTextbook);
+						});
+						path("remove", () -> {
+							post(GraphService::removeTextbook);
+						});
+					});
+				});
+				path("user/:user", () -> {
+					path("verb/:verb", () -> {
+						path("textbook/:textbook", () -> {
+							post(GraphService::addTextbookRelationship);
+						});
+					});
+					path("textbook/:textbook", () -> {
+						post(GraphService::searchBook);
+					});
+					path("consumer/:consumer", () -> {
+						path("transfer", () -> {
+							post(GraphService::transferBook);
+						});
+					});
+					path("wishlist/search", () -> {
+						post(GraphService::searchWishlist);
+					});
+				});
+				path("internal", () -> {
+					path("user/:user", () -> {
+						path("add", () -> {
+							post(GraphService::addUser);
+						});
+						path("delete", () -> {
+							post(GraphService::removeUser);
+						});
+					});
+				});
+			});
 		});
 	}
 }
