@@ -3,9 +3,6 @@ package com.strade.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
-import java.util.Date;
-
 public class Textbook {
 	@JsonProperty("title")
 	private String title;

@@ -3,6 +3,7 @@ package com.strade.server;
 import com.strade.service.GraphService;
 import io.javalin.Javalin;
 
+import static io.javalin.apibuilder.ApiBuilder.delete;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
@@ -24,7 +25,7 @@ public class App {
 							post(GraphService::addTextbook);
 						});
 						path("remove", () -> {
-							post(GraphService::removeTextbook);
+							delete(GraphService::removeTextbook);
 						});
 					});
 				});
