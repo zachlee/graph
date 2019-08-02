@@ -3,7 +3,13 @@ package com.strade.domain;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.UUID;
+
 public class Textbook {
+
+	@JsonProperty("id")
+	private UUID id;
+
 	@JsonProperty("title")
 	private String title;
 
@@ -21,6 +27,29 @@ public class Textbook {
 
 	@JsonProperty("isbn13")
 	private String isbn13;
+
+	public Textbook(UUID id,
+					String title,
+					String author,
+					String generalSubject,
+					String specificSubject,
+					String isbn10,
+					String isbn13) {
+		this.setTitle(title);
+		this.setAuthor(author);
+		this.setGeneralSubject(generalSubject);
+		this.setSpecificSubject(specificSubject);
+		this.setIsbn10(isbn10);
+		this.setIsbn13(isbn13);
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id){
+		this.id = id;
+	}
 
 	public String getTitle() {
 		return title;

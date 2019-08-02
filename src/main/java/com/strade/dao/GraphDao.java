@@ -9,9 +9,11 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,9 +40,8 @@ public class GraphDao {
 				.hasLabel(TEXTBOOK_LABEL)
 				.limit(1)
 				.valueMap(true);
-		Map<Object, Object> textbook = traversal.next();
-		//todo figure out how to return the textbook
-		return new Textbook();
+		Map<Object, Object> textbookValueMap = traversal.next();
+		return createTextbook(textbookValueMap);
 	}
 
 	public static boolean insertTextbook(Textbook textbook) {
@@ -49,6 +50,7 @@ public class GraphDao {
 		traversal.hasLabel(TEXTBOOK_LABEL)
 				.hasId(textbookId)
 				.properties("title", textbook.getTitle())
+				.properties("author", textbook.getAuthor())
 				.properties("generalSubject", textbook.getGeneralSubject())
 				.properties("specificSubject", textbook.getSpecificSubject())
 				.properties("isbn10", textbook.getIsbn10())
@@ -90,6 +92,27 @@ public class GraphDao {
 				.from(__.V(userId))
 				.to(__.V(texbookId));
 		return traversal.hasNext();
+	}
+
+	private static Textbook createTextbook( Map<Object, Object> textbookValueMap ) {
+		String id = (String) textbookValueMap.get(T.id);
+		UUID textbookUUID = UUID.fromString(id);
+		return new Textbook(textbookUUID,
+				getString(textbookValueMap.get("title")),
+				getString(textbookValueMap.get("author")),
+				getString(textbookValueMap.get("generalSubject")),
+				getString(textbookValueMap.get("specificSubject")),
+				getString(textbookValueMap.get("isbn10")),
+				getString(textbookValueMap.get("isbn13")));
+	}
+
+	public static String getString( Object entry ) {
+		ArrayList<String> list = (ArrayList<String>) entry;
+		if ( null != list && !list.isEmpty() ) {
+			return list.get(0);
+		} else {
+			return "";
+		}
 	}
 
 	public static void testGraph() {
