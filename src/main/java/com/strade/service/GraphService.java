@@ -11,8 +11,7 @@ import java.io.IOException;
 
 public class GraphService {
 
-	private  ObjectMapper mapper = new ObjectMapper();
-	static GraphDao graphDao;
+	private static GraphDao graphDao;
 
 	public GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;

@@ -5,13 +5,13 @@ import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
+import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,12 +25,13 @@ public class GraphDao {
 
 	public GraphDao() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
-		graphTraversalSource = EmptyGraph.instance().traversal().withRemote(DriverRemoteConnection.using(cluster));
+		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
 	public boolean doesTextbookExist(String textbookId) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(textbookId)
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", textbookId)
 				.limit(1);
 		return traversal.hasNext();
 	}
@@ -53,35 +54,36 @@ public class GraphDao {
 	}
 
 	public boolean insertTextbook(Textbook textbook) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV();
 		String textbookId = UUID.randomUUID().toString();
-		traversal.hasLabel(TEXTBOOK_LABEL)
-				.hasId(textbookId)
-				.properties("title", textbook.getTitle())
-				.properties("author", textbook.getAuthor())
-				.properties("generalSubject", textbook.getGeneralSubject())
-				.properties("specificSubject", textbook.getSpecificSubject())
-				.properties("isbn10", textbook.getIsbn10())
-				.properties("isbn13", textbook.getIsbn13());
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
+				.hasLabel(TEXTBOOK_LABEL)
+				.property("id", textbookId)
+				.property("title", textbook.getTitle())
+				.property("author", textbook.getAuthor())
+				.property("generalSubject", textbook.getGeneralSubject())
+				.property("specificSubject", textbook.getSpecificSubject())
+				.property("isbn10", textbook.getIsbn10())
+				.property("isbn13", textbook.getIsbn13());
 		return traversal.hasNext();
 	}
 
 	public boolean deleteTextbook(String textbookId) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(textbookId)
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", textbookId)
 				.drop();
 		return traversal.hasNext();
 	}
 
 	public boolean addUser(User user) {
 		String userId = UUID.randomUUID().toString();
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV();
-		traversal.hasId(userId)
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
 				.hasLabel(USER_LABEL)
-				.properties("school", user.getSchool())
-				.properties("email", user.getEmail())
-				.properties("username", user.getUsername())
-				.properties("type", user.getType());
+				.property("id", userId)
+				.property("school", user.getSchool())
+				.property("email", user.getEmail())
+				.property("username", user.getUsername())
+				.property("type", user.getType());
 		return traversal.hasNext();
 	}
 
@@ -94,8 +96,10 @@ public class GraphDao {
 
 	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
 		GraphTraversal<Edge, Edge> traversal = graphTraversalSource.addE(verb)
-				.from(__.V(userId))
-				.to(__.V(textbookId));
+				.from(__.V().hasLabel(USER_LABEL)
+						.has("id", userId))
+				.to(__.V().hasLabel(TEXTBOOK_LABEL)
+						.has("id", textbookId));
 		return traversal.hasNext();
 	}
 
