@@ -1,5 +1,6 @@
 package com.strade.server;
 
+import com.strade.resource.GraphResource;
 import com.strade.service.GraphService;
 import io.javalin.Javalin;
 
@@ -16,44 +17,44 @@ public class App {
 				.start(7000);
 		app.routes(()-> {
 			path("/", () -> {
-				post(GraphService::aboutPage);
+				post(GraphResource::aboutPage);
 			});
 			path("graph", () -> {
 				path("textbook", () -> {
 					path(":textbook", () -> {
 						path("add", () -> {
-							post(GraphService::addTextbook);
+							post(GraphResource::addTextbook);
 						});
 						path("remove", () -> {
-							delete(GraphService::removeTextbook);
+							delete(GraphResource::removeTextbook);
 						});
 					});
 				});
 				path("user/:user", () -> {
 					path("verb/:verb", () -> {
 						path("textbook/:textbook", () -> {
-							post(GraphService::addTextbookRelationship);
+							post(GraphResource::addTextbookRelationship);
 						});
 					});
 					path("textbook/:textbook", () -> {
-						post(GraphService::searchBook);
+						post(GraphResource::searchBook);
 					});
 					path("consumer/:consumer", () -> {
 						path("transfer", () -> {
-							post(GraphService::transferBook);
+							post(GraphResource::transferBook);
 						});
 					});
 					path("wishlist/search", () -> {
-						post(GraphService::searchWishlist);
+						post(GraphResource::searchWishlist);
 					});
 				});
 				path("internal", () -> {
 					path("user/:user", () -> {
 						path("add", () -> {
-							post(GraphService::addUser);
+							post(GraphResource::addUser);
 						});
 						path("delete", () -> {
-							post(GraphService::removeUser);
+							post(GraphResource::removeUser);
 						});
 					});
 				});

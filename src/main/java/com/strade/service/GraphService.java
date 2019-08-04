@@ -8,66 +8,57 @@ import io.javalin.Context;
 import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class GraphService {
 
-	private static ObjectMapper mapper = new ObjectMapper();
-	static GraphDao graphDao = new GraphDao();
+	private  ObjectMapper mapper = new ObjectMapper();
+	static GraphDao graphDao;
 
-	public static void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
+	public GraphService(GraphDao graphDao) {
+		this.graphDao = graphDao;
+	}
 
-	public static void addTextbook(Context context) throws IOException {
-		Textbook textbook = mapper.readValue(context.body(), Textbook.class);
-		boolean inserted = graphDao.insertTextbook(textbook);
-		if ( inserted ) {
-			context.status(200);
+	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
+
+	public boolean addTextbook(Textbook textbook) throws Exception {
+		String textbookId = textbook.getId();
+		boolean textbookExists = graphDao.doesTextbookExist(textbookId);
+		if (textbookExists){
+			throw new Exception("Textbook Already Exists");
 		} else {
-			context.status(500);
+			return graphDao.insertTextbook(textbook);
 		}
 	}
 
-	public static void removeTextbook(Context context){
-		String textbookIdString = context.queryParam("textbook");
-		UUID textbookId = UUID.fromString(textbookIdString);
+	public void removeTextbook(String textbookId){
 		boolean doesTextbookExist = graphDao.doesTextbookExist(textbookId);
-		if ( doesTextbookExist ) {
-			boolean removed = graphDao.deleteTextbook(textbookId);
+		if (doesTextbookExist) {
+			graphDao.deleteTextbook(textbookId);
 		}
-		context.status(204);
 	}
 
-	public static void addTextbookRelationship(Context context){
-		String textbookId = context.queryParam("textbook");
-		String verb = context.queryParam("verb");
-		String userId = context.queryParam("user");
-		boolean relationshipAdded = graphDao.createTextbookRelationship(userId, verb, textbookId);
-		if ( relationshipAdded ) {
-			context.status(201);
+	public boolean addTextbookRelationship(String userId, String verb, String textbookId){
+		boolean doesUserExist = graphDao.doesUserExist(userId);
+		boolean verbValid = graphDao.isVerbValid(verb);
+		boolean doesTextbookExist = graphDao.doesTextbookExist(textbookId);
+		if (doesUserExist && verbValid && doesTextbookExist) {
+			return graphDao.createTextbookRelationship(userId, verb, textbookId);
 		} else {
-			context.status(400);
+			return false;
 		}
 	}
 
-	public static void searchBook(Context context){}
+	public void searchBook(Context context){}
 
-	public static void transferBook(Context context){}
+	public void transferBook(Context context){}
 
-	public static void searchWishlist(Context context){}
+	public void searchWishList(Context context){}
 
-	public static void addUser(Context context) throws IOException {
-		User user = mapper.readValue(context.body(), User.class);
-		boolean userAdded = graphDao.addUser( user );
-		if ( userAdded ) {
-			context.status(201);
-		} else {
-			context.status(400);
-		}
+	public boolean addUser(User user) throws IOException {
+		return graphDao.addUser(user);
 	}
 
-	public static void removeUser(Context context){
-		String userId = context.queryParam("user");
-		boolean userRemoved = graphDao.removeUser( userId );
-		context.status(200);
+	public boolean removeUser(String userId){
+		return graphDao.removeUser(userId);
 	}
 }

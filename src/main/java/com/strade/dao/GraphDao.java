@@ -19,7 +19,6 @@ import java.util.UUID;
 
 public class GraphDao {
 
-	private static ObjectMapper mapper = new ObjectMapper();
 	private static GraphTraversalSource graphTraversalSource;
 	private static final String TEXTBOOK_LABEL = "textbook";
 	private static final String USER_LABEL = "user";
@@ -29,14 +28,22 @@ public class GraphDao {
 		graphTraversalSource = EmptyGraph.instance().traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
-	public static boolean doesTextbookExist( UUID textbookId ) {
+	public boolean doesTextbookExist(String textbookId) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(textbookId)
 				.hasLabel(TEXTBOOK_LABEL)
 				.limit(1);
 		return traversal.hasNext();
 	}
 
-	public static Textbook getTextbook( UUID textbookId ) {
+	public boolean doesUserExist(String userId) {
+		return true;
+	}
+
+	public boolean isVerbValid(String verbId) {
+		return true;
+	}
+
+	public Textbook getTextbook(String textbookId) {
 		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V(textbookId)
 				.hasLabel(TEXTBOOK_LABEL)
 				.limit(1)
@@ -45,9 +52,9 @@ public class GraphDao {
 		return createTextbook(textbookValueMap);
 	}
 
-	public static boolean insertTextbook(Textbook textbook) {
+	public boolean insertTextbook(Textbook textbook) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV();
-		UUID textbookId = UUID.randomUUID();
+		String textbookId = UUID.randomUUID().toString();
 		traversal.hasLabel(TEXTBOOK_LABEL)
 				.hasId(textbookId)
 				.properties("title", textbook.getTitle())
@@ -59,15 +66,15 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public static boolean deleteTextbook( UUID textbookId ) {
+	public boolean deleteTextbook(String textbookId) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(textbookId)
 				.hasLabel(TEXTBOOK_LABEL)
 				.drop();
 		return traversal.hasNext();
 	}
 
-	public static boolean addUser ( User user ) {
-		UUID userId = UUID.randomUUID();
+	public boolean addUser(User user) {
+		String userId = UUID.randomUUID().toString();
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV();
 		traversal.hasId(userId)
 				.hasLabel(USER_LABEL)
@@ -78,27 +85,23 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public static boolean removeUser ( String userIdString ) {
-		UUID userId = UUID.fromString(userIdString);
+	public boolean removeUser(String userId) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(userId)
 				.hasLabel("user")
 				.drop();
 		return traversal.hasNext();
 	}
 
-	public static boolean createTextbookRelationship( String user, String verb, String textbook) {
-		UUID userId = UUID.fromString(user);
-		UUID texbookId = UUID.fromString(textbook);
+	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
 		GraphTraversal<Edge, Edge> traversal = graphTraversalSource.addE(verb)
 				.from(__.V(userId))
-				.to(__.V(texbookId));
+				.to(__.V(textbookId));
 		return traversal.hasNext();
 	}
 
-	private static Textbook createTextbook( Map<Object, Object> textbookValueMap ) {
-		String id = (String) textbookValueMap.get(T.id);
-		UUID textbookUUID = UUID.fromString(id);
-		return new Textbook(textbookUUID,
+	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
+		String textbookId = (String) textbookValueMap.get(T.id);
+		return new Textbook(textbookId,
 				getString(textbookValueMap.get("title")),
 				getString(textbookValueMap.get("author")),
 				getString(textbookValueMap.get("generalSubject")),
@@ -107,16 +110,16 @@ public class GraphDao {
 				getString(textbookValueMap.get("isbn13")));
 	}
 
-	public static String getString( Object entry ) {
+	private String getString(Object entry) {
 		ArrayList<String> list = (ArrayList<String>) entry;
-		if ( null != list && !list.isEmpty() ) {
+		if (null != list && !list.isEmpty()) {
 			return list.get(0);
 		} else {
 			return "";
 		}
 	}
 
-	public static void testGraph() {
+	public void testGraph() {
 		Vertex v = graphTraversalSource.V().next();
 	}
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 public class Textbook {
 
 	@JsonProperty("id")
-	private UUID id;
+	private String id;
 
 	@JsonProperty("title")
 	private String title;
@@ -28,7 +28,7 @@ public class Textbook {
 	@JsonProperty("isbn13")
 	private String isbn13;
 
-	public Textbook(UUID id,
+	public Textbook(String id,
 					String title,
 					String author,
 					String generalSubject,
@@ -43,11 +43,11 @@ public class Textbook {
 		this.setIsbn13(isbn13);
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(UUID id){
+	public void setId(String id){
 		this.id = id;
 	}
 
