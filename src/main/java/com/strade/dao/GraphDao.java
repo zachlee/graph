@@ -22,10 +22,11 @@ public class GraphDao {
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static GraphTraversalSource graphTraversalSource;
 	private static final String TEXTBOOK_LABEL = "textbook";
+	private static final String USER_LABEL = "user";
 
 	public GraphDao() {
-		Cluster readCluster = Cluster.build().port(8182).addContactPoint("localhost").create();
-		graphTraversalSource = EmptyGraph.instance().traversal().withRemote(DriverRemoteConnection.using(readCluster));
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
+		graphTraversalSource = EmptyGraph.instance().traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
 	public static boolean doesTextbookExist( UUID textbookId ) {
@@ -69,7 +70,7 @@ public class GraphDao {
 		UUID userId = UUID.randomUUID();
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV();
 		traversal.hasId(userId)
-				.hasLabel("user")
+				.hasLabel(USER_LABEL)
 				.properties("school", user.getSchool())
 				.properties("email", user.getEmail())
 				.properties("username", user.getUsername())
