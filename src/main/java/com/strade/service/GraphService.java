@@ -1,11 +1,9 @@
 package com.strade.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strade.dao.GraphDao;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import io.javalin.Context;
-import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 
@@ -25,7 +23,7 @@ public class GraphService {
 
 	public boolean addTextbook(Textbook textbook) throws Exception {
 		String textbookId = textbook.getId();
-		boolean textbookExists = graphDao.doesTextbookExist(textbookId);
+		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
 		if (textbookExists){
 			throw new Exception("Textbook Already Exists");
 		} else {
@@ -34,7 +32,7 @@ public class GraphService {
 	}
 
 	public void removeTextbook(String textbookId){
-		boolean doesTextbookExist = graphDao.doesTextbookExist(textbookId);
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesTextbookExist) {
 			graphDao.deleteTextbook(textbookId);
 		}
@@ -43,7 +41,7 @@ public class GraphService {
 	public boolean addTextbookRelationship(String userId, String verb, String textbookId){
 		boolean doesUserExist = graphDao.doesUserExist(userId);
 		boolean verbValid = graphDao.isVerbValid(verb);
-		boolean doesTextbookExist = graphDao.doesTextbookExist(textbookId);
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesUserExist && verbValid && doesTextbookExist) {
 			return graphDao.createTextbookRelationship(userId, verb, textbookId);
 		} else {

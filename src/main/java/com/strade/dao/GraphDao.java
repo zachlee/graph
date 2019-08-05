@@ -36,11 +36,32 @@ public class GraphDao {
 		return instance;
 	}
 
-	public boolean doesTextbookExist(String textbookId) {
+	public boolean doesTextbookExistById(String textbookId) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", textbookId)
-				.limit(1);
+				.has("id", textbookId);
+		return traversal.hasNext();
+	}
+
+	public boolean doesTextbookExistByIsbn10(String isbn10) {
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("isbn10", isbn10);
+		return traversal.hasNext();
+	}
+
+	public boolean doesTextbookExistByIsbn13(String isbn13) {
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("isbn13", isbn13);
+		return traversal.hasNext();
+	}
+
+	public boolean doesTextbookExist(String textbookId, String isbn10, String isbn13) {
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
+				.or(__.V().hasLabel(TEXTBOOK_LABEL).has("id", textbookId),
+					__.V().hasLabel(TEXTBOOK_LABEL).has("isbn10", isbn10),
+					__.V().hasLabel(TEXTBOOK_LABEL).has("isbn13", isbn13));
 		return traversal.hasNext();
 	}
 
