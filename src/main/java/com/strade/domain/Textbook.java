@@ -1,9 +1,6 @@
 package com.strade.domain;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.UUID;
 
 public class Textbook {
 

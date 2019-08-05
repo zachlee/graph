@@ -37,7 +37,7 @@ public class GraphServiceTest {
 
 	@Test
 	public void addTextbookWhenTextbookAlreadyExists() {
-		when(graphDaoMock.doesTextbookExist(anyString())).thenReturn(true);
+//		when(graphDaoMock.doesTextbookExist(anyString())).thenReturn(true);
 		when(graphDaoMock.insertTextbook(textbook)).thenThrow(Exception.class);
 		try {
 			underTest.addTextbook(textbook);
@@ -49,7 +49,7 @@ public class GraphServiceTest {
 
 	@Test
 	public void successfullyAddTextbook() throws Exception {
-		when(graphDaoMock.doesTextbookExist(anyString())).thenReturn(false);
+//		when(graphDaoMock.doesTextbookExist(anyString())).thenReturn(false);
 		when(graphDaoMock.insertTextbook(any(Textbook.class))).thenReturn(true);
 		boolean textbookAdded = underTest.addTextbook(textbook);
 		assertTrue(textbookAdded);

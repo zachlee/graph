@@ -20,12 +20,20 @@ import java.util.UUID;
 public class GraphDao {
 
 	private static GraphTraversalSource graphTraversalSource;
+	private static GraphDao instance;
+
 	private static final String TEXTBOOK_LABEL = "textbook";
 	private static final String USER_LABEL = "user";
 
 	public GraphDao() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
+	}
+
+	public static GraphDao getInstance() {
+		if (instance == null)
+			instance = new GraphDao();
+		return instance;
 	}
 
 	public boolean doesTextbookExist(String textbookId) {

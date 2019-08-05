@@ -10,8 +10,8 @@ import io.javalin.Context;
 import java.io.IOException;
 
 public class GraphResource {
-	public static GraphDao graphDao = new GraphDao();
-	private static final GraphService graphService = new GraphService(graphDao);
+
+	private static final GraphService graphService = new GraphService();
 	private static ObjectMapper mapper = new ObjectMapper();
 
 	public static void aboutPage(Context context) {

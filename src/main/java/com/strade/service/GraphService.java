@@ -13,8 +13,12 @@ public class GraphService {
 
 	private static GraphDao graphDao;
 
-	public GraphService(GraphDao graphDao) {
+	GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;
+	}
+
+	public GraphService() {
+		this.graphDao = GraphDao.getInstance();
 	}
 
 	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
