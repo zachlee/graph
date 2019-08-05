@@ -11,8 +11,4 @@ public class TestGraphDao {
 	public static void setup() {
 		graphDao = new GraphDao();
 	}
-	@Test
-	public void graph() throws Exception {
-		graphDao.testGraph();
-	}
 }

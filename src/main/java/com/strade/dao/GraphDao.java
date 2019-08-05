@@ -68,11 +68,17 @@ public class GraphDao {
 	}
 
 	public boolean deleteTextbook(String textbookId) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
+		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
 				.has("id", textbookId)
-				.drop();
-		return traversal.hasNext();
+				.as("foundVertex")
+				.valueMap(true)
+				.store("droppedVertex")
+				.select("foundVertex")
+				.drop()
+				.cap("droppedVertex")
+				.unfold();
+		return dropTraversal.hasNext();
 	}
 
 	public boolean addUser(User user) {
@@ -88,10 +94,17 @@ public class GraphDao {
 	}
 
 	public boolean removeUser(String userId) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V(userId)
-				.hasLabel("user")
-				.drop();
-		return traversal.hasNext();
+		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has("id", userId)
+				.as("foundVertex")
+				.valueMap(true)
+				.store("droppedVertex")
+				.select("foundVertex")
+				.drop()
+				.cap("droppedVertex")
+				.unfold();
+		return dropTraversal.hasNext();
 	}
 
 	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
@@ -101,6 +114,25 @@ public class GraphDao {
 				.to(__.V().hasLabel(TEXTBOOK_LABEL)
 						.has("id", textbookId));
 		return traversal.hasNext();
+	}
+
+	public boolean removeTextbookRelationship(String userId, String verb, String texbookId) {
+		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has("id", userId)
+				.outE(verb)
+				.as("foundEdge")
+				.inV()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", texbookId)
+				.valueMap(true)
+				.store("droppedEdge")
+				.select("foundEdge")
+				.drop()
+				.cap("droppedEdge")
+				.unfold();
+
+		return dropEdgeTraversal.hasNext();
 	}
 
 	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
@@ -121,9 +153,5 @@ public class GraphDao {
 		} else {
 			return "";
 		}
-	}
-
-	public void testGraph() {
-		Vertex v = graphTraversalSource.V().next();
 	}
 }

@@ -54,8 +54,4 @@ public class GraphServiceTest {
 		boolean textbookAdded = underTest.addTextbook(textbook);
 		assertTrue(textbookAdded);
 	}
-
-
-
-
 }

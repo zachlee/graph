@@ -5,6 +5,8 @@ import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.Test;
 
@@ -23,43 +25,106 @@ public class TestNeo4j {
 	}
 
 	@Test
-	public void insertTextbookTest() {
-		String textbookId = UUID.randomUUID().toString();
-		Map<Object, Object> next = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.hasId(textbookId)
-				.properties("title", "TITLE")
-				.properties("author", "AUTHOR")
-				.properties("generalSubject", "GENERAL_SUBJECT")
-				.properties("specificSubject", "SPECIFIC_SUBJECT")
-				.properties("isbn10", "ISBN10")
-				.properties("isbn13", "ISBN13")
-				.valueMap(true)
-				.next();
+	public void insertReadDropVertexTest() {
+		String textbookId = UUID.randomUUID().toString() + "_test";
+		GraphTraversal<Vertex, Map<Object, Object>> vertexInsert = graphTraversalSource.addV(TEXTBOOK_LABEL)
+				.property("id", textbookId)
+				.property("title", "TITLE")
+				.property("author", "AUTHOR")
+				.property("generalSubject", "GENERAL_SUBJECT")
+				.property("specificSubject", "SPECIFIC_SUBJECT")
+				.property("isbn10", "ISBN10")
+				.property("isbn13", "ISBN13")
+				.valueMap(true);
+		Map<Object, Object> insertedVertex = vertexInsert.next();
 
-		GraphTraversal<Vertex, Vertex> traversalRead = graphTraversalSource.V(textbookId)
+		assert insertedVertex.size() == 9;
+
+		GraphTraversal<Vertex, Map<Object, Object>> traversalRead = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.limit(1);
-		Vertex textbookRead = traversalRead.next();
+				.has("id", textbookId)
+				.limit(1)
+				.valueMap(true);
+		boolean textbookRead = traversalRead.hasNext();
+		assert(textbookRead);
+
+		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", textbookId)
+				.as("foundVertex")
+				.valueMap(true)
+				.store("droppedVertex")
+				.select("foundVertex")
+				.drop()
+				.cap("droppedVertex")
+				.unfold();
+		boolean dropped = dropTraversal.hasNext();
+		assert dropped;
 	}
 
 	@Test
-	public void graphTest() {
-//		GraphTraversal<Vertex, Vertex> newVertex = graphTraversalSource.addV(TEXTBOOK_LABEL)
-//				.property("id", "textbookId")
-//				.property("title", "TITLE")
-//				.property("author", "AUTHOR")
-//				.property("generalSubject", "GENERAL_SUBJECT")
-//				.property("specificSubject", "SPECIFIC_SUBJECT")
-//				.property("isbn10", "ISBN10")
-//				.property("isbn13", "ISBN13");
-//		newVertex.next();
+	public void insertReadDropEdge() {
+		String idOne = UUID.randomUUID().toString() + "_test";
+		Vertex vertexOne = graphTraversalSource.addV(TEXTBOOK_LABEL)
+				.property("id", idOne)
+				.next();
+		assert null != vertexOne;
+		String idTwo = UUID.randomUUID().toString() + "_test";
+		Vertex vertexTwo = graphTraversalSource.addV(TEXTBOOK_LABEL)
+				.property("id", idTwo)
+				.next();
+		assert null != vertexTwo;
 
-		GraphTraversal<Vertex, Map<Object, Object>> traversalRead = graphTraversalSource.V(14)
+		GraphTraversal<Edge, Edge> edgeTraversal = graphTraversalSource.addE("VERBS")
+				.from(__.V().hasLabel(TEXTBOOK_LABEL)
+						.has("id", idOne))
+				.to(__.V().hasLabel(TEXTBOOK_LABEL)
+						.has("id", idTwo));
+		Edge next = edgeTraversal.next();
+		assert null != next;
+
+		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", "textbookId")
-				.limit(1l)
-				.valueMap(true);
-		Map<Object, Object> next = traversalRead.next();
-		System.out.println("inserted");
+				.has("id", idOne)
+				.outE("VERBS")
+				.as("foundEdge")
+				.inV()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", idTwo)
+				.valueMap(true)
+				.store("droppedEdge")
+				.select("foundEdge")
+				.drop()
+				.cap("droppedEdge")
+				.unfold();
+
+		boolean droppedEdge = dropEdgeTraversal.hasNext();
+		assert droppedEdge;
+
+		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", idOne)
+				.as("foundVertex")
+				.valueMap(true)
+				.store("droppedVertex")
+				.select("foundVertex")
+				.drop()
+				.cap("droppedVertex")
+				.unfold();
+		boolean droppedOne = dropTraversal.hasNext();
+		assert droppedOne;
+
+		GraphTraversal<Vertex, Vertex> dropTraversalTwo = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("id", idTwo)
+				.as("foundVertex")
+				.valueMap(true)
+				.store("droppedVertex")
+				.select("foundVertex")
+				.drop()
+				.cap("droppedVertex")
+				.unfold();
+		boolean droppedTwo = dropTraversalTwo.hasNext();
+		assert droppedTwo;
 	}
 }
