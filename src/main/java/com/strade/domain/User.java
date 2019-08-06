@@ -3,6 +3,9 @@ package com.strade.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
+	@JsonProperty("uuid")
+	private String uuid;
+
 	@JsonProperty("username")
 	private String username;
 
@@ -14,6 +17,14 @@ public class User {
 
 	@JsonProperty("type")
 	private String type;
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public String getUsername() {
 		return username;

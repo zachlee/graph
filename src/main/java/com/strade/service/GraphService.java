@@ -25,7 +25,7 @@ public class GraphService {
 	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
 
 	public boolean addTextbook(Textbook textbook) throws Exception {
-		String textbookId = textbook.getId();
+		String textbookId = textbook.getUuid();
 		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
 		if (textbookExists){
 			throw new Exception("Textbook Already Exists");

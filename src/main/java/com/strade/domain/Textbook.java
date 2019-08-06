@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Textbook {
 
-	@JsonProperty("id")
-	private String id;
+	@JsonProperty("uuid")
+	private String uuid;
 
 	@JsonProperty("title")
 	private String title;
@@ -13,10 +13,10 @@ public class Textbook {
 	@JsonProperty("author")
 	private String author;
 
-	@JsonProperty("generalSubject")
+	@JsonProperty("general_subject")
 	private String generalSubject;
 
-	@JsonProperty("specificSubject")
+	@JsonProperty("specific_subject")
 	private String specificSubject;
 
 	@JsonProperty("isbn10")
@@ -25,7 +25,7 @@ public class Textbook {
 	@JsonProperty("isbn13")
 	private String isbn13;
 
-	public Textbook(String id,
+	public Textbook(String uuid,
 					String title,
 					String author,
 					String generalSubject,
@@ -40,12 +40,12 @@ public class Textbook {
 		this.setIsbn13(isbn13);
 	}
 
-	public String getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setId(String id){
-		this.id = id;
+	public void setUuid(String uuid){
+		this.uuid = uuid;
 	}
 
 	public String getTitle() {
