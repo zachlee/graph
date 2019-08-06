@@ -1,5 +1,6 @@
 package com.strade.dao;
 
+import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
@@ -9,7 +10,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.ArrayList;
@@ -148,13 +148,13 @@ public class GraphDao {
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
 				.outE(verb)
-				.as(USER_ALIAS)
+				.as(RELATIONSHIP_ALIAS)
 				.inV()
 				.hasLabel(TEXTBOOK_LABEL)
 				.has(NODE_UUID, texbookId)
 				.valueMap(true)
 				.store(DROPPED_ALIAS)
-				.select(USER_ALIAS)
+				.select(RELATIONSHIP_ALIAS)
 				.drop()
 				.cap(DROPPED_ALIAS)
 				.unfold();
@@ -162,8 +162,23 @@ public class GraphDao {
 		return dropEdgeTraversal.hasNext();
 	}
 
+	public Relationship getTextbookRelationship(String userId, String verb, String textbookId) {
+		GraphTraversal<Vertex, Map<Object, Object>> relationshipTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has(NODE_UUID, userId)
+				.outE(verb)
+				.as(RELATIONSHIP_ALIAS)
+				.inV()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookId)
+				.select(RELATIONSHIP_ALIAS)
+				.valueMap(true);
+		Map<Object, Object> relationshipMap = relationshipTraversal.next();
+		return createRelationship(relationshipMap);
+	}
+
 	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
-		String textbookId = (String) textbookValueMap.get(T.id);
+		String textbookId = (String) textbookValueMap.get(NODE_UUID);
 		return new Textbook(textbookId,
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
@@ -171,6 +186,12 @@ public class GraphDao {
 				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
 				getString(textbookValueMap.get(ISBN10)),
 				getString(textbookValueMap.get(ISBN13)));
+	}
+
+	private Relationship createRelationship(Map<Object, Object> relationshipValueMap) {
+		String relationshipId = (String) relationshipValueMap.get(NODE_UUID);
+		//todo finish implementing create relationship
+		return new Relationship();
 	}
 
 	private String getString(Object entry) {

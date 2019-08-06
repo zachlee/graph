@@ -6,6 +6,7 @@ public class Labels {
 	public static final String TEXTBOOK_LABEL = "textbook";
 	public static final String USER_LABEL = "user";
 	public static final String USER_ALIAS = "user_alias";
+	public static final String RELATIONSHIP_ALIAS = "relationship_alias";
 	public static final String SCHOOL = "school";
 	public static final String EMAIL = "email";
 	public static final String USERNAME = "username";

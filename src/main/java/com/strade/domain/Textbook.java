@@ -3,7 +3,6 @@ package com.strade.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Textbook {
-
 	@JsonProperty("uuid")
 	private String uuid;
 

@@ -1,6 +1,7 @@
 package com.strade.service;
 
 import com.strade.dao.GraphDao;
+import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import io.javalin.Context;
@@ -71,6 +72,17 @@ public class GraphService {
 			return graphDao.removeTextbookRelationship(userId, verb, textbookId);
 		} else {
 			return false;
+		}
+	}
+
+	public Relationship getTextbookRelationship(String userId, String verb, String textbookId) {
+		boolean doesUserExist = graphDao.doesUserExist(userId);
+		boolean verbValid = graphDao.isVerbValid(verb);
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
+		if ( doesUserExist && verbValid && doesTextbookExist) {
+			return graphDao.getTextbookRelationship(userId, verb, textbookId);
+		} else {
+			return null;
 		}
 	}
 
