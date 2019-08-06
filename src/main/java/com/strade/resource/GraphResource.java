@@ -8,8 +8,10 @@ import io.javalin.Context;
 
 import java.io.IOException;
 
-public class GraphResource {
+import static com.google.api.client.http.HttpStatusCodes.*;
 
+
+public class GraphResource {
 
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static GraphService graphService = GraphService.getInstance();
@@ -27,9 +29,9 @@ public class GraphResource {
 		Textbook textbook = mapper.readValue(context.body(), Textbook.class);
 		boolean inserted = graphService.addTextbook(textbook);
 		if ( inserted ) {
-			context.status(200);
+			context.status(STATUS_CODE_CREATED);
 		} else {
-			context.status(500);
+			context.status(STATUS_CODE_SERVER_ERROR);
 		}
 	}
 
@@ -38,15 +40,21 @@ public class GraphResource {
 		Textbook textbook = graphService.getTextbookById(textbookId);
 		if (null != textbook) {
 			context.json(textbook);
+			context.status(STATUS_CODE_OK);
 		} else {
-			context.status(404);
+			context.status(STATUS_CODE_NOT_FOUND);
 		}
 	}
 
 	public static void removeTextbook(Context context) {
 		String textbookIdString = context.queryParam("textbook");
-		graphService.removeTextbook(textbookIdString);
-		context.status(204);
+		boolean removed = graphService.removeTextbook(textbookIdString);
+		if (removed){
+			context.status(STATUS_CODE_NO_CONTENT);
+		} else {
+			context.status(STATUS_CODE_NOT_FOUND);
+		}
+
 	}
 
 	public static void addTextbookRelationship(Context context) {
@@ -55,9 +63,9 @@ public class GraphResource {
 		String textbookId = context.queryParam("textbook");
 		boolean relationshipAdded = graphService.addTextbookRelationship(userId, verb, textbookId);
 		if (relationshipAdded) {
-			context.status(201);
+			context.status(STATUS_CODE_CREATED);
 		} else {
-			context.status(400);
+			context.status(STATUS_CODE_BAD_REQUEST);
 		}
 	}
 
@@ -67,9 +75,9 @@ public class GraphResource {
 		String textbookId = context.queryParam("textbook");
 		boolean relationshipDeleted = graphService.removeTextbookRelationship(userId, verb, textbookId);
 		if (relationshipDeleted) {
-			context.status(204);
+			context.status(STATUS_CODE_NO_CONTENT);
 		} else {
-			context.status(404);
+			context.status(STATUS_CODE_NOT_FOUND);
 		}
 	}
 
@@ -83,9 +91,9 @@ public class GraphResource {
 		User user = mapper.readValue(context.body(), User.class);
 		boolean userAdded = graphService.addUser(user);
 		if (userAdded) {
-			context.status(201);
+			context.status(STATUS_CODE_CREATED);
 		} else {
-			context.status(400);
+			context.status(STATUS_CODE_BAD_REQUEST);
 		}
 	}
 
@@ -93,9 +101,9 @@ public class GraphResource {
 		String userId = context.queryParam("user");
 		boolean userRemoved = graphService.removeUser(userId);
 		if (userRemoved) {
-			context.status(200);
+			context.status(STATUS_CODE_NO_CONTENT);
 		} else {
-			context.status(400);
+			context.status(STATUS_CODE_NOT_FOUND);
 		}
 	}
 }

@@ -34,10 +34,12 @@ public class GraphService {
 		}
 	}
 
-	public void removeTextbook(String textbookId) {
+	public boolean removeTextbook(String textbookId) {
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesTextbookExist) {
-			graphDao.deleteTextbook(textbookId);
+			return graphDao.deleteTextbook(textbookId);
+		} else {
+			return false;
 		}
 	}
 
