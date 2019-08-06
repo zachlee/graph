@@ -13,6 +13,8 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.strade.utils.Labels.*;
+
 public class TestNeo4j {
 
 	private static GraphTraversalSource graphTraversalSource;
@@ -28,13 +30,13 @@ public class TestNeo4j {
 	public void insertReadDropVertexTest() {
 		String textbookId = UUID.randomUUID().toString() + "_test";
 		GraphTraversal<Vertex, Map<Object, Object>> vertexInsert = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.property("id", textbookId)
-				.property("title", "TITLE")
-				.property("author", "AUTHOR")
-				.property("generalSubject", "GENERAL_SUBJECT")
-				.property("specificSubject", "SPECIFIC_SUBJECT")
-				.property("isbn10", "ISBN10")
-				.property("isbn13", "ISBN13")
+				.property(NODE_UUID, textbookId)
+				.property(TITLE, "TITLE")
+				.property(AUTHOR, "AUTHOR")
+				.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
+				.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
+				.property(ISBN10, "ISBN10")
+				.property(ISBN13, "ISBN13")
 				.valueMap(true);
 		Map<Object, Object> insertedVertex = vertexInsert.next();
 
@@ -42,7 +44,7 @@ public class TestNeo4j {
 
 		GraphTraversal<Vertex, Map<Object, Object>> traversalRead = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", textbookId)
+				.has(NODE_UUID, textbookId)
 				.limit(1)
 				.valueMap(true);
 		boolean textbookRead = traversalRead.hasNext();
@@ -50,13 +52,13 @@ public class TestNeo4j {
 
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", textbookId)
-				.as("foundVertex")
+				.has(NODE_UUID, textbookId)
+				.as(TEXTBOOK_ALIAS)
 				.valueMap(true)
-				.store("droppedVertex")
-				.select("foundVertex")
+				.store(DROPPED_ALIAS)
+				.select(TEXTBOOK_ALIAS)
 				.drop()
-				.cap("droppedVertex")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 		boolean dropped = dropTraversal.hasNext();
 		assert dropped;
@@ -66,36 +68,36 @@ public class TestNeo4j {
 	public void insertReadDropEdge() {
 		String idOne = UUID.randomUUID().toString() + "_test";
 		Vertex vertexOne = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.property("id", idOne)
+				.property(NODE_UUID, idOne)
 				.next();
 		assert null != vertexOne;
 		String idTwo = UUID.randomUUID().toString() + "_test";
 		Vertex vertexTwo = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.property("id", idTwo)
+				.property(NODE_UUID, idTwo)
 				.next();
 		assert null != vertexTwo;
 
-		GraphTraversal<Edge, Edge> edgeTraversal = graphTraversalSource.addE("VERBS")
+		GraphTraversal<Edge, Edge> edgeTraversal = graphTraversalSource.addE(OWNS_VERB)
 				.from(__.V().hasLabel(TEXTBOOK_LABEL)
-						.has("id", idOne))
+						.has(NODE_UUID, idOne))
 				.to(__.V().hasLabel(TEXTBOOK_LABEL)
-						.has("id", idTwo));
+						.has(NODE_UUID, idTwo));
 		Edge next = edgeTraversal.next();
 		assert null != next;
 
 		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", idOne)
-				.outE("VERBS")
-				.as("foundEdge")
+				.has(NODE_UUID, idOne)
+				.outE(OWNS_VERB)
+				.as(OWNS_ALIAS)
 				.inV()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", idTwo)
+				.has(NODE_UUID, idTwo)
 				.valueMap(true)
-				.store("droppedEdge")
-				.select("foundEdge")
+				.store(DROPPED_ALIAS)
+				.select(OWNS_ALIAS)
 				.drop()
-				.cap("droppedEdge")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 
 		boolean droppedEdge = dropEdgeTraversal.hasNext();
@@ -103,26 +105,26 @@ public class TestNeo4j {
 
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", idOne)
-				.as("foundVertex")
+				.has(NODE_UUID, idOne)
+				.as(TEXTBOOK_ALIAS)
 				.valueMap(true)
-				.store("droppedVertex")
-				.select("foundVertex")
+				.store(DROPPED_ALIAS)
+				.select(TEXTBOOK_ALIAS)
 				.drop()
-				.cap("droppedVertex")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 		boolean droppedOne = dropTraversal.hasNext();
 		assert droppedOne;
 
 		GraphTraversal<Vertex, Vertex> dropTraversalTwo = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", idTwo)
-				.as("foundVertex")
+				.has(NODE_UUID, idTwo)
+				.as(TEXTBOOK_ALIAS)
 				.valueMap(true)
-				.store("droppedVertex")
-				.select("foundVertex")
+				.store(DROPPED_ALIAS)
+				.select(TEXTBOOK_ALIAS)
 				.drop()
-				.cap("droppedVertex")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 		boolean droppedTwo = dropTraversalTwo.hasNext();
 		assert droppedTwo;

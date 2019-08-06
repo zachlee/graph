@@ -1,6 +1,5 @@
 package com.strade.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
@@ -17,13 +16,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.strade.utils.Labels.*;
+
 public class GraphDao {
 
 	private static GraphTraversalSource graphTraversalSource;
 	private static GraphDao instance;
-
-	private static final String TEXTBOOK_LABEL = "textbook";
-	private static final String USER_LABEL = "user";
 
 	public GraphDao() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
@@ -39,29 +37,29 @@ public class GraphDao {
 	public boolean doesTextbookExistById(String textbookId) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", textbookId);
+				.has(NODE_UUID, textbookId);
 		return traversal.hasNext();
 	}
 
 	public boolean doesTextbookExistByIsbn10(String isbn10) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("isbn10", isbn10);
+				.has(ISBN10, isbn10);
 		return traversal.hasNext();
 	}
 
 	public boolean doesTextbookExistByIsbn13(String isbn13) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("isbn13", isbn13);
+				.has(ISBN13, isbn13);
 		return traversal.hasNext();
 	}
 
 	public boolean doesTextbookExist(String textbookId, String isbn10, String isbn13) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
-				.or(__.V().hasLabel(TEXTBOOK_LABEL).has("id", textbookId),
-					__.V().hasLabel(TEXTBOOK_LABEL).has("isbn10", isbn10),
-					__.V().hasLabel(TEXTBOOK_LABEL).has("isbn13", isbn13));
+				.or(__.V().hasLabel(TEXTBOOK_LABEL).has(NODE_UUID, textbookId),
+					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN10, isbn10),
+					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN13, isbn13));
 		return traversal.hasNext();
 	}
 
@@ -86,26 +84,26 @@ public class GraphDao {
 		String textbookId = UUID.randomUUID().toString();
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
 				.hasLabel(TEXTBOOK_LABEL)
-				.property("id", textbookId)
-				.property("title", textbook.getTitle())
-				.property("author", textbook.getAuthor())
-				.property("generalSubject", textbook.getGeneralSubject())
-				.property("specificSubject", textbook.getSpecificSubject())
-				.property("isbn10", textbook.getIsbn10())
-				.property("isbn13", textbook.getIsbn13());
+				.property(NODE_UUID, textbookId)
+				.property(TITLE, textbook.getTitle())
+				.property(AUTHOR, textbook.getAuthor())
+				.property(GENERAL_SUBJECT, textbook.getGeneralSubject())
+				.property(SPECIFIC_SUBJECT, textbook.getSpecificSubject())
+				.property(ISBN10, textbook.getIsbn10())
+				.property(ISBN13, textbook.getIsbn13());
 		return traversal.hasNext();
 	}
 
 	public boolean deleteTextbook(String textbookId) {
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", textbookId)
-				.as("foundVertex")
+				.has(NODE_UUID, textbookId)
+				.as(TEXTBOOK_ALIAS)
 				.valueMap(true)
-				.store("droppedVertex")
-				.select("foundVertex")
+				.store(DROPPED_ALIAS)
+				.select(TEXTBOOK_ALIAS)
 				.drop()
-				.cap("droppedVertex")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 		return dropTraversal.hasNext();
 	}
@@ -114,24 +112,24 @@ public class GraphDao {
 		String userId = UUID.randomUUID().toString();
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
 				.hasLabel(USER_LABEL)
-				.property("id", userId)
-				.property("school", user.getSchool())
-				.property("email", user.getEmail())
-				.property("username", user.getUsername())
-				.property("type", user.getType());
+				.property(NODE_UUID, userId)
+				.property(SCHOOL, user.getSchool())
+				.property(EMAIL, user.getEmail())
+				.property(USERNAME, user.getUsername())
+				.property(TYPE, user.getType());
 		return traversal.hasNext();
 	}
 
 	public boolean removeUser(String userId) {
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
-				.has("id", userId)
-				.as("foundVertex")
+				.has(NODE_UUID, userId)
+				.as(USER_ALIAS)
 				.valueMap(true)
-				.store("droppedVertex")
-				.select("foundVertex")
+				.store(DROPPED_ALIAS)
+				.select(USER_ALIAS)
 				.drop()
-				.cap("droppedVertex")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 		return dropTraversal.hasNext();
 	}
@@ -139,26 +137,26 @@ public class GraphDao {
 	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
 		GraphTraversal<Edge, Edge> traversal = graphTraversalSource.addE(verb)
 				.from(__.V().hasLabel(USER_LABEL)
-						.has("id", userId))
+						.has(NODE_UUID, userId))
 				.to(__.V().hasLabel(TEXTBOOK_LABEL)
-						.has("id", textbookId));
+						.has(NODE_UUID, textbookId));
 		return traversal.hasNext();
 	}
 
 	public boolean removeTextbookRelationship(String userId, String verb, String texbookId) {
 		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
-				.has("id", userId)
+				.has(NODE_UUID, userId)
 				.outE(verb)
-				.as("foundEdge")
+				.as(USER_ALIAS)
 				.inV()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has("id", texbookId)
+				.has(NODE_UUID, texbookId)
 				.valueMap(true)
-				.store("droppedEdge")
-				.select("foundEdge")
+				.store(DROPPED_ALIAS)
+				.select(USER_ALIAS)
 				.drop()
-				.cap("droppedEdge")
+				.cap(DROPPED_ALIAS)
 				.unfold();
 
 		return dropEdgeTraversal.hasNext();
@@ -167,12 +165,12 @@ public class GraphDao {
 	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
 		String textbookId = (String) textbookValueMap.get(T.id);
 		return new Textbook(textbookId,
-				getString(textbookValueMap.get("title")),
-				getString(textbookValueMap.get("author")),
-				getString(textbookValueMap.get("generalSubject")),
-				getString(textbookValueMap.get("specificSubject")),
-				getString(textbookValueMap.get("isbn10")),
-				getString(textbookValueMap.get("isbn13")));
+				getString(textbookValueMap.get(TITLE)),
+				getString(textbookValueMap.get(AUTHOR)),
+				getString(textbookValueMap.get(GENERAL_SUBJECT)),
+				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
+				getString(textbookValueMap.get(ISBN10)),
+				getString(textbookValueMap.get(ISBN13)));
 	}
 
 	private String getString(Object entry) {

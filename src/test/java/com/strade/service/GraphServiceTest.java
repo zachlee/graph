@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.strade.utils.Labels.*;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,13 +26,13 @@ public class GraphServiceTest {
 
 	@Before
 	public void setup() {
-		textbook = new Textbook("id",
-				"title",
-				"author",
-				"generalSubject",
-				"specificSubject",
-				"isbn10",
-				"isbn13");
+		textbook = new Textbook(NODE_UUID,
+				TITLE,
+				AUTHOR,
+				GENERAL_SUBJECT,
+				SPECIFIC_SUBJECT,
+				ISBN10,
+				ISBN13);
 		underTest = new GraphService(graphDaoMock);
 	}
 
