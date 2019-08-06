@@ -9,14 +9,17 @@ import java.io.IOException;
 
 public class GraphService {
 
-	private static GraphDao graphDao;
+	private static GraphDao graphDao = GraphDao.getInstance();
+	private static GraphService instance;
 
 	GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;
 	}
 
-	public GraphService() {
-		this.graphDao = GraphDao.getInstance();
+	public static GraphService getInstance() {
+		if (instance == null)
+			instance = new GraphService(graphDao);
+		return instance;
 	}
 
 	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
@@ -31,10 +34,19 @@ public class GraphService {
 		}
 	}
 
-	public void removeTextbook(String textbookId){
+	public void removeTextbook(String textbookId) {
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesTextbookExist) {
 			graphDao.deleteTextbook(textbookId);
+		}
+	}
+
+	public Textbook getTextbookById(String textbookId) {
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
+		if (doesTextbookExist){
+			return graphDao.getTextbook(textbookId);
+		} else {
+			return null;
 		}
 	}
 
@@ -44,6 +56,17 @@ public class GraphService {
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesUserExist && verbValid && doesTextbookExist) {
 			return graphDao.createTextbookRelationship(userId, verb, textbookId);
+		} else {
+			return false;
+		}
+	}
+
+	public boolean removeTextbookRelationship(String userId, String verb, String textbookId) {
+		boolean doesUserExist = graphDao.doesUserExist(userId);
+		boolean verbValid = graphDao.isVerbValid(verb);
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
+		if ( doesUserExist && verbValid && doesTextbookExist) {
+			return graphDao.removeTextbookRelationship(userId, verb, textbookId);
 		} else {
 			return false;
 		}

@@ -1,7 +1,6 @@
 package com.strade.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.strade.dao.GraphDao;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import com.strade.service.GraphService;
@@ -11,8 +10,14 @@ import java.io.IOException;
 
 public class GraphResource {
 
-	private static final GraphService graphService = new GraphService();
+
 	private static ObjectMapper mapper = new ObjectMapper();
+	private static GraphService graphService = GraphService.getInstance();
+
+	//injector for testing
+	public GraphResource(GraphService service) {
+		graphService = service;
+	}
 
 	public static void aboutPage(Context context) {
 		graphService.aboutPage(context);
@@ -28,6 +33,16 @@ public class GraphResource {
 		}
 	}
 
+	public static void getTextbookById(Context context) {
+		String textbookId = context.queryParam("textbook");
+		Textbook textbook = graphService.getTextbookById(textbookId);
+		if (null != textbook) {
+			context.json(textbook);
+		} else {
+			context.status(404);
+		}
+	}
+
 	public static void removeTextbook(Context context) {
 		String textbookIdString = context.queryParam("textbook");
 		graphService.removeTextbook(textbookIdString);
@@ -38,11 +53,23 @@ public class GraphResource {
 		String userId = context.queryParam("user");
 		String verb = context.queryParam("verb");
 		String textbookId = context.queryParam("textbook");
-		boolean textbookAdded = graphService.addTextbookRelationship(userId, verb, textbookId);
-		if (textbookAdded) {
+		boolean relationshipAdded = graphService.addTextbookRelationship(userId, verb, textbookId);
+		if (relationshipAdded) {
 			context.status(201);
 		} else {
 			context.status(400);
+		}
+	}
+
+	public static void removeTextbookRelationship(Context context) {
+		String userId = context.queryParam("user");
+		String verb = context.queryParam("verb");
+		String textbookId = context.queryParam("textbook");
+		boolean relationshipDeleted = graphService.removeTextbookRelationship(userId, verb, textbookId);
+		if (relationshipDeleted) {
+			context.status(204);
+		} else {
+			context.status(404);
 		}
 	}
 

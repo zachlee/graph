@@ -1,12 +1,12 @@
 package com.strade.server;
 
 import com.strade.resource.GraphResource;
-import com.strade.service.GraphService;
 import io.javalin.Javalin;
 
 import static io.javalin.apibuilder.ApiBuilder.delete;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.get;
 
 public class App {
 	public static void main(String[] args) {
@@ -22,6 +22,7 @@ public class App {
 			path("graph", () -> {
 				path("textbook", () -> {
 					path(":textbook", () -> {
+						get(GraphResource::getTextbookById);
 						path("add", () -> {
 							post(GraphResource::addTextbook);
 						});
@@ -34,6 +35,7 @@ public class App {
 					path("verb/:verb", () -> {
 						path("textbook/:textbook", () -> {
 							post(GraphResource::addTextbookRelationship);
+							delete(GraphResource::removeTextbookRelationship);
 						});
 					});
 					path("textbook/:textbook", () -> {
