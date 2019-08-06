@@ -49,11 +49,7 @@ public class GraphResource {
 	public static void removeTextbook(Context context) {
 		String textbookIdString = context.queryParam("textbook");
 		boolean removed = graphService.removeTextbook(textbookIdString);
-		if (removed){
-			context.status(STATUS_CODE_NO_CONTENT);
-		} else {
-			context.status(STATUS_CODE_NOT_FOUND);
-		}
+		context.status(STATUS_CODE_NO_CONTENT);
 
 	}
 
@@ -74,11 +70,7 @@ public class GraphResource {
 		String verb = context.queryParam("verb");
 		String textbookId = context.queryParam("textbook");
 		boolean relationshipDeleted = graphService.removeTextbookRelationship(userId, verb, textbookId);
-		if (relationshipDeleted) {
-			context.status(STATUS_CODE_NO_CONTENT);
-		} else {
-			context.status(STATUS_CODE_NOT_FOUND);
-		}
+		context.status(STATUS_CODE_NO_CONTENT);
 	}
 
 	public static void searchBook(Context context){}
@@ -100,10 +92,6 @@ public class GraphResource {
 	public static void removeUser(Context context){
 		String userId = context.queryParam("user");
 		boolean userRemoved = graphService.removeUser(userId);
-		if (userRemoved) {
-			context.status(STATUS_CODE_NO_CONTENT);
-		} else {
-			context.status(STATUS_CODE_NOT_FOUND);
-		}
+		context.status(STATUS_CODE_NO_CONTENT);
 	}
 }
