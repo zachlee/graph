@@ -7,11 +7,24 @@ public class Relationship {
 	@JsonProperty("uuid")
 	private String uuid;
 
-	private Verb verb;
+	@JsonProperty("verb")
+	private String verb;
 
-	private User user;
+	@JsonProperty("user")
+	private String user;
 
-	private Textbook textbook;
+	@JsonProperty("textbook")
+	private String textbook;
+
+	public Relationship(String uuid,
+						String user,
+						String verb,
+						String textbook) {
+		setUuid(uuid);
+		setUser(user);
+		setVerb(verb);
+		setTextbook(textbook);
+	}
 
 	public String getUuid() {
 		return uuid;
@@ -21,27 +34,27 @@ public class Relationship {
 		this.uuid = uuid;
 	}
 
-	public Verb getVerb() {
+	public String getVerb() {
 		return verb;
 	}
 
-	public void setVerb(Verb verb) {
+	public void setVerb(String verb) {
 		this.verb = verb;
 	}
 
-	public User getUser() {
+	public String getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public Textbook getTextbook() {
+	public String getTextbook() {
 		return textbook;
 	}
 
-	public void setTextbook(Textbook textbook) {
+	public void setTextbook(String textbook) {
 		this.textbook = textbook;
 	}
 }

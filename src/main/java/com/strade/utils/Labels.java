@@ -16,6 +16,7 @@ public class Labels {
 	public static final String OWNS_ALIAS = "owns_alias";
 	public static final String WANTS_VERB = "wants";
 	public static final String WANTS_ALIAS = "wants_alias";
+	public static final String VERB_LABEL = "verb";
 	public static final String TITLE = "title";
 	public static final String AUTHOR = "author";
 	public static final String GENERAL_SUBJECT = "general_subject";

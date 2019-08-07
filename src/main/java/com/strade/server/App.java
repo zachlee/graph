@@ -34,6 +34,7 @@ public class App {
 				path("user/:user", () -> {
 					path("verb/:verb", () -> {
 						path("textbook/:textbook", () -> {
+							get(GraphResource::getTextbookRelationship);
 							post(GraphResource::addTextbookRelationship);
 							delete(GraphResource::removeTextbookRelationship);
 						});

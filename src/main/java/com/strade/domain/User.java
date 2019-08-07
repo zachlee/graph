@@ -18,6 +18,18 @@ public class User {
 	@JsonProperty("type")
 	private String type;
 
+	public User(String uuid,
+				String username,
+				String email,
+				String school,
+				String type) {
+		setUuid(uuid);
+		setUsername(username);
+		setEmail(email);
+		setSchool(school);
+		setType(type);
+	}
+
 	public String getUuid() {
 		return uuid;
 	}

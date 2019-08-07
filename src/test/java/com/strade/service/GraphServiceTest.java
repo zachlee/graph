@@ -12,7 +12,6 @@ import static com.strade.utils.Labels.*;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,7 +38,7 @@ public class GraphServiceTest {
 	@Test
 	public void addTextbookWhenTextbookAlreadyExists() {
 //		when(graphDaoMock.doesTextbookExistById(anyString())).thenReturn(true);
-		when(graphDaoMock.insertTextbook(textbook)).thenThrow(Exception.class);
+		when(graphDaoMock.createTextbook(textbook)).thenThrow(Exception.class);
 		try {
 			underTest.addTextbook(textbook);
 			fail("Test should have thrown exception for textbook already existing");
@@ -51,7 +50,7 @@ public class GraphServiceTest {
 	@Test
 	public void successfullyAddTextbook() throws Exception {
 //		when(graphDaoMock.doesTextbookExistById(anyString())).thenReturn(false);
-		when(graphDaoMock.insertTextbook(any(Textbook.class))).thenReturn(true);
+		when(graphDaoMock.createTextbook(any(Textbook.class))).thenReturn(true);
 		boolean textbookAdded = underTest.addTextbook(textbook);
 		assertTrue(textbookAdded);
 	}

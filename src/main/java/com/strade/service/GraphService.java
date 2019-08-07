@@ -31,7 +31,7 @@ public class GraphService {
 		if (textbookExists){
 			throw new Exception("Textbook Already Exists");
 		} else {
-			return graphDao.insertTextbook(textbook);
+			return graphDao.createTextbook(textbook);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class GraphService {
 		boolean verbValid = graphDao.isVerbValid(verb);
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if ( doesUserExist && verbValid && doesTextbookExist) {
-			return graphDao.removeTextbookRelationship(userId, verb, textbookId);
+			return graphDao.deleteTextbookRelationship(userId, verb, textbookId);
 		} else {
 			return false;
 		}
@@ -93,10 +93,10 @@ public class GraphService {
 	public void searchWishList(Context context){}
 
 	public boolean addUser(User user) throws IOException {
-		return graphDao.addUser(user);
+		return graphDao.createUser(user);
 	}
 
 	public boolean removeUser(String userId){
-		return graphDao.removeUser(userId);
+		return graphDao.deleteUser(userId);
 	}
 }

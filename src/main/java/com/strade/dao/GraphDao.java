@@ -23,7 +23,7 @@ public class GraphDao {
 	private static GraphTraversalSource graphTraversalSource;
 	private static GraphDao instance;
 
-	public GraphDao() {
+	GraphDao() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
@@ -72,18 +72,18 @@ public class GraphDao {
 	}
 
 	public Textbook getTextbook(String textbookId) {
-		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V(textbookId)
+		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
+				.property(NODE_UUID, textbookId)
 				.limit(1)
 				.valueMap(true);
 		Map<Object, Object> textbookValueMap = traversal.next();
 		return createTextbook(textbookValueMap);
 	}
 
-	public boolean insertTextbook(Textbook textbook) {
+	public boolean createTextbook(Textbook textbook) {
 		String textbookId = UUID.randomUUID().toString();
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
-				.hasLabel(TEXTBOOK_LABEL)
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
 				.property(NODE_UUID, textbookId)
 				.property(TITLE, textbook.getTitle())
 				.property(AUTHOR, textbook.getAuthor())
@@ -108,11 +108,9 @@ public class GraphDao {
 		return dropTraversal.hasNext();
 	}
 
-	public boolean addUser(User user) {
-		String userId = UUID.randomUUID().toString();
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV()
-				.hasLabel(USER_LABEL)
-				.property(NODE_UUID, userId)
+	public boolean createUser(User user) {
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
+				.property(NODE_UUID, user.getUuid())
 				.property(SCHOOL, user.getSchool())
 				.property(EMAIL, user.getEmail())
 				.property(USERNAME, user.getUsername())
@@ -120,7 +118,7 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public boolean removeUser(String userId) {
+	public boolean deleteUser(String userId) {
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
@@ -134,6 +132,20 @@ public class GraphDao {
 		return dropTraversal.hasNext();
 	}
 
+	public User getUser(String userId) {
+		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has("uuid", userId)
+				.limit(1)
+				.valueMap(true);
+		if (getUserTraversal.hasNext()) {
+			Map<Object, Object> user = getUserTraversal.next();
+			return createUser(user);
+		} else {
+			return null;
+		}
+	}
+
 	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
 		GraphTraversal<Edge, Edge> traversal = graphTraversalSource.addE(verb)
 				.from(__.V().hasLabel(USER_LABEL)
@@ -143,7 +155,7 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public boolean removeTextbookRelationship(String userId, String verb, String texbookId) {
+	public boolean deleteTextbookRelationship(String userId, String verb, String texbookId) {
 		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
@@ -178,8 +190,7 @@ public class GraphDao {
 	}
 
 	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
-		String textbookId = (String) textbookValueMap.get(NODE_UUID);
-		return new Textbook(textbookId,
+		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
 				getString(textbookValueMap.get(GENERAL_SUBJECT)),
@@ -189,9 +200,18 @@ public class GraphDao {
 	}
 
 	private Relationship createRelationship(Map<Object, Object> relationshipValueMap) {
-		String relationshipId = (String) relationshipValueMap.get(NODE_UUID);
-		//todo finish implementing create relationship
-		return new Relationship();
+		return new Relationship(getString(relationshipValueMap.get(NODE_UUID)),
+				getString(relationshipValueMap.get(USER_LABEL)),
+				getString(relationshipValueMap.get(VERB_LABEL)),
+				getString(relationshipValueMap.get(TEXTBOOK_LABEL)));
+	}
+
+	private User createUser(Map<Object, Object> userValueMap) {
+		return new User(getString(userValueMap.get(NODE_UUID)),
+				getString(userValueMap.get(USERNAME)),
+				getString(userValueMap.get(EMAIL)),
+				getString(userValueMap.get(SCHOOL)),
+				getString(userValueMap.get(TYPE)));
 	}
 
 	private String getString(Object entry) {

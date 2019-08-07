@@ -1,6 +1,7 @@
 package com.strade.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import com.strade.service.GraphService;
@@ -71,6 +72,15 @@ public class GraphResource {
 		String textbookId = context.queryParam("textbook");
 		boolean relationshipDeleted = graphService.removeTextbookRelationship(userId, verb, textbookId);
 		context.status(STATUS_CODE_NO_CONTENT);
+	}
+
+	public static void getTextbookRelationship(Context context){
+		String userId = context.queryParam("user");
+		String verb = context.queryParam("verb");
+		String textbookId = context.queryParam("textbook");
+		Relationship relationship = graphService.getTextbookRelationship(userId, verb, textbookId);
+		context.json(relationship);
+		context.status(STATUS_CODE_OK);
 	}
 
 	public static void searchBook(Context context){}

@@ -31,6 +31,7 @@ public class Textbook {
 					String specificSubject,
 					String isbn10,
 					String isbn13) {
+		this.setUuid(uuid);
 		this.setTitle(title);
 		this.setAuthor(author);
 		this.setGeneralSubject(generalSubject);
