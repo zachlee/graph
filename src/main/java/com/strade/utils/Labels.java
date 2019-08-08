@@ -22,5 +22,5 @@ public class Labels {
 	public static final String GENERAL_SUBJECT = "general_subject";
 	public static final String SPECIFIC_SUBJECT = "specific_subject";
 	public static final String ISBN10 = "isbn10";
-	public static final String ISBN13 = "isbn13;";
+	public static final String ISBN13 = "isbn13";
 }

@@ -1,6 +1,7 @@
 package com.strade.functional;
 
 import com.strade.dao.GraphDao;
+import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
@@ -11,6 +12,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -114,7 +116,108 @@ public class FunctionalDao {
 		assert !userExists;
 	}
 
+	@Test
+	public void deleteNonExistingUserIdempotent() {
+		graphDao.deleteUser("DoesntExist");
+	}
 
+	@Test
+	public void createTextbookTest() {
+		String textbookId = UUID.randomUUID().toString();
+		try {
+			Textbook textbook = createTextbookObject(textbookId);
+			boolean createdTextbook = graphDao.createTextbook(textbook);
+			assert createdTextbook;
+
+			GraphTraversal<Vertex, Map<Object, Object>> getTextbook = graphTraversalSource.V()
+					.hasLabel(TEXTBOOK_LABEL)
+					.has("uuid", textbookId)
+					.limit(1)
+					.valueMap(true);
+			boolean textbookExists = getTextbook.hasNext();
+			assert textbookExists;
+		} finally {
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
+		}
+	}
+
+	@Test
+	public void getTextbookReturnsTextbook() {
+		String textbookId = UUID.randomUUID().toString();
+		try {
+			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
+					.property(NODE_UUID, textbookId)
+					.property(TITLE, "TITLE")
+					.property(AUTHOR, "AUTHOR")
+					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
+					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
+					.property(ISBN10, "isbn10")
+					.property(ISBN13, "isbn13");
+			boolean textbookCreated = textbookTraversal.hasNext();
+			assert textbookCreated;
+
+			Textbook textbookRetrieved = graphDao.getTextbook(textbookId);
+			assert null != textbookRetrieved;
+			assert textbookRetrieved.getUuid().equals(textbookId);
+		} finally {
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
+		}
+	}
+
+	@Test
+	public void getTextbookNonExistingTextbookReturnsNull() {
+		Textbook doesntExist = graphDao.getTextbook("doesntExist");
+		assert null == doesntExist;
+	}
+
+	@Test
+	public void deleteTextbookTest() {
+		String textbookId = UUID.randomUUID().toString();
+		Textbook textbook = createTextbookObject(textbookId);
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
+				.property(NODE_UUID, textbook.getUuid());
+		traversal.hasNext();
+
+		GraphTraversal<Vertex, Map<Object, Object>> getTextbookTraversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookId)
+				.limit(1)
+				.valueMap(true);
+		Map<Object, Object> textbookMap = getTextbookTraversal.next();
+		Textbook getTextbook = createTextbookFromMap(textbookMap);
+
+		assert null != getTextbook;
+
+		graphDao.deleteTextbook(textbookId);
+
+		GraphTraversal<Vertex, Map<Object, Object>> getTextbookTraversalAfterDelete = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookId)
+				.limit(1)
+				.valueMap(true);
+		boolean textbookExists = getTextbookTraversal.hasNext();
+		assert !textbookExists;
+	}
+
+	private Textbook createTextbookObject(String textbookId) {
+		return new Textbook(textbookId,
+				"title",
+				"author",
+				"subject",
+				"specificSubject",
+				"isbn10",
+				"isbn13");
+	}
+
+	private Textbook createTextbookFromMap(Map<Object, Object> textbookValueMap) {
+		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
+				getString(textbookValueMap.get(TITLE)),
+				getString(textbookValueMap.get(AUTHOR)),
+				getString(textbookValueMap.get(GENERAL_SUBJECT)),
+				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
+				getString(textbookValueMap.get(ISBN10)),
+				getString(textbookValueMap.get(ISBN13)));
+	}
 
 	private User createUser(String uuid) {
 		return new User(uuid,

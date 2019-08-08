@@ -77,14 +77,17 @@ public class GraphDao {
 				.property(NODE_UUID, textbookId)
 				.limit(1)
 				.valueMap(true);
-		Map<Object, Object> textbookValueMap = traversal.next();
-		return createTextbook(textbookValueMap);
+		if ( traversal.hasNext() ) {
+			Map<Object, Object> textbookValueMap = traversal.next();
+			return createTextbook(textbookValueMap);
+		} else {
+			return null;
+		}
 	}
 
 	public boolean createTextbook(Textbook textbook) {
-		String textbookId = UUID.randomUUID().toString();
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.property(NODE_UUID, textbookId)
+				.property(NODE_UUID, textbook.getUuid())
 				.property(TITLE, textbook.getTitle())
 				.property(AUTHOR, textbook.getAuthor())
 				.property(GENERAL_SUBJECT, textbook.getGeneralSubject())
