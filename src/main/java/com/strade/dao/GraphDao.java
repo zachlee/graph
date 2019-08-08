@@ -6,6 +6,7 @@ import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
@@ -13,8 +14,9 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.strade.utils.Labels.*;
 
@@ -79,7 +81,7 @@ public class GraphDao {
 				.valueMap(true);
 		if ( traversal.hasNext() ) {
 			Map<Object, Object> textbookValueMap = traversal.next();
-			return createTextbook(textbookValueMap);
+			return createTextbookFromMap(textbookValueMap);
 		} else {
 			return null;
 		}
@@ -143,7 +145,7 @@ public class GraphDao {
 				.valueMap(true);
 		if (getUserTraversal.hasNext()) {
 			Map<Object, Object> user = getUserTraversal.next();
-			return createUser(user);
+			return createUserFromMap(user);
 		} else {
 			return null;
 		}
@@ -178,21 +180,22 @@ public class GraphDao {
 	}
 
 	public Relationship getTextbookRelationship(String userId, String verb, String textbookId) {
-		GraphTraversal<Vertex, Map<Object, Object>> relationshipTraversal = graphTraversalSource.V()
+		GraphTraversal<Vertex, Path> relationshipTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
-				.outE(verb)
+				.outE(OWNS_VERB)
 				.as(RELATIONSHIP_ALIAS)
 				.inV()
 				.hasLabel(TEXTBOOK_LABEL)
 				.has(NODE_UUID, textbookId)
 				.select(RELATIONSHIP_ALIAS)
-				.valueMap(true);
-		Map<Object, Object> relationshipMap = relationshipTraversal.next();
-		return createRelationship(relationshipMap);
+				.path()
+				.by(__.valueMap(true));
+		Path relationshipMap = relationshipTraversal.next();
+		return createRelationshipFromPath(relationshipMap);
 	}
 
-	private Textbook createTextbook(Map<Object, Object> textbookValueMap) {
+	private Textbook createTextbookFromMap(Map<Object, Object> textbookValueMap) {
 		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
@@ -202,14 +205,18 @@ public class GraphDao {
 				getString(textbookValueMap.get(ISBN13)));
 	}
 
-	private Relationship createRelationship(Map<Object, Object> relationshipValueMap) {
+	private Relationship createRelationshipFromPath(Path relationshipPath) {
+		List<Object> pathObjects = relationshipPath.objects();
+		User user = createUserFromMap((Map<Object, Object>) pathObjects.get(0));
+		Map<Object, Object> relationshipValueMap = new HashMap<>();
+		createUserFromMap((Map<Object, Object>)relationshipPath.objects().get(0));
 		return new Relationship(getString(relationshipValueMap.get(NODE_UUID)),
 				getString(relationshipValueMap.get(USER_LABEL)),
 				getString(relationshipValueMap.get(VERB_LABEL)),
 				getString(relationshipValueMap.get(TEXTBOOK_LABEL)));
 	}
 
-	private User createUser(Map<Object, Object> userValueMap) {
+	private User createUserFromMap(Map<Object, Object> userValueMap) {
 		return new User(getString(userValueMap.get(NODE_UUID)),
 				getString(userValueMap.get(USERNAME)),
 				getString(userValueMap.get(EMAIL)),
