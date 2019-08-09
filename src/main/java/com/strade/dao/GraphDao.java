@@ -14,10 +14,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.strade.utils.Labels.*;
 
@@ -64,10 +61,6 @@ public class GraphDao {
 					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN10, isbn10),
 					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN13, isbn13));
 		return traversal.hasNext();
-	}
-
-	public boolean doesUserExist(String userId) {
-		return true;
 	}
 
 	public boolean isVerbValid(String verbId) {
@@ -124,20 +117,6 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public boolean deleteUser(String userId) {
-		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
-				.hasLabel(USER_LABEL)
-				.has(NODE_UUID, userId)
-				.as(USER_ALIAS)
-				.valueMap(true)
-				.store(DROPPED_ALIAS)
-				.select(USER_ALIAS)
-				.drop()
-				.cap(DROPPED_ALIAS)
-				.unfold();
-		return dropTraversal.hasNext();
-	}
-
 	public User getUser(String userId) {
 		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
@@ -150,6 +129,28 @@ public class GraphDao {
 		} else {
 			return null;
 		}
+	}
+
+	public boolean doesUserExist(String userId) {
+		GraphTraversal<Vertex, Vertex> getUserTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has("uuid", userId)
+				.limit(1);
+		return getUserTraversal.hasNext();
+	}
+
+	public boolean deleteUser(String userId) {
+		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has(NODE_UUID, userId)
+				.as(USER_ALIAS)
+				.valueMap(true)
+				.store(DROPPED_ALIAS)
+				.select(USER_ALIAS)
+				.drop()
+				.cap(DROPPED_ALIAS)
+				.unfold();
+		return dropTraversal.hasNext();
 	}
 
 	public boolean createTextbookRelationship(String userId, String verb, String textbookId) {
@@ -215,39 +216,36 @@ public class GraphDao {
 	}
 
 	private Map<String, String> parsePathObjectsIntoRelationshipMap(List<Object> pathObjects) {
-		Map<String, String> relationshipMap = new HashMap<>();
-//		Map<String, List<String>> userMap = (HashMap<String, List<String>>) pathObjects.get(0);
-//		List<String> userUUIDList = userMap.get("uuid");
-//		String userIdFromList = userUUIDList.get(0);
-		String userId = extractUserIdFromPathObject(pathObjects.get(0));
-		relationshipMap.put("userId", userId);
-//		Map<String, List<String>> textbookMap = (HashMap<String, List<String>>) pathObjects.get(2);
-//		List<String> textbookList = textbookMap.get("uuid");
-//		String textbookIdFromList = textbookList.get(0);
-		String textbookId = extractTextbookIdFromPathObject(pathObjects.get(2));
-		relationshipMap.put("textbookId", textbookId);
-//		HashMap<T,String> edgeMap = (HashMap<T,String>) pathObjects.get(1);
-//		String verbLabel = edgeMap.entrySet().iterator().next().getValue();
+		String userId = extractIdFromPathObject(pathObjects.get(0));
 		String verbLabel = extractEdgeLabelFromPathObject(pathObjects.get(1));
+		String textbookId = extractIdFromPathObject(pathObjects.get(2));
+
+		Map<String, String> relationshipMap = new HashMap<>();
+		relationshipMap.put("userId", userId);
 		relationshipMap.put("verbLabel", verbLabel);
+		relationshipMap.put("textbookId", textbookId);
+
 		return relationshipMap;
 	}
 
-	private String extractUserIdFromPathObject( Object userObjectFromPath) {
-		Map<String, List<String>> userMap = (Map<String, List<String>>) userObjectFromPath;
-		List<String> userUUIDList = userMap.get("uuid");
-		return userUUIDList.get(0);
-	}
-
-	private String extractTextbookIdFromPathObject(Object textbookObjectFromPath) {
-		Map<String, List<String>> textbookMap = (Map<String, List<String>>) textbookObjectFromPath;
-		List<String> textbookUUIDList = textbookMap.get("uuid");
-		return textbookUUIDList.get(0);
+	private String extractIdFromPathObject(Object vertexObjectFromPath) {
+		Map<String, List<String>> valueMap = (Map<String, List<String>>) vertexObjectFromPath;
+		List<String> uuidList = valueMap.get("uuid");
+		return uuidList.get(0);
 	}
 
 	private String extractEdgeLabelFromPathObject(Object edgeObjectFromPath) {
 		HashMap<T,String> edgeMap = (HashMap<T,String>) edgeObjectFromPath;
-		String verbLabel = edgeMap.entrySet().iterator().next().getValue();
+		boolean labelFound = false;
+		Iterator<Map.Entry<T, String>> iterator = edgeMap.entrySet().iterator();
+		String verbLabel = "";
+		while ( !labelFound && iterator.hasNext() ) {
+			Object value = iterator.next().getValue();
+			if ( value instanceof String) {
+				labelFound = true;
+				verbLabel = (String) value;
+			}
+		}
 		return verbLabel;
 	}
 

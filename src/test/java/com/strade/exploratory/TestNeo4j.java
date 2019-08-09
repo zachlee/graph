@@ -19,6 +19,8 @@ import java.util.*;
 import static com.strade.utils.Labels.*;
 import static com.strade.utils.Labels.TEXTBOOK_LABEL;
 import static com.strade.utils.Labels.USER_LABEL;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.valueMap;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.values;
 
 public class TestNeo4j {
 
@@ -175,7 +177,7 @@ public class TestNeo4j {
 					.has(NODE_UUID, textbookId)
 					.select(RELATIONSHIP_ALIAS)
 					.path()
-					.by(__.valueMap(true));
+					.by(valueMap(true));
 			Path relationship = relationshipTraversal.next();
 			List<Object> objects = relationship.objects();
 			Map<String, List<String>> userMap = (HashMap<String, List<String>>) objects.get(0);

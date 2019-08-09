@@ -383,7 +383,7 @@ public class IntegrationGraphDao {
 			assert null != edge;
 
 			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
-//			assert userTextbookRelationship;
+			assert null != userTextbookRelationship;
 
 			GraphTraversal<Vertex, Object> relationshipTraversal = graphTraversalSource.V()
 					.hasLabel(USER_LABEL)
@@ -396,6 +396,73 @@ public class IntegrationGraphDao {
 					.select(RELATIONSHIP_ALIAS);
 			Object relationship = relationshipTraversal.next();
 			assert null != relationship;
+		} finally {
+			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
+		}
+	}
+
+	@Test
+	public void deleteTextbookRelationship() {
+		String userId = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		String verb = OWNS_VERB;
+		try {
+			User user = createUser(userId);
+			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
+					.property(NODE_UUID, user.getUuid())
+					.property(SCHOOL, user.getSchool())
+					.property(EMAIL, user.getEmail())
+					.property(USERNAME, user.getUsername())
+					.property(TYPE, user.getType());
+			assert traversal.hasNext();
+
+			String isbn10 = "isbn10";
+			String isbn13 = "isbn13";
+			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
+					.property(NODE_UUID, textbookId)
+					.property(TITLE, "TITLE")
+					.property(AUTHOR, "AUTHOR")
+					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
+					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
+					.property(ISBN10, isbn10)
+					.property(ISBN13, isbn13);
+			assert textbookTraversal.hasNext();
+
+			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(verb)
+					.from(__.V().hasLabel(USER_LABEL)
+							.has(NODE_UUID, userId))
+					.to(__.V().hasLabel(TEXTBOOK_LABEL)
+							.has(NODE_UUID, textbookId));
+			Edge edge = createEdgeTraversal.next();
+			assert null != edge;
+
+			GraphTraversal<Vertex, Object> relationshipTraversal = graphTraversalSource.V()
+					.hasLabel(USER_LABEL)
+					.has(NODE_UUID, userId)
+					.outE(OWNS_VERB)
+					.as(RELATIONSHIP_ALIAS)
+					.inV()
+					.hasLabel(TEXTBOOK_LABEL)
+					.has(NODE_UUID, textbookId)
+					.select(RELATIONSHIP_ALIAS);
+			Object relationship = relationshipTraversal.next();
+			assert null != relationship;
+
+			boolean deletedRelationship = graphDao.deleteTextbookRelationship(userId, verb, textbookId);
+			assert deletedRelationship;
+
+			GraphTraversal<Vertex, Object> relationshipTraversalAfterDeleted = graphTraversalSource.V()
+					.hasLabel(USER_LABEL)
+					.has(NODE_UUID, userId)
+					.outE(OWNS_VERB)
+					.as(RELATIONSHIP_ALIAS)
+					.inV()
+					.hasLabel(TEXTBOOK_LABEL)
+					.has(NODE_UUID, textbookId)
+					.select(RELATIONSHIP_ALIAS);
+			boolean nonExistant = relationshipTraversalAfterDeleted.hasNext();
+			assert !nonExistant;
 		} finally {
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
 			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
