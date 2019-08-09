@@ -11,6 +11,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.ArrayList;
@@ -207,13 +208,47 @@ public class GraphDao {
 
 	private Relationship createRelationshipFromPath(Path relationshipPath) {
 		List<Object> pathObjects = relationshipPath.objects();
-		User user = createUserFromMap((Map<Object, Object>) pathObjects.get(0));
-		Map<Object, Object> relationshipValueMap = new HashMap<>();
-		createUserFromMap((Map<Object, Object>)relationshipPath.objects().get(0));
-		return new Relationship(getString(relationshipValueMap.get(NODE_UUID)),
-				getString(relationshipValueMap.get(USER_LABEL)),
-				getString(relationshipValueMap.get(VERB_LABEL)),
-				getString(relationshipValueMap.get(TEXTBOOK_LABEL)));
+		Map<String, String> relationshipMap = parsePathObjectsIntoRelationshipMap(pathObjects);
+		return new Relationship(relationshipMap.get("userId"),
+				relationshipMap.get("textbookId"),
+				relationshipMap.get("verbLabel"));
+	}
+
+	private Map<String, String> parsePathObjectsIntoRelationshipMap(List<Object> pathObjects) {
+		Map<String, String> relationshipMap = new HashMap<>();
+//		Map<String, List<String>> userMap = (HashMap<String, List<String>>) pathObjects.get(0);
+//		List<String> userUUIDList = userMap.get("uuid");
+//		String userIdFromList = userUUIDList.get(0);
+		String userId = extractUserIdFromPathObject(pathObjects.get(0));
+		relationshipMap.put("userId", userId);
+//		Map<String, List<String>> textbookMap = (HashMap<String, List<String>>) pathObjects.get(2);
+//		List<String> textbookList = textbookMap.get("uuid");
+//		String textbookIdFromList = textbookList.get(0);
+		String textbookId = extractTextbookIdFromPathObject(pathObjects.get(2));
+		relationshipMap.put("textbookId", textbookId);
+//		HashMap<T,String> edgeMap = (HashMap<T,String>) pathObjects.get(1);
+//		String verbLabel = edgeMap.entrySet().iterator().next().getValue();
+		String verbLabel = extractEdgeLabelFromPathObject(pathObjects.get(1));
+		relationshipMap.put("verbLabel", verbLabel);
+		return relationshipMap;
+	}
+
+	private String extractUserIdFromPathObject( Object userObjectFromPath) {
+		Map<String, List<String>> userMap = (Map<String, List<String>>) userObjectFromPath;
+		List<String> userUUIDList = userMap.get("uuid");
+		return userUUIDList.get(0);
+	}
+
+	private String extractTextbookIdFromPathObject(Object textbookObjectFromPath) {
+		Map<String, List<String>> textbookMap = (Map<String, List<String>>) textbookObjectFromPath;
+		List<String> textbookUUIDList = textbookMap.get("uuid");
+		return textbookUUIDList.get(0);
+	}
+
+	private String extractEdgeLabelFromPathObject(Object edgeObjectFromPath) {
+		HashMap<T,String> edgeMap = (HashMap<T,String>) edgeObjectFromPath;
+		String verbLabel = edgeMap.entrySet().iterator().next().getValue();
+		return verbLabel;
 	}
 
 	private User createUserFromMap(Map<Object, Object> userValueMap) {

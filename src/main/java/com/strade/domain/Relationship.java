@@ -16,11 +16,9 @@ public class Relationship {
 	@JsonProperty("textbook")
 	private String textbook;
 
-	public Relationship(String uuid,
-						String user,
+	public Relationship(String user,
 						String verb,
 						String textbook) {
-		setUuid(uuid);
 		setUser(user);
 		setVerb(verb);
 		setTextbook(textbook);
