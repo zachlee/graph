@@ -6,8 +6,6 @@ import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import io.javalin.Context;
 
-import java.io.IOException;
-
 public class GraphService {
 
 	private static GraphDao graphDao = GraphDao.getInstance();
@@ -25,9 +23,29 @@ public class GraphService {
 
 	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
 
+	public boolean addUser(User user) throws Exception {
+		String userId = user.getUuid();
+		boolean userExists = graphDao.doesUserExist(userId);
+		//todo real exception
+		if (userExists) {
+			throw new Exception("User Already Exists");
+		} else {
+			return graphDao.createUser(user);
+		}
+	}
+
+	public boolean removeUser(String userId) {
+		return graphDao.deleteUser(userId);
+	}
+
+	public User getUser(String userId) {
+		return graphDao.getUser(userId);
+	}
+
 	public boolean addTextbook(Textbook textbook) throws Exception {
 		String textbookId = textbook.getUuid();
 		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
+		//todo real exception
 		if (textbookExists){
 			throw new Exception("Textbook Already Exists");
 		} else {
@@ -91,12 +109,4 @@ public class GraphService {
 	public void transferBook(Context context){}
 
 	public void searchWishList(Context context){}
-
-	public boolean addUser(User user) throws IOException {
-		return graphDao.createUser(user);
-	}
-
-	public boolean removeUser(String userId){
-		return graphDao.deleteUser(userId);
-	}
 }

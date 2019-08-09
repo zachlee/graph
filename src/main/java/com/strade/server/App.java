@@ -24,10 +24,10 @@ public class App {
 					path(":textbook", () -> {
 						get(GraphResource::getTextbookById);
 						path("add", () -> {
-							post(GraphResource::addTextbook);
+							post(GraphResource::createTextbook);
 						});
 						path("remove", () -> {
-							delete(GraphResource::removeTextbook);
+							delete(GraphResource::deleteTextbook);
 						});
 					});
 				});
@@ -35,8 +35,8 @@ public class App {
 					path("verb/:verb", () -> {
 						path("textbook/:textbook", () -> {
 							get(GraphResource::getTextbookRelationship);
-							post(GraphResource::addTextbookRelationship);
-							delete(GraphResource::removeTextbookRelationship);
+							post(GraphResource::createTextbookRelationship);
+							delete(GraphResource::deleteTextbookRelationship);
 						});
 					});
 					path("textbook/:textbook", () -> {
@@ -53,11 +53,12 @@ public class App {
 				});
 				path("internal", () -> {
 					path("user/:user", () -> {
+						get(GraphResource::getUser);
 						path("add", () -> {
 							post(GraphResource::addUser);
 						});
 						path("delete", () -> {
-							post(GraphResource::removeUser);
+							post(GraphResource::deleteUser);
 						});
 					});
 				});

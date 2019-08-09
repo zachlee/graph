@@ -7,8 +7,6 @@ import com.strade.domain.User;
 import com.strade.service.GraphService;
 import io.javalin.Context;
 
-import java.io.IOException;
-
 import static com.google.api.client.http.HttpStatusCodes.*;
 
 
@@ -26,7 +24,7 @@ public class GraphResource {
 		graphService.aboutPage(context);
 	}
 
-	public static void addTextbook(Context context) throws Exception {
+	public static void createTextbook(Context context) throws Exception {
 		Textbook textbook = mapper.readValue(context.body(), Textbook.class);
 		boolean inserted = graphService.addTextbook(textbook);
 		if ( inserted ) {
@@ -47,14 +45,14 @@ public class GraphResource {
 		}
 	}
 
-	public static void removeTextbook(Context context) {
+	public static void deleteTextbook(Context context) {
 		String textbookIdString = context.queryParam("textbook");
 		boolean removed = graphService.removeTextbook(textbookIdString);
 		context.status(STATUS_CODE_NO_CONTENT);
 
 	}
 
-	public static void addTextbookRelationship(Context context) {
+	public static void createTextbookRelationship(Context context) {
 		String userId = context.queryParam("user");
 		String verb = context.queryParam("verb");
 		String textbookId = context.queryParam("textbook");
@@ -66,7 +64,7 @@ public class GraphResource {
 		}
 	}
 
-	public static void removeTextbookRelationship(Context context) {
+	public static void deleteTextbookRelationship(Context context) {
 		String userId = context.queryParam("user");
 		String verb = context.queryParam("verb");
 		String textbookId = context.queryParam("textbook");
@@ -83,13 +81,7 @@ public class GraphResource {
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void searchBook(Context context){}
-
-	public static void transferBook(Context context){}
-
-	public static void searchWishlist(Context context){}
-
-	public static void addUser(Context context) throws IOException {
+	public static void addUser(Context context) throws Exception {
 		User user = mapper.readValue(context.body(), User.class);
 		boolean userAdded = graphService.addUser(user);
 		if (userAdded) {
@@ -99,9 +91,22 @@ public class GraphResource {
 		}
 	}
 
-	public static void removeUser(Context context){
+	public static void deleteUser(Context context){
 		String userId = context.queryParam("user");
 		boolean userRemoved = graphService.removeUser(userId);
 		context.status(STATUS_CODE_NO_CONTENT);
 	}
+
+	public static void getUser(Context context){
+		String userId = context.queryParam("user");
+		User user = graphService.getUser(userId);
+		context.json(user);
+		context.status(STATUS_CODE_OK);
+	}
+
+	public static void searchBook(Context context){}
+
+	public static void transferBook(Context context){}
+
+	public static void searchWishlist(Context context){}
 }
