@@ -7,6 +7,8 @@ import com.strade.domain.User;
 import com.strade.service.GraphService;
 import io.javalin.Context;
 
+import java.util.List;
+
 import static com.google.api.client.http.HttpStatusCodes.*;
 
 
@@ -104,9 +106,16 @@ public class GraphResource {
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void searchBook(Context context){}
+	public static void findUsersWithTextbook(Context context){
+		String textbookId = context.queryParam("textbook");
+		List<User> usersWithTextbook = graphService.findUsersWithTextbook(textbookId);
+		context.json(usersWithTextbook);
+		context.status(STATUS_CODE_OK);
+	}
 
 	public static void transferBook(Context context){}
 
-	public static void searchWishlist(Context context){}
+	public static void searchWishlist(Context context){
+
+	}
 }

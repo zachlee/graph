@@ -39,8 +39,10 @@ public class App {
 							delete(GraphResource::deleteTextbookRelationship);
 						});
 					});
+				});
+				path("find", () -> {
 					path("textbook/:textbook", () -> {
-						post(GraphResource::searchBook);
+						get(GraphResource::findUsersWithTextbook);
 					});
 					path("consumer/:consumer", () -> {
 						path("transfer", () -> {

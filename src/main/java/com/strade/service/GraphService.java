@@ -6,6 +6,9 @@ import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import io.javalin.Context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GraphService {
 
 	private static GraphDao graphDao = GraphDao.getInstance();
@@ -104,9 +107,28 @@ public class GraphService {
 		}
 	}
 
-	public void searchBook(Context context){}
+	public List<User> findUsersWithTextbook(String textbookId){
+		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
+		if (doesTextbookExist) {
+			return graphDao.getUsersWhoOwnTextbook(textbookId);
+		} else {
+			return null;
+		}
+	}
+
+	public List<User> searchWishList(List<String> textbookIds) {
+		List<String> existingTextbooks = new ArrayList<>();
+		for ( String textbookId : textbookIds ) {
+			if (graphDao.doesTextbookExistById(textbookId)) {
+				existingTextbooks.add(textbookId);
+			}
+		}
+		if (existingTextbooks.size() > 0) {
+			return graphDao.getUsersWhoOwnTextbooks(existingTextbooks);
+		} else {
+			return null;
+		}
+	}
 
 	public void transferBook(Context context){}
-
-	public void searchWishList(Context context){}
 }

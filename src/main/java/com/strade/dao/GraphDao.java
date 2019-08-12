@@ -197,6 +197,48 @@ public class GraphDao {
 		return createRelationshipFromPath(relationshipMap);
 	}
 
+	public List<User> getUsersWhoOwnTextbook(String textbookId) {
+		GraphTraversal<Vertex, List<Map<Object, Object>>> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookId)
+				.in(OWNS_VERB)
+				.hasLabel(USER_LABEL)
+				.valueMap(true)
+				.fold();
+		List<User> userList = new ArrayList<>();
+		if (traversal.hasNext()) {
+			List<Map<Object, Object>> traversalList = traversal.next();
+			for (Map<Object, Object> userValueMap : traversalList) {
+				User user = createUserFromMap(userValueMap);
+				userList.add(user);
+			}
+			return userList;
+		} else {
+			return null;
+		}
+	}
+
+	public List<User> getUsersWhoOwnTextbooks(List<String> textbookIds) {
+		GraphTraversal<Vertex, List<Map<Object, Object>>> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookIds)
+				.in(OWNS_VERB)
+				.hasLabel(USER_LABEL)
+				.valueMap(true)
+				.fold();
+		List<User> userList = new ArrayList<>();
+		if (traversal.hasNext()) {
+			List<Map<Object, Object>> traversalList = traversal.next();
+			for (Map<Object, Object> userValueMap : traversalList) {
+				User user = createUserFromMap(userValueMap);
+				userList.add(user);
+			}
+			return userList;
+		} else {
+			return null;
+		}
+	}
+
 	private Textbook createTextbookFromMap(Map<Object, Object> textbookValueMap) {
 		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
 				getString(textbookValueMap.get(TITLE)),
