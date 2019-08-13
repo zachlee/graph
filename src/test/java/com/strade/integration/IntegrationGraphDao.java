@@ -240,12 +240,11 @@ public class IntegrationGraphDao {
 	public void createUserTextbookRelationship() {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
 			createUserTraversalAndAssert(user);
-
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
 			boolean userTextbookRelationship = graphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
@@ -275,14 +274,12 @@ public class IntegrationGraphDao {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		String verb = OWNS_VERB;
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
 			createUserTraversalAndAssert(user);
-
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-
 			createRelationshipAndAssert(userId, textbookId, verb);
 
 			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
@@ -310,14 +307,12 @@ public class IntegrationGraphDao {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		String verb = OWNS_VERB;
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
 			createUserTraversalAndAssert(user);
-
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-
 			createRelationshipAndAssert(userId, textbookId, verb);
 
 			GraphTraversal<Vertex, Object> relationshipTraversal = graphTraversalSource.V()
@@ -360,21 +355,18 @@ public class IntegrationGraphDao {
 		String userId4 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		String verb = OWNS_VERB;
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
-
 			User user2 = createUser(userId2);
-			createUserTraversalAndAssert(user2);
-
 			User user3 = createUser(userId3);
-			createUserTraversalAndAssert(user3);
-
 			User user4 = createUser(userId4);
-			createUserTraversalAndAssert(user4);
 
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
+			createUserTraversalAndAssert(user);
+			createUserTraversalAndAssert(user2);
+			createUserTraversalAndAssert(user3);
+			createUserTraversalAndAssert(user4);
 
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
@@ -410,15 +402,13 @@ public class IntegrationGraphDao {
 		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
-
 			User user2 = createUser(userId2);
-			createUserTraversalAndAssert(user2);
-
 			User user3 = createUser(userId3);
-			createUserTraversalAndAssert(user3);
-
 			User user4 = createUser(userId4);
+
+			createUserTraversalAndAssert(user);
+			createUserTraversalAndAssert(user2);
+			createUserTraversalAndAssert(user3);
 			createUserTraversalAndAssert(user4);
 
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
