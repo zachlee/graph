@@ -52,6 +52,9 @@ public class App {
 					path("textbook/users", () -> {
 						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
+					path("user/:user", () -> {
+						post(GraphResource::searchWishList);
+					});
 				});
 				path("internal", () -> {
 					path("user/:user", () -> {

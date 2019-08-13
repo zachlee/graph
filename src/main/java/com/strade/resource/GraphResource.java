@@ -7,7 +7,9 @@ import com.strade.domain.User;
 import com.strade.service.GraphService;
 import io.javalin.Context;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.api.client.http.HttpStatusCodes.*;
 
@@ -113,9 +115,21 @@ public class GraphResource {
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void transferBook(Context context){}
-
 	public static void getUsersWhoOwnTextbooks(Context context){
+		//todo construct post body
+		List<String> textbookIds = new ArrayList<>();
+		Map<Long, List<User>> usersWhoOwnTextbooks = graphService.getUsersWhoOwnTextbooks(textbookIds);
+		context.json(usersWhoOwnTextbooks);
+		context.status(STATUS_CODE_OK);
 
 	}
+
+	public static void searchWishList(Context context) {
+		String userId = context.pathParam("user");
+		Map<Long, List<User>> usersWhoOwnTextbooksFromWishList = graphService.getUsersWhoOwnTextbooksFromWishList(userId);
+		context.json(usersWhoOwnTextbooksFromWishList);
+		context.status(STATUS_CODE_OK);
+	}
+
+	public static void transferBook(Context context){}
 }

@@ -238,6 +238,27 @@ public class GraphDao {
 		}
 	}
 
+	public Map<Long, List<User>> getUsersWhoOwnWantedTextbooks(String userId) {
+		GraphTraversal<Vertex, List<Map<Object, Long>>> traversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has(NODE_UUID, userId)
+				.out(WANTS_VERB)
+				.hasLabel(TEXTBOOK_LABEL)
+				.in(OWNS_VERB)
+				.hasLabel(USER_LABEL)
+				.valueMap()
+				.groupCount()
+				.order()
+				.fold();
+		if (traversal.hasNext()) {
+			Map<Object, Long> traversalMap = traversal.next().get(0);
+			Map<Long, List<User>> orderedUserMap = extractOrderedUserMapFromTraversal(traversalMap);
+			return orderedUserMap;
+		} else {
+			return null;
+		}
+	}
+
 	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
 		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
 		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();

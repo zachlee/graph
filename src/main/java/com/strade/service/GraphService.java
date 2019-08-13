@@ -131,5 +131,19 @@ public class GraphService {
 		}
 	}
 
+	public Map<Long, List<User>> getUsersWhoOwnTextbooksFromWishList(String userId) {
+		boolean userExists = graphDao.doesUserExist(userId);
+		if (userExists) {
+			Map<Long, List<User>> usersWhoOwnWantedTextbooks = graphDao.getUsersWhoOwnWantedTextbooks(userId);
+			if (usersWhoOwnWantedTextbooks.size() == 0) {
+				return null;
+			} else {
+				return usersWhoOwnWantedTextbooks;
+			}
+		} else {
+			return null;
+		}
+	}
+
 	public void transferBook(Context context){}
 }

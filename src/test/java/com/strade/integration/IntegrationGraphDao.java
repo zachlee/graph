@@ -370,7 +370,7 @@ public class IntegrationGraphDao {
 
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
-			createRelationshipAndAssert(userId, textbookId);
+			createRelationshipAndAssert(userId, textbookId, verb);
 			createRelationshipAndAssert(userId2, textbookId, verb);
 			createRelationshipAndAssert(userId3, textbookId, verb);
 			createRelationshipAndAssert(userId4, textbookId, verb);
@@ -436,6 +436,55 @@ public class IntegrationGraphDao {
 		}
 	}
 
+	@Test
+	public void getUsersWhoOwnWantedTextbooks() {
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String userId3 = UUID.randomUUID().toString();
+		String userId4 = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		String textbookId2 = UUID.randomUUID().toString();
+		String textbookId3 = UUID.randomUUID().toString();
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
+		try {
+			User user = createUser(userId);
+			User user2 = createUser(userId2);
+			User user3 = createUser(userId3);
+			User user4 = createUser(userId4);
+
+			createUserTraversalAndAssert(user);
+			createUserTraversalAndAssert(user2);
+			createUserTraversalAndAssert(user3);
+			createUserTraversalAndAssert(user4);
+
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId3, isbn10, isbn13);
+
+			createRelationshipAndAssert(userId, textbookId, WANTS_VERB);
+			createRelationshipAndAssert(userId, textbookId2, WANTS_VERB);
+			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB);
+			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB);
+
+
+			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnWantedTextbooks(userId);
+			assert null != orderedUserMap;
+			assert orderedUserMap.size() == 2;
+			assert orderedUserMap.get(2L).get(0).getUuid().equals(userId2);
+			assert orderedUserMap.get(1L).get(0).getUuid().equals(userId3);
+		} finally {
+			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId2).drop().iterate();
+			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId3).drop().iterate();
+			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId4).drop().iterate();
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId2).drop().iterate();
+			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId3).drop().iterate();
+		}
+	}
+
 	private void createRelationshipAndAssert(String userId2, String textbookId, String verb) {
 		GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(verb)
 				.from(__.V().hasLabel(USER_LABEL)
@@ -444,10 +493,6 @@ public class IntegrationGraphDao {
 						.has(NODE_UUID, textbookId));
 		Edge edge2 = createEdgeTraversal2.next();
 		assert null != edge2;
-	}
-
-	private void createRelationshipAndAssert(String userId, String textbookId) {
-		createRelationshipAndAssert(userId, textbookId, OWNS_VERB);
 	}
 
 	private void createTextbookTraversalAndAssert(String textbookId, String isbn10, String isbn13) {
