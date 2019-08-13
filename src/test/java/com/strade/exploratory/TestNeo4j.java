@@ -17,10 +17,8 @@ import org.junit.Test;
 import java.util.*;
 
 import static com.strade.utils.Labels.*;
-import static com.strade.utils.Labels.TEXTBOOK_LABEL;
-import static com.strade.utils.Labels.USER_LABEL;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.valueMap;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.values;
+
 
 public class TestNeo4j {
 

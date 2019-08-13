@@ -115,7 +115,7 @@ public class GraphResource {
 
 	public static void transferBook(Context context){}
 
-	public static void searchWishlist(Context context){
+	public static void getUsersWhoOwnTextbooks(Context context){
 
 	}
 }

@@ -49,8 +49,8 @@ public class App {
 							post(GraphResource::transferBook);
 						});
 					});
-					path("wishlist/search", () -> {
-						post(GraphResource::searchWishlist);
+					path("textbook/users", () -> {
+						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
 				});
 				path("internal", () -> {

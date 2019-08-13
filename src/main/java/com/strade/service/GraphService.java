@@ -117,7 +117,7 @@ public class GraphService {
 		}
 	}
 
-	public Map<Long, List<User>> searchWishList(List<String> textbookIds) {
+	public Map<Long, List<User>> getUsersWhoOwnTextbooks(List<String> textbookIds) {
 		List<String> existingTextbooks = new ArrayList<>();
 		for ( String textbookId : textbookIds ) {
 			if (graphDao.doesTextbookExistById(textbookId)) {
