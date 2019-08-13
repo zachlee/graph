@@ -580,6 +580,9 @@ public class IntegrationGraphDao {
 		String userId4 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		String textbookId2 = UUID.randomUUID().toString();
+		List<String> textbookIds = new ArrayList<>();
+		textbookIds.add(textbookId);
+		textbookIds.add(textbookId2);
 		try {
 			User user = createUser(userId);
 			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
@@ -690,9 +693,11 @@ public class IntegrationGraphDao {
 			Edge edge6 = createEdgeTraversal6.next();
 			assert null != edge2;
 
-			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);
-			assert null != userList;
-			assert userList.size() == 4;
+ 			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
+			assert null != orderedUserMap;
+			assert orderedUserMap.size() == 2;
+			assert orderedUserMap.get(2l).size() == 2;
+			assert orderedUserMap.get(1l).size() == 2;
 		} finally {
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId2).drop().iterate();

@@ -6,6 +6,7 @@ import com.strade.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -218,22 +219,34 @@ public class GraphDao {
 		}
 	}
 
-	public List<User> getUsersWhoOwnTextbooks(List<String> textbookIds) {
-		GraphTraversal<Vertex, List<Map<Object, Object>>> traversal = graphTraversalSource.V()
+	public Map<Long, List<User>> getUsersWhoOwnTextbooks(List<String> textbookIds) {
+		GraphTraversal<Vertex, List<Map<Object, Long>>> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.has(NODE_UUID, textbookIds)
+				.has(NODE_UUID, P.within(textbookIds))
 				.in(OWNS_VERB)
 				.hasLabel(USER_LABEL)
-				.valueMap(true)
+				.valueMap()
+				.groupCount()
+				.order()
 				.fold();
-		List<User> userList = new ArrayList<>();
+		Map<Long, List<User>> orderedUserMap = new HashMap<>();
 		if (traversal.hasNext()) {
-			List<Map<Object, Object>> traversalList = traversal.next();
-			for (Map<Object, Object> userValueMap : traversalList) {
-				User user = createUserFromMap(userValueMap);
-				userList.add(user);
+			Map<Object, Long> objectLongMap = traversal.next().get(0);
+			Set<Map.Entry<Object, Long>> returnedUserMapSet = objectLongMap.entrySet();
+			Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
+			while (iterator.hasNext()){
+				Map.Entry<Object, Long> entry = iterator.next();
+				Object userMap = entry.getKey();
+				User user = createUserFromMap((Map<Object,Object>)userMap);
+				Long numberOfRelationships = entry.getValue();
+				if (!orderedUserMap.containsKey(numberOfRelationships)) {
+					orderedUserMap.put(numberOfRelationships, new ArrayList<>());
+					orderedUserMap.get(numberOfRelationships).add(user);
+				} else {
+					orderedUserMap.get(numberOfRelationships).add(user);
+				}
 			}
-			return userList;
+			return orderedUserMap;
 		} else {
 			return null;
 		}

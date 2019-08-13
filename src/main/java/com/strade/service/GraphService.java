@@ -8,6 +8,7 @@ import io.javalin.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GraphService {
 
@@ -116,7 +117,7 @@ public class GraphService {
 		}
 	}
 
-	public List<User> searchWishList(List<String> textbookIds) {
+	public Map<Long, List<User>> searchWishList(List<String> textbookIds) {
 		List<String> existingTextbooks = new ArrayList<>();
 		for ( String textbookId : textbookIds ) {
 			if (graphDao.doesTextbookExistById(textbookId)) {
