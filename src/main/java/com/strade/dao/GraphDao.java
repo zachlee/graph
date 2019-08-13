@@ -71,7 +71,7 @@ public class GraphDao {
 	public Textbook getTextbook(String textbookId) {
 		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
-				.property(NODE_UUID, textbookId)
+				.has(NODE_UUID, textbookId)
 				.limit(1)
 				.valueMap(true);
 		if ( traversal.hasNext() ) {
@@ -229,26 +229,39 @@ public class GraphDao {
 				.groupCount()
 				.order()
 				.fold();
-		Map<Long, List<User>> orderedUserMap = new HashMap<>();
 		if (traversal.hasNext()) {
-			Map<Object, Long> objectLongMap = traversal.next().get(0);
-			Set<Map.Entry<Object, Long>> returnedUserMapSet = objectLongMap.entrySet();
-			Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
-			while (iterator.hasNext()){
-				Map.Entry<Object, Long> entry = iterator.next();
-				Object userMap = entry.getKey();
-				User user = createUserFromMap((Map<Object,Object>)userMap);
-				Long numberOfRelationships = entry.getValue();
-				if (!orderedUserMap.containsKey(numberOfRelationships)) {
-					orderedUserMap.put(numberOfRelationships, new ArrayList<>());
-					orderedUserMap.get(numberOfRelationships).add(user);
-				} else {
-					orderedUserMap.get(numberOfRelationships).add(user);
-				}
-			}
+			Map<Object, Long> traversalMap = traversal.next().get(0);
+			Map<Long, List<User>> orderedUserMap = extractOrderedUserMapFromTraversal(traversalMap);
 			return orderedUserMap;
 		} else {
 			return null;
+		}
+	}
+
+	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
+		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
+		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
+		Map<Long, List<User>> orderedUserMap = new HashMap<>();
+		while (iterator.hasNext()){
+			Map.Entry<Object, Long> entry = iterator.next();
+			iterateAndAddUserToMap(orderedUserMap, entry);
+		}
+		return orderedUserMap;
+	}
+
+	private void iterateAndAddUserToMap(Map<Long, List<User>> orderedUserMap, Map.Entry<Object, Long> entry ) {
+		Object userMap = entry.getKey();
+		User user = createUserFromMap((Map<Object,Object>)userMap);
+		Long numberOfRelationships = entry.getValue();
+		buildOrderedUserMap(orderedUserMap, user, numberOfRelationships);
+	}
+
+	private void buildOrderedUserMap(Map<Long, List<User>> orderedUserMap, User user, Long numberOfRelationships) {
+		if (!orderedUserMap.containsKey(numberOfRelationships)) {
+			orderedUserMap.put(numberOfRelationships, new ArrayList<>());
+			orderedUserMap.get(numberOfRelationships).add(user);
+		} else {
+			orderedUserMap.get(numberOfRelationships).add(user);
 		}
 	}
 

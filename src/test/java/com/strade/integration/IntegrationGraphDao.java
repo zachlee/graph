@@ -696,8 +696,8 @@ public class IntegrationGraphDao {
  			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
 			assert null != orderedUserMap;
 			assert orderedUserMap.size() == 2;
-			assert orderedUserMap.get(2l).size() == 2;
-			assert orderedUserMap.get(1l).size() == 2;
+			assert orderedUserMap.get(2L).size() == 2;
+			assert orderedUserMap.get(1L).size() == 2;
 		} finally {
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId2).drop().iterate();

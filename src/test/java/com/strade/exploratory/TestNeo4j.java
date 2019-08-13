@@ -196,7 +196,7 @@ public class TestNeo4j {
 	}
 
 	@Test
-	public void getUsersWhoOwnTextbooks() {
+	public void populateVertex() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String userId3 = UUID.randomUUID().toString();
@@ -204,124 +204,127 @@ public class TestNeo4j {
 		String textbookId = UUID.randomUUID().toString();
 		String textbookId2 = UUID.randomUUID().toString();
 		try {
-			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, "u1")
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, "zach")
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			for ( int i = 0; i < 1000; i++) {
 
-			User user2 = createUser(userId2);
-			GraphTraversal<Vertex, Vertex> traversal2 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, "u2")
-					.property(SCHOOL, user2.getSchool())
-					.property(EMAIL, user2.getEmail())
-					.property(USERNAME, "kelly")
-					.property(TYPE, user2.getType());
-			assert traversal2.hasNext();
+				User user = createUser(userId);
+				GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(SCHOOL, user.getSchool())
+						.property(EMAIL, user.getEmail())
+						.property(USERNAME, "zach")
+						.property(TYPE, user.getType());
+				traversal.hasNext();
 
-			User user3 = createUser(userId3);
-			GraphTraversal<Vertex, Vertex> traversal3 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, "u3")
-					.property(SCHOOL, user3.getSchool())
-					.property(EMAIL, user3.getEmail())
-					.property(USERNAME, "josh")
-					.property(TYPE, user3.getType());
-			assert traversal3.hasNext();
+				User user2 = createUser(userId2);
+				GraphTraversal<Vertex, Vertex> traversal2 = graphTraversalSource.addV(USER_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(SCHOOL, user2.getSchool())
+						.property(EMAIL, user2.getEmail())
+						.property(USERNAME, "kelly")
+						.property(TYPE, user2.getType());
+				traversal2.hasNext();
 
-			User user4 = createUser(userId4);
-			GraphTraversal<Vertex, Vertex> traversal4 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, "u4")
-					.property(SCHOOL, user4.getSchool())
-					.property(EMAIL, user4.getEmail())
-					.property(USERNAME, "haley")
-					.property(TYPE, user4.getType());
-			assert traversal4.hasNext();
+				User user3 = createUser(userId3);
+				GraphTraversal<Vertex, Vertex> traversal3 = graphTraversalSource.addV(USER_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(SCHOOL, user3.getSchool())
+						.property(EMAIL, user3.getEmail())
+						.property(USERNAME, "josh")
+						.property(TYPE, user3.getType());
+				traversal3.hasNext();
 
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, "tb1")
-					.property(TITLE, "Calculus")
-					.property(AUTHOR, "Issac")
-					.property(GENERAL_SUBJECT, "Math")
-					.property(SPECIFIC_SUBJECT, "Calculus")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
+				User user4 = createUser(userId4);
+				GraphTraversal<Vertex, Vertex> traversal4 = graphTraversalSource.addV(USER_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(SCHOOL, user4.getSchool())
+						.property(EMAIL, user4.getEmail())
+						.property(USERNAME, "haley")
+						.property(TYPE, user4.getType());
+				traversal4.hasNext();
 
-			GraphTraversal<Vertex, Vertex> textbookTraversal2 = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, "tb2")
-					.property(TITLE, "English")
-					.property(AUTHOR, "Shakespear")
-					.property(GENERAL_SUBJECT, "Language")
-					.property(SPECIFIC_SUBJECT, "Literature")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal2.hasNext();
+				String isbn10 = "isbn10";
+				String isbn13 = "isbn13";
+				GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(TITLE, "Calculus")
+						.property(AUTHOR, "Issac")
+						.property(GENERAL_SUBJECT, "Math")
+						.property(SPECIFIC_SUBJECT, "Calculus")
+						.property(ISBN10, isbn10)
+						.property(ISBN13, isbn13);
+				textbookTraversal.hasNext();
 
-			GraphTraversal<Vertex, Vertex> textbookTraversal3 = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, "tb3")
-					.property(TITLE, "Physics")
-					.property(AUTHOR, "Tyson")
-					.property(GENERAL_SUBJECT, "Science")
-					.property(SPECIFIC_SUBJECT, "Physics")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal2.hasNext();
+				GraphTraversal<Vertex, Vertex> textbookTraversal2 = graphTraversalSource.addV(TEXTBOOK_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(TITLE, "English")
+						.property(AUTHOR, "Shakespear")
+						.property(GENERAL_SUBJECT, "Language")
+						.property(SPECIFIC_SUBJECT, "Literature")
+						.property(ISBN10, isbn10)
+						.property(ISBN13, isbn13);
+				textbookTraversal2.hasNext();
 
-//			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId));
-//			Edge edge = createEdgeTraversal.next();
-//			assert null != edge;
+				GraphTraversal<Vertex, Vertex> textbookTraversal3 = graphTraversalSource.addV(TEXTBOOK_LABEL)
+						.property(NODE_UUID, UUID.randomUUID().toString())
+						.property(TITLE, "Physics")
+						.property(AUTHOR, "Tyson")
+						.property(GENERAL_SUBJECT, "Science")
+						.property(SPECIFIC_SUBJECT, "Physics")
+						.property(ISBN10, isbn10)
+						.property(ISBN13, isbn13);
+				textbookTraversal3.hasNext();
+
+//				GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId));
+//				Edge edge = createEdgeTraversal.next();
+////				assert null != edge;
 //
 //
-//			GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId2))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId));
-//			Edge edge2 = createEdgeTraversal2.next();
-//			assert null != edge2;
+//				GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId2))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId));
+//				Edge edge2 = createEdgeTraversal2.next();
+////				assert null != edge2;
 //
-//			GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId3))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId));
-//			Edge edge3 = createEdgeTraversal3.next();
-//			assert null != edge3;
-//
-//
-//			GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId4))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId));
-//			Edge edge4 = createEdgeTraversal4.next();
-//			assert null != edge4;
-//
-//			GraphTraversal<Edge, Edge> createEdgeTraversal5 = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId2));
-//			Edge edge5 = createEdgeTraversal5.next();
-//			assert null != edge;
+//				GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId3))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId));
+//				Edge edge3 = createEdgeTraversal3.next();
+////				assert null != edge3;
 //
 //
-//			GraphTraversal<Edge, Edge> createEdgeTraversal6 = graphTraversalSource.addE(OWNS_VERB)
-//					.from(__.V().hasLabel(USER_LABEL)
-//							.has(NODE_UUID, userId2))
-//					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//							.has(NODE_UUID, textbookId2));
-//			Edge edge6 = createEdgeTraversal6.next();
-//			assert null != edge2;
+//				GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId4))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId));
+//				Edge edge4 = createEdgeTraversal4.next();
+////				assert null != edge4;
+//
+//				GraphTraversal<Edge, Edge> createEdgeTraversal5 = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId2));
+//				Edge edge5 = createEdgeTraversal5.next();
+////				assert null != edge;
+//
+//
+//				GraphTraversal<Edge, Edge> createEdgeTraversal6 = graphTraversalSource.addE(OWNS_VERB)
+//						.from(__.V().hasLabel(USER_LABEL)
+//								.has(NODE_UUID, userId2))
+//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+//								.has(NODE_UUID, textbookId2));
+//				Edge edge6 = createEdgeTraversal6.next();
+//				assert null != edge2;
+			}
 
 //			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);
 //			assert null != userList;
