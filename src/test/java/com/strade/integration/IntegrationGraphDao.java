@@ -43,7 +43,6 @@ public class IntegrationGraphDao {
 			User user = createUser(userId);
 			boolean addUser = graphDao.createUser(user);
 			assert addUser;
-
 			GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
 					.hasLabel(USER_LABEL)
 					.has("uuid", userId)
@@ -63,14 +62,7 @@ public class IntegrationGraphDao {
 		String userId = UUID.randomUUID().toString();
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			traversal.hasNext();
-
+			createUserTraversalAndAssert(user);
 			User daoUser = graphDao.getUser(userId);
 			assert null != daoUser;
 			assert daoUser.getUuid().equals(userId);
@@ -91,14 +83,7 @@ public class IntegrationGraphDao {
 	public void deleteUserTest() {
 		String userId = UUID.randomUUID().toString();
 		User user = createUser(userId);
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-				.property(NODE_UUID, user.getUuid())
-				.property(SCHOOL, user.getSchool())
-				.property(EMAIL, user.getEmail())
-				.property(USERNAME, user.getUsername())
-				.property(TYPE, user.getType());
-		traversal.hasNext();
-
+		createUserTraversalAndAssert(user);
 		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has("uuid", userId)
@@ -148,18 +133,10 @@ public class IntegrationGraphDao {
 	@Test
 	public void getTextbookReturnsTextbook() {
 		String textbookId = UUID.randomUUID().toString();
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, "isbn10")
-					.property(ISBN13, "isbn13");
-			boolean textbookCreated = textbookTraversal.hasNext();
-			assert textbookCreated;
-
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 			Textbook textbookRetrieved = graphDao.getTextbook(textbookId);
 			assert null != textbookRetrieved;
 			assert textbookRetrieved.getUuid().equals(textbookId);
@@ -209,17 +186,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			boolean textbookCreated = textbookTraversal.hasNext();
-			assert textbookCreated;
-
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 			boolean textbookExist = graphDao.doesTextbookExist(textbookId, isbn10, isbn13);
 			assert textbookExist;
 		} finally {
@@ -233,17 +200,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			boolean textbookCreated = textbookTraversal.hasNext();
-			assert textbookCreated;
-
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 			boolean textbookExist = graphDao.doesTextbookExistByIsbn10(isbn10);
 			assert textbookExist;
 		} finally {
@@ -257,17 +214,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			boolean textbookCreated = textbookTraversal.hasNext();
-			assert textbookCreated;
-
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 			boolean textbookExist = graphDao.doesTextbookExistByIsbn13(isbn13);
 			assert textbookExist;
 		} finally {
@@ -281,17 +228,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			boolean textbookCreated = textbookTraversal.hasNext();
-			assert textbookCreated;
-
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 			boolean textbookExist = graphDao.doesTextbookExistById(textbookId);
 			assert textbookExist;
 		} finally {
@@ -305,25 +242,11 @@ public class IntegrationGraphDao {
 		String textbookId = UUID.randomUUID().toString();
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			createUserTraversalAndAssert(user);
 
 			String isbn10 = "isbn10";
 			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
 			boolean userTextbookRelationship = graphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
 			assert userTextbookRelationship;
@@ -340,7 +263,6 @@ public class IntegrationGraphDao {
 					.path()
 					.by(__.valueMap(true));
 			Path relationship = relationshipTraversal.next();
-			List<Object> objects = relationship.objects();
 			assert null != relationship;
 		} finally {
 			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
@@ -352,35 +274,16 @@ public class IntegrationGraphDao {
 	public void getUserTextbookRelationship() {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
+		String verb = OWNS_VERB;
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			createUserTraversalAndAssert(user);
 
 			String isbn10 = "isbn10";
 			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
-			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge = createEdgeTraversal.next();
-			assert null != edge;
+			createRelationshipAndAssert(userId, textbookId, verb);
 
 			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
 			assert null != userTextbookRelationship;
@@ -409,33 +312,13 @@ public class IntegrationGraphDao {
 		String verb = OWNS_VERB;
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			createUserTraversalAndAssert(user);
 
 			String isbn10 = "isbn10";
 			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
-			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(verb)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge = createEdgeTraversal.next();
-			assert null != edge;
+			createRelationshipAndAssert(userId, textbookId, verb);
 
 			GraphTraversal<Vertex, Object> relationshipTraversal = graphTraversalSource.V()
 					.hasLabel(USER_LABEL)
@@ -476,89 +359,29 @@ public class IntegrationGraphDao {
 		String userId3 = UUID.randomUUID().toString();
 		String userId4 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
+		String verb = OWNS_VERB;
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			createUserTraversalAndAssert(user);
 
 			User user2 = createUser(userId2);
-			GraphTraversal<Vertex, Vertex> traversal2 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user2.getUuid())
-					.property(SCHOOL, user2.getSchool())
-					.property(EMAIL, user2.getEmail())
-					.property(USERNAME, user2.getUsername())
-					.property(TYPE, user2.getType());
-			assert traversal2.hasNext();
+			createUserTraversalAndAssert(user2);
 
 			User user3 = createUser(userId3);
-			GraphTraversal<Vertex, Vertex> traversal3 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user3.getUuid())
-					.property(SCHOOL, user3.getSchool())
-					.property(EMAIL, user3.getEmail())
-					.property(USERNAME, user3.getUsername())
-					.property(TYPE, user3.getType());
-			assert traversal3.hasNext();
+			createUserTraversalAndAssert(user3);
 
 			User user4 = createUser(userId4);
-			GraphTraversal<Vertex, Vertex> traversal4 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user4.getUuid())
-					.property(SCHOOL, user4.getSchool())
-					.property(EMAIL, user4.getEmail())
-					.property(USERNAME, user4.getUsername())
-					.property(TYPE, user4.getType());
-			assert traversal4.hasNext();
+			createUserTraversalAndAssert(user4);
 
 			String isbn10 = "isbn10";
 			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
 
-			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge = createEdgeTraversal.next();
-			assert null != edge;
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
 
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId2))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge2 = createEdgeTraversal2.next();
-			assert null != edge2;
-
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId3))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge3 = createEdgeTraversal3.next();
-			assert null != edge3;
-
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId4))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge4 = createEdgeTraversal4.next();
-			assert null != edge4;
+			createRelationshipAndAssert(userId, textbookId);
+			createRelationshipAndAssert(userId2, textbookId, verb);
+			createRelationshipAndAssert(userId3, textbookId, verb);
+			createRelationshipAndAssert(userId4, textbookId, verb);
 
 			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);
 			assert null != userList;
@@ -583,117 +406,32 @@ public class IntegrationGraphDao {
 		List<String> textbookIds = new ArrayList<>();
 		textbookIds.add(textbookId);
 		textbookIds.add(textbookId2);
+		String isbn10 = "isbn10";
+		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user.getUuid())
-					.property(SCHOOL, user.getSchool())
-					.property(EMAIL, user.getEmail())
-					.property(USERNAME, user.getUsername())
-					.property(TYPE, user.getType());
-			assert traversal.hasNext();
+			createUserTraversalAndAssert(user);
 
 			User user2 = createUser(userId2);
-			GraphTraversal<Vertex, Vertex> traversal2 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user2.getUuid())
-					.property(SCHOOL, user2.getSchool())
-					.property(EMAIL, user2.getEmail())
-					.property(USERNAME, user2.getUsername())
-					.property(TYPE, user2.getType());
-			assert traversal2.hasNext();
+			createUserTraversalAndAssert(user2);
 
 			User user3 = createUser(userId3);
-			GraphTraversal<Vertex, Vertex> traversal3 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user3.getUuid())
-					.property(SCHOOL, user3.getSchool())
-					.property(EMAIL, user3.getEmail())
-					.property(USERNAME, user3.getUsername())
-					.property(TYPE, user3.getType());
-			assert traversal3.hasNext();
+			createUserTraversalAndAssert(user3);
 
 			User user4 = createUser(userId4);
-			GraphTraversal<Vertex, Vertex> traversal4 = graphTraversalSource.addV(USER_LABEL)
-					.property(NODE_UUID, user4.getUuid())
-					.property(SCHOOL, user4.getSchool())
-					.property(EMAIL, user4.getEmail())
-					.property(USERNAME, user4.getUsername())
-					.property(TYPE, user4.getType());
-			assert traversal4.hasNext();
+			createUserTraversalAndAssert(user4);
 
-			String isbn10 = "isbn10";
-			String isbn13 = "isbn13";
-			GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal.hasNext();
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13);
 
-			GraphTraversal<Vertex, Vertex> textbookTraversal2 = graphTraversalSource.addV(TEXTBOOK_LABEL)
-					.property(NODE_UUID, textbookId2)
-					.property(TITLE, "TITLE")
-					.property(AUTHOR, "AUTHOR")
-					.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-					.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-					.property(ISBN10, isbn10)
-					.property(ISBN13, isbn13);
-			assert textbookTraversal2.hasNext();
+			createRelationshipAndAssert(userId, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId4, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId, textbookId2, OWNS_VERB);
+			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB);
 
-			GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge = createEdgeTraversal.next();
-			assert null != edge;
-
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId2))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge2 = createEdgeTraversal2.next();
-			assert null != edge2;
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId3))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge3 = createEdgeTraversal3.next();
-			assert null != edge3;
-
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId4))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId));
-			Edge edge4 = createEdgeTraversal4.next();
-			assert null != edge4;
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal5 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId2));
-			Edge edge5 = createEdgeTraversal5.next();
-			assert null != edge;
-
-
-			GraphTraversal<Edge, Edge> createEdgeTraversal6 = graphTraversalSource.addE(OWNS_VERB)
-					.from(__.V().hasLabel(USER_LABEL)
-							.has(NODE_UUID, userId2))
-					.to(__.V().hasLabel(TEXTBOOK_LABEL)
-							.has(NODE_UUID, textbookId2));
-			Edge edge6 = createEdgeTraversal6.next();
-			assert null != edge2;
-
- 			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
+			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
 			assert null != orderedUserMap;
 			assert orderedUserMap.size() == 2;
 			assert orderedUserMap.get(2L).size() == 2;
@@ -706,6 +444,42 @@ public class IntegrationGraphDao {
 			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
 			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId2).drop().iterate();
 		}
+	}
+
+	private void createRelationshipAndAssert(String userId2, String textbookId, String verb) {
+		GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(verb)
+				.from(__.V().hasLabel(USER_LABEL)
+						.has(NODE_UUID, userId2))
+				.to(__.V().hasLabel(TEXTBOOK_LABEL)
+						.has(NODE_UUID, textbookId));
+		Edge edge2 = createEdgeTraversal2.next();
+		assert null != edge2;
+	}
+
+	private void createRelationshipAndAssert(String userId, String textbookId) {
+		createRelationshipAndAssert(userId, textbookId, OWNS_VERB);
+	}
+
+	private void createTextbookTraversalAndAssert(String textbookId, String isbn10, String isbn13) {
+		GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
+				.property(NODE_UUID, textbookId)
+				.property(TITLE, "TITLE")
+				.property(AUTHOR, "AUTHOR")
+				.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
+				.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
+				.property(ISBN10, isbn10)
+				.property(ISBN13, isbn13);
+		assert textbookTraversal.hasNext();
+	}
+
+	private void createUserTraversalAndAssert(User user) {
+		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
+				.property(NODE_UUID, user.getUuid())
+				.property(SCHOOL, user.getSchool())
+				.property(EMAIL, user.getEmail())
+				.property(USERNAME, user.getUsername())
+				.property(TYPE, user.getType());
+		assert traversal.hasNext();
 	}
 
 	private Textbook createTextbookObject(String textbookId) {
