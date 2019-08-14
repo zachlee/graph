@@ -259,6 +259,17 @@ public class GraphDao {
 		}
 	}
 
+	public boolean transferTextbookBetweenUsers(String ownerUserId, String consumerUserId, String textbookId){
+		boolean deleteOwnsRelationship = deleteTextbookRelationship(ownerUserId, OWNS_VERB, textbookId);
+		boolean deleteWantsRelationship = deleteTextbookRelationship(consumerUserId, WANTS_VERB, textbookId);
+		boolean textbookRelationship = createTextbookRelationship(consumerUserId, OWNS_VERB, textbookId);
+		if (deleteOwnsRelationship && deleteWantsRelationship && textbookRelationship) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
 		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
 		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();

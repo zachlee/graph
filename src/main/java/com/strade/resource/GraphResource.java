@@ -131,5 +131,10 @@ public class GraphResource {
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void transferBook(Context context){}
+	public static void transferBook(Context context){
+		String owningUser = context.pathParam("user");
+		String consumingUser = context.pathParam("consumer");
+		String textbookId = context.pathParam("textbook");
+		graphService.transferBook(owningUser, consumingUser, textbookId);
+	}
 }

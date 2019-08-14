@@ -20,34 +20,28 @@ public class App {
 				post(GraphResource::aboutPage);
 			});
 			path("graph", () -> {
-				path("textbook", () -> {
-					path(":textbook", () -> {
-						get(GraphResource::getTextbookById);
-						path("add", () -> {
-							post(GraphResource::createTextbook);
-						});
-						path("remove", () -> {
-							delete(GraphResource::deleteTextbook);
-						});
+				path("textbook/:textbook", () -> {
+					get(GraphResource::getTextbookById);
+					path("add", () -> {
+						post(GraphResource::createTextbook);
+					});
+					path("remove", () -> {
+						delete(GraphResource::deleteTextbook);
 					});
 				});
 				path("user/:user", () -> {
-					path("verb/:verb", () -> {
-						path("textbook/:textbook", () -> {
-							get(GraphResource::getTextbookRelationship);
-							post(GraphResource::createTextbookRelationship);
-							delete(GraphResource::deleteTextbookRelationship);
-						});
+					path("verb/:verb/textbook/:textbook", () -> {
+						get(GraphResource::getTextbookRelationship);
+						post(GraphResource::createTextbookRelationship);
+						delete(GraphResource::deleteTextbookRelationship);
+					});
+					path("textbook/:textbook/consumer/:consumer/transfer", () -> {
+						post(GraphResource::transferBook);
 					});
 				});
 				path("find", () -> {
 					path("textbook/:textbook", () -> {
 						get(GraphResource::findUsersWithTextbook);
-					});
-					path("consumer/:consumer", () -> {
-						path("transfer", () -> {
-							post(GraphResource::transferBook);
-						});
 					});
 					path("textbook/users", () -> {
 						post(GraphResource::getUsersWhoOwnTextbooks);

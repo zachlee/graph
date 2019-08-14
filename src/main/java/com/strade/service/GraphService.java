@@ -145,5 +145,15 @@ public class GraphService {
 		}
 	}
 
-	public void transferBook(Context context){}
+	public boolean transferBook(String owner, String consumer, String textbookId) {
+		boolean ownerExists = graphDao.doesUserExist(owner);
+		boolean consumerExists = graphDao.doesUserExist(consumer);
+		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
+		if (ownerExists && consumerExists && textbookExists) {
+			boolean textbookTransferred = graphDao.transferTextbookBetweenUsers(owner, consumer, textbookId);
+			return textbookTransferred;
+		} else {
+			return false;
+		}
+	}
 }
