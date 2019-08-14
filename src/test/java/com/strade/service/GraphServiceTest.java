@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.logging.Logger;
+
 import static com.strade.utils.Labels.*;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -16,6 +18,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GraphServiceTest {
+	Logger logger = Logger.getLogger(GraphServiceTest.class.getName());
+
 	@Mock
 	private GraphDao graphDaoMock;
 

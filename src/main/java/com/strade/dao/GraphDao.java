@@ -16,11 +16,13 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import static com.strade.utils.Labels.*;
 
 public class GraphDao {
 
+	Logger logger = Logger.getLogger(GraphDao.class.getName());
 	private static GraphTraversalSource graphTraversalSource;
 	private static GraphDao instance;
 

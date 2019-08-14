@@ -1,7 +1,10 @@
 package com.strade.server;
 
+import com.strade.dao.GraphDao;
 import com.strade.resource.GraphResource;
 import io.javalin.Javalin;
+
+import java.util.logging.Logger;
 
 import static io.javalin.apibuilder.ApiBuilder.delete;
 import static io.javalin.apibuilder.ApiBuilder.path;
@@ -9,6 +12,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
 import static io.javalin.apibuilder.ApiBuilder.get;
 
 public class App {
+	Logger logger = Logger.getLogger(App.class.getName());
 	public static void main(String[] args) {
 		Javalin app = Javalin
 				.create()

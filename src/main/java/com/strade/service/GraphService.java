@@ -9,9 +9,11 @@ import io.javalin.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class GraphService {
 
+	Logger logger = Logger.getLogger(GraphService.class.getName());
 	private static GraphDao graphDao = GraphDao.getInstance();
 	private static GraphService instance;
 

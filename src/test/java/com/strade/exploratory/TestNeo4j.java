@@ -15,6 +15,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import static com.strade.utils.Labels.*;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.valueMap;
@@ -22,6 +23,7 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.valueM
 
 public class TestNeo4j {
 
+	Logger logger = Logger.getLogger(TestNeo4j.class.getName());
 	private static GraphTraversalSource graphTraversalSource;
 	private static GraphDao graphDao = GraphDao.getInstance();
 	private static final String TEXTBOOK_LABEL = "textbook";

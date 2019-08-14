@@ -1,5 +1,6 @@
 package com.strade.resource;
 
+import com.strade.dao.GraphDao;
 import com.strade.service.GraphService;
 import io.javalin.Context;
 import org.junit.Before;
@@ -11,9 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 
 public class GraphResourceTest {
+	Logger logger = Logger.getLogger(GraphResourceTest.class.getName());
+
 	@Mock
 	static HttpServletRequest request;
 	@Mock

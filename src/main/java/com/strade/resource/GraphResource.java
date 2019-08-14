@@ -1,6 +1,7 @@
 package com.strade.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.strade.dao.GraphDao;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
@@ -10,12 +11,14 @@ import io.javalin.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static com.google.api.client.http.HttpStatusCodes.*;
 
 
 public class GraphResource {
 
+	Logger logger = Logger.getLogger(GraphResource.class.getName());
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static GraphService graphService = GraphService.getInstance();
 
