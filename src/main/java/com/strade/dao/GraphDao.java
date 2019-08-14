@@ -263,11 +263,7 @@ public class GraphDao {
 		boolean deleteOwnsRelationship = deleteTextbookRelationship(ownerUserId, OWNS_VERB, textbookId);
 		boolean deleteWantsRelationship = deleteTextbookRelationship(consumerUserId, WANTS_VERB, textbookId);
 		boolean textbookRelationship = createTextbookRelationship(consumerUserId, OWNS_VERB, textbookId);
-		if (deleteOwnsRelationship && deleteWantsRelationship && textbookRelationship) {
-			return true;
-		} else {
-			return false;
-		}
+		return deleteOwnsRelationship && deleteWantsRelationship && textbookRelationship;
 	}
 
 	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
