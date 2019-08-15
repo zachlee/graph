@@ -196,8 +196,12 @@ public class GraphDao {
 				.select(RELATIONSHIP_ALIAS)
 				.path()
 				.by(__.valueMap(true));
-		Path relationshipMap = relationshipTraversal.next();
-		return createRelationshipFromPath(relationshipMap);
+		if (relationshipTraversal.hasNext()){
+			Path relationshipMap = relationshipTraversal.next();
+			return createRelationshipFromPath(relationshipMap);
+		} else {
+			return null;
+		}
 	}
 
 	public List<User> getUsersWhoOwnTextbook(String textbookId) {
