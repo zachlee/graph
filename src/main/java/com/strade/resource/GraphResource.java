@@ -1,5 +1,6 @@
 package com.strade.resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strade.dao.GraphDao;
 import com.strade.domain.Relationship;
@@ -8,6 +9,7 @@ import com.strade.domain.User;
 import com.strade.service.GraphService;
 import io.javalin.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,11 @@ public class GraphResource {
 		graphService = service;
 	}
 
-	public static void aboutPage(Context context) {
-		graphService.aboutPage(context);
+	public static void aboutPage(Context context) throws IOException {
+		String aboutReturn = graphService.aboutPage();
+		context.contentType("application/json")
+				.status(STATUS_CODE_OK)
+				.json(aboutReturn);
 	}
 
 	public static void createTextbook(Context context) throws Exception {

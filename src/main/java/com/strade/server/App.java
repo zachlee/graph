@@ -20,8 +20,8 @@ public class App {
 				.enableCorsForOrigin("http://localhost:8080")
 				.start(7000);
 		app.routes(()-> {
-			path("/", () -> {
-				post(GraphResource::aboutPage);
+			path("about", () -> {
+				get(GraphResource::aboutPage);
 			});
 			path("graph", () -> {
 				path("textbook/:textbook", () -> {
@@ -44,13 +44,13 @@ public class App {
 					});
 				});
 				path("find", () -> {
-					path("textbook/:textbook", () -> {
+					path("textbook/:textbook/users", () -> {
 						get(GraphResource::findUsersWithTextbook);
 					});
 					path("textbook/users", () -> {
 						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
-					path("user/:user", () -> {
+					path("user/:user/wishlist", () -> {
 						post(GraphResource::searchWishList);
 					});
 				});

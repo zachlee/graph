@@ -1,11 +1,17 @@
 package com.strade.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.strade.dao.GraphDao;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
 import io.javalin.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +22,7 @@ public class GraphService {
 	Logger logger = Logger.getLogger(GraphService.class.getName());
 	private static GraphDao graphDao = GraphDao.getInstance();
 	private static GraphService instance;
+	ObjectMapper mapper = new ObjectMapper();
 
 	GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;
@@ -27,7 +34,9 @@ public class GraphService {
 		return instance;
 	}
 
-	public  void aboutPage( Context ctx ) { ctx.result( "studentrade-graph" ); }
+	public String aboutPage() throws IOException {
+		return "true";
+	}
 
 	public boolean addUser(User user) throws Exception {
 		String userId = user.getUuid();
