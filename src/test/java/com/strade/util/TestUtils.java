@@ -2,6 +2,7 @@ package com.strade.util;
 
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
+import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
@@ -17,14 +18,14 @@ import static com.strade.utils.Labels.TYPE;
 
 public class TestUtils {
 
-	public static void createRelationshipAndAssert(String userId2, String textbookId, String verb, GraphTraversalSource graphTraversalSource) {
-		GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(verb)
+	public static void createRelationshipAndAssert(String userId, String textbookId, String verb, GraphTraversalSource graphTraversalSource) {
+		GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(verb)
 				.from(__.V().hasLabel(USER_LABEL)
-						.has(NODE_UUID, userId2))
+						.has(NODE_UUID, userId))
 				.to(__.V().hasLabel(TEXTBOOK_LABEL)
 						.has(NODE_UUID, textbookId));
-		Edge edge2 = createEdgeTraversal2.next();
-		assert null != edge2;
+		Edge edge = createEdgeTraversal.next();
+		assert null != edge;
 	}
 
 	public static void createTextbookTraversalAndAssert(String textbookId, String isbn10, String isbn13, GraphTraversalSource graphTraversalSource) {
@@ -47,6 +48,21 @@ public class TestUtils {
 				.property(USERNAME, user.getUsername())
 				.property(TYPE, user.getType());
 		assert traversal.hasNext();
+	}
+
+	public static boolean getUserTextbookRelationshipExists(String userId, String verb, String textbookId, GraphTraversalSource graphTraversalSource){
+		GraphTraversal<Vertex, Path> relationshipTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has(NODE_UUID, userId)
+				.outE(verb)
+				.as(RELATIONSHIP_ALIAS)
+				.inV()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(NODE_UUID, textbookId)
+				.select(RELATIONSHIP_ALIAS)
+				.path()
+				.by(__.valueMap(true));
+		return relationshipTraversal.hasNext();
 	}
 
 	public static Textbook createTextbookObject(String textbookId) {
@@ -83,6 +99,24 @@ public class TestUtils {
 				getString(userValueMap.get(EMAIL)),
 				getString(userValueMap.get(SCHOOL)),
 				getString(userValueMap.get(TYPE)));
+	}
+
+	public static boolean doesUserExist(String userId, GraphTraversalSource graphTraversalSource) {
+		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has("uuid", userId)
+				.limit(1)
+				.valueMap(true);
+		return getUserTraversal.hasNext();
+	}
+
+	public static boolean doesTextbookExist(String textbookId, GraphTraversalSource graphTraversalSource) {
+		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has("uuid", textbookId)
+				.limit(1)
+				.valueMap(true);
+		return getUserTraversal.hasNext();
 	}
 
 	public static String getString(Object entry) {

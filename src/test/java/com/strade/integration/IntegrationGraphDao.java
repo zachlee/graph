@@ -327,6 +327,9 @@ public class IntegrationGraphDao {
 
 			long startTime = System.currentTimeMillis();
 			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
+			assert userTextbookRelationship.getUser().equals(userId);
+			assert userTextbookRelationship.getTextbook().equals(textbookId);
+			assert userTextbookRelationship.getVerb().equals(OWNS_VERB);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get existing textbook relationship = " + (endTime - startTime) + "ms");
 			assert null != userTextbookRelationship;

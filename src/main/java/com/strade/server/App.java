@@ -26,7 +26,7 @@ public class App {
 					path("add", () -> {
 						post(GraphResource::createTextbook);
 					});
-					path("remove", () -> {
+					path("delete", () -> {
 						delete(GraphResource::deleteTextbook);
 					});
 				});
@@ -58,7 +58,7 @@ public class App {
 							post(GraphResource::addUser);
 						});
 						path("delete", () -> {
-							post(GraphResource::deleteUser);
+							delete(GraphResource::deleteUser);
 						});
 					});
 				});

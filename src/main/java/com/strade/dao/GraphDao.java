@@ -188,7 +188,7 @@ public class GraphDao {
 		GraphTraversal<Vertex, Path> relationshipTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
-				.outE(OWNS_VERB)
+				.outE(verb)
 				.as(RELATIONSHIP_ALIAS)
 				.inV()
 				.hasLabel(TEXTBOOK_LABEL)
@@ -313,8 +313,8 @@ public class GraphDao {
 		List<Object> pathObjects = relationshipPath.objects();
 		Map<String, String> relationshipMap = parsePathObjectsIntoRelationshipMap(pathObjects);
 		return new Relationship(relationshipMap.get("userId"),
-				relationshipMap.get("textbookId"),
-				relationshipMap.get("verbLabel"));
+				relationshipMap.get("verbLabel"),
+				relationshipMap.get("textbookId"));
 	}
 
 	private Map<String, String> parsePathObjectsIntoRelationshipMap(List<Object> pathObjects) {
