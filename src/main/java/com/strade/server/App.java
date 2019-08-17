@@ -48,7 +48,7 @@ public class App {
 						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
 					path("user/:user/wishlist", () -> {
-						post(GraphResource::searchWishList);
+						get(GraphResource::searchWishList);
 					});
 				});
 				path("internal", () -> {
