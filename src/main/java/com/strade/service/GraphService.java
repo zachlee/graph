@@ -48,8 +48,13 @@ public class GraphService {
 		return graphDao.deleteUser(userId);
 	}
 
-	public User getUser(String userId) {
-		return graphDao.getUser(userId);
+	public User getUser(String userId) throws UserDoesNotExistException {
+		User user = graphDao.getUser(userId);
+		if (null != user) {
+			return user;
+		} else {
+			throw new UserDoesNotExistException(String.format("User with id %s doesn't exist", userId));
+		}
 	}
 
 	public boolean addTextbook(Textbook textbook) throws Exception {
@@ -122,17 +127,15 @@ public class GraphService {
 		throw new RelationshipException(String.format("Could not create Relationship between %s, %s and %s", userId, verb, textbookId));
 	}
 
-	public List<User> findUsersWithTextbook(String textbookId) {
+	public List<User> findUsersWithTextbook(String textbookId) throws TextbookDoesNotExistException {
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (!doesTextbookExist) {
-			throw new TextbookDoesNotExistException()
-			return graphDao.getUsersWhoOwnTextbook(textbookId);
-		} else {
-			return null;
+			throw new TextbookDoesNotExistException(String.format("Textbook with id %s doesn't exist", textbookId));
 		}
+		return graphDao.getUsersWhoOwnTextbook(textbookId);
 	}
 
-	public Map<Long, List<User>> getUsersWhoOwnTextbooks(List<String> textbookIds) {
+	public Map<Long, List<User>> getUsersWhoOwnTextbooks(List<String> textbookIds) throws TextbookDoesNotExistException {
 		List<String> existingTextbooks = new ArrayList<>();
 		for (String textbookId : textbookIds) {
 			if (graphDao.doesTextbookExistById(textbookId)) {
@@ -142,33 +145,41 @@ public class GraphService {
 		if (existingTextbooks.size() > 0) {
 			return graphDao.getUsersWhoOwnTextbooks(existingTextbooks);
 		} else {
-			return null;
+			throw new TextbookDoesNotExistException("No textbooks were returned");
 		}
 	}
 
-	public Map<Long, List<User>> getUsersWhoOwnTextbooksFromWishList(String userId) {
+	public Map<Long, List<User>> getUsersWhoOwnTextbooksFromWishList(String userId) throws UserDoesNotExistException {
 		boolean userExists = graphDao.doesUserExist(userId);
 		if (userExists) {
-			Map<Long, List<User>> usersWhoOwnWantedTextbooks = graphDao.getUsersWhoOwnWantedTextbooks(userId);
-			if (usersWhoOwnWantedTextbooks.size() == 0) {
-				return null;
-			} else {
-				return usersWhoOwnWantedTextbooks;
-			}
+			return graphDao.getUsersWhoOwnWantedTextbooks(userId);
 		} else {
-			return null;
+			throw new UserDoesNotExistException(String.format("User with id %s doesnt exist", userId));
 		}
 	}
 
-	public boolean transferBook(String owner, String consumer, String textbookId) {
-		boolean ownerExists = graphDao.doesUserExist(owner);
-		boolean consumerExists = graphDao.doesUserExist(consumer);
-		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
-		if (ownerExists && consumerExists && textbookExists) {
-			boolean textbookTransferred = graphDao.transferTextbookBetweenUsers(owner, consumer, textbookId);
-			return textbookTransferred;
-		} else {
-			return false;
+	public boolean transferBook(String owner,
+								String consumer,
+								String textbookId)
+			throws UserDoesNotExistException, TextbookDoesNotExistException, RelationshipException {
+		validateInputsForTransfer(owner, consumer, textbookId);
+		boolean textbookTransferred = graphDao.transferTextbookBetweenUsers(owner, consumer, textbookId);
+		if (!textbookTransferred) {
+			throw new RelationshipException(String.format("Unable to complete tranfer between %s %s and %s", owner, consumer, textbookId));
+		}
+		return textbookTransferred;
+
+	}
+
+	private void validateInputsForTransfer(String owner, String consumer, String textbookId) throws TextbookDoesNotExistException, UserDoesNotExistException {
+		if (!graphDao.doesUserExist(owner)) {
+			throw new UserDoesNotExistException(String.format("User with id %s doesn't exist", owner));
+		}
+		if (!graphDao.doesUserExist(consumer)) {
+			throw new UserDoesNotExistException(String.format("User with id %s doesn't exist", consumer));
+		}
+		if (!graphDao.doesTextbookExistById(textbookId)) {
+			throw new TextbookDoesNotExistException(String.format("Textbook with id %s doesnt exist", textbookId));
 		}
 	}
 
