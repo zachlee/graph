@@ -18,8 +18,6 @@ public class GraphService {
 	Logger logger = Logger.getLogger(GraphService.class.getName());
 	private static GraphDao graphDao = GraphDao.getInstance();
 	private static GraphService instance;
-	ObjectMapper mapper = new ObjectMapper();
-
 	GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;
 	}
@@ -57,13 +55,16 @@ public class GraphService {
 		}
 	}
 
-	public boolean addTextbook(Textbook textbook) throws Exception {
+	public void addTextbook(Textbook textbook) throws TextbookException {
 		String textbookId = textbook.getUuid();
 		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
 		if (textbookExists) {
 			throw new TextbookAlreadyExistsException(String.format("Textbook with id %s already exists.", textbookId));
 		} else {
-			return graphDao.createTextbook(textbook);
+			boolean textbookCreated = graphDao.createTextbook(textbook);
+			if (!textbookCreated) {
+				throw new TextbookException(String.format("Textbook with id %s was not able to be created", textbookId));
+			}
 		}
 	}
 
