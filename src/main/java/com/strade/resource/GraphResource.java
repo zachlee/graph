@@ -59,10 +59,15 @@ public class GraphResource {
 			Textbook textbook = graphService.getTextbookById(textbookId);
 			context.status(STATUS_CODE_OK);
 			context.json(textbook);
+		} catch ( TextbookDoesNotExistException e) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
 		} catch (TextbookException e) {
-			context.status(STATUS_CODE_SERVER_ERROR);
+			context.status(STATUS_CODE_SERVER_ERROR)
+					.json(e.getMessage());
 		} catch (IOException e) {
-			context.status(STATUS_CODE_BAD_REQUEST);
+			context.status(STATUS_CODE_BAD_REQUEST)
+					.json(e.getMessage());
 		}
 	}
 
@@ -80,7 +85,10 @@ public class GraphResource {
 			validateInputs(userId, verb, textbookId);
 			graphService.addTextbookRelationship(userId, verb, textbookId);
 			context.status(STATUS_CODE_CREATED);
-		} catch (VerbException | IOException | TextbookDoesNotExistException | UserDoesNotExistException e) {
+		} catch ( TextbookDoesNotExistException | UserDoesNotExistException e ) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (VerbException | IOException e) {
 			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		} catch (RelationshipException e) {
@@ -97,7 +105,10 @@ public class GraphResource {
 			validateInputs(userId, verb, textbookId);
 			graphService.removeTextbookRelationship(userId, verb, textbookId);
 			context.status(STATUS_CODE_NO_CONTENT);
-		} catch (VerbException | IOException | TextbookDoesNotExistException | UserDoesNotExistException e) {
+		} catch ( TextbookDoesNotExistException | UserDoesNotExistException e ) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (VerbException | IOException e) {
 			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		} catch (RelationshipException e) {
@@ -115,7 +126,10 @@ public class GraphResource {
 			Relationship relationship = graphService.getTextbookRelationship(userId, verb, textbookId);
 			context.json(relationship)
 					.status(STATUS_CODE_OK);
-		} catch (VerbException | IOException | TextbookDoesNotExistException | UserDoesNotExistException e) {
+		} catch (TextbookDoesNotExistException | UserDoesNotExistException e ) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (VerbException | IOException e) {
 			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		} catch (RelationshipException e) {
@@ -158,7 +172,7 @@ public class GraphResource {
 			context.status(STATUS_CODE_OK)
 					.json(user);
 		} catch (UserDoesNotExistException e) {
-			context.status(STATUS_CODE_BAD_REQUEST)
+			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (IOException e) {
 			context.status(STATUS_CODE_SERVER_ERROR)
@@ -174,7 +188,7 @@ public class GraphResource {
 			context.status(STATUS_CODE_OK)
 					.json(usersWithTextbook);
 		} catch (TextbookDoesNotExistException e) {
-			context.status(STATUS_CODE_BAD_REQUEST)
+			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (IOException e) {
 			context.status(STATUS_CODE_SERVER_ERROR)
@@ -190,7 +204,7 @@ public class GraphResource {
 			context.status(STATUS_CODE_OK)
 					.json(usersWhoOwnTextbooks);
 		} catch (TextbookDoesNotExistException e) {
-			context.status(STATUS_CODE_BAD_REQUEST)
+			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		}
 	}
@@ -202,7 +216,10 @@ public class GraphResource {
 			Map<Long, List<User>> usersWhoOwnTextbooksFromWishList = graphService.getUsersWhoOwnTextbooksFromWishList(userId);
 			context.status(STATUS_CODE_OK)
 					.json(usersWhoOwnTextbooksFromWishList);
-		} catch (UserDoesNotExistException | IOException e) {
+		} catch ( UserDoesNotExistException e ) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (IOException e) {
 			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		}
@@ -217,7 +234,7 @@ public class GraphResource {
 			graphService.transferBook(owningUser, consumingUser, textbookId);
 			context.status(STATUS_CODE_CREATED);
 		} catch (UserDoesNotExistException | IOException | TextbookDoesNotExistException e) {
-			context.status(STATUS_CODE_BAD_REQUEST)
+			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (RelationshipException e) {
 			context.status(STATUS_CODE_SERVER_ERROR)

@@ -20,8 +20,8 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.strade.util.TestUtils.*;
 
 public class AppFunctional {
-	Logger logger = Logger.getLogger(AppFunctional.class.getName());
-	String localhost = "http://localhost:7000";
+	private Logger logger = Logger.getLogger(AppFunctional.class.getName());
+	private String localhost = "http://localhost:7000";
 
 	public AppFunctional() {
 	}
@@ -69,5 +69,8 @@ public class AppFunctional {
 			graphTraversalSource.V().has("uuid", userId).drop().iterate();
 		}
 	}
+
+	@Test
+	public void getNonExistantUserReturns404
 
 }
