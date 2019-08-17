@@ -1,6 +1,5 @@
 package com.strade.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strade.dao.GraphDao;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
@@ -15,9 +14,12 @@ import java.util.logging.Logger;
 
 public class GraphService {
 
-	Logger logger = Logger.getLogger(GraphService.class.getName());
 	private static GraphDao graphDao = GraphDao.getInstance();
 	private static GraphService instance;
+
+	Logger logger = Logger.getLogger(GraphService.class.getName());
+
+	//injector for testing
 	GraphService(GraphDao graphDao) {
 		this.graphDao = graphDao;
 	}
@@ -32,18 +34,18 @@ public class GraphService {
 		return "true";
 	}
 
-	public boolean addUser(User user) throws UserException {
+	public void addUser(User user) throws UserException {
 		String userId = user.getUuid();
 		boolean userExists = graphDao.doesUserExist(userId);
 		if (userExists) {
 			throw new UserAlreadyExistsException(String.format("User with id %s already exists", userId));
 		} else {
-			return graphDao.createUser(user);
+			graphDao.createUser(user);
 		}
 	}
 
-	public boolean removeUser(String userId) {
-		return graphDao.deleteUser(userId);
+	public void removeUser(String userId) {
+		graphDao.deleteUser(userId);
 	}
 
 	public User getUser(String userId) throws UserDoesNotExistException {
@@ -68,12 +70,10 @@ public class GraphService {
 		}
 	}
 
-	public boolean removeTextbook(String textbookId) {
+	public void removeTextbook(String textbookId) {
 		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
 		if (doesTextbookExist) {
-			return graphDao.deleteTextbook(textbookId);
-		} else {
-			return false;
+			graphDao.deleteTextbook(textbookId);
 		}
 	}
 
@@ -91,9 +91,9 @@ public class GraphService {
 		return textbook;
 	}
 
-	public boolean addTextbookRelationship(String userId,
-										   String verb,
-										   String textbookId)
+	public void addTextbookRelationship(String userId,
+										String verb,
+										String textbookId)
 			throws UserDoesNotExistException, VerbException, TextbookDoesNotExistException, RelationshipException {
 
 		validateInputsForRelationship(userId, verb, textbookId);
@@ -101,19 +101,17 @@ public class GraphService {
 		if ( !created ) {
 			throw new RelationshipException(String.format("Could not create Relationship between %s, %s and %s", userId, verb, textbookId));
 		}
-		return created;
 	}
 
-	public boolean removeTextbookRelationship(String userId,
-											  String verb,
-											  String textbookId)
+	public void removeTextbookRelationship(String userId,
+										   String verb,
+										   String textbookId)
 			throws TextbookDoesNotExistException, UserDoesNotExistException, VerbException, RelationshipException {
 		validateInputsForRelationship(userId, verb, textbookId);
 		boolean relationshipDeleted = graphDao.deleteTextbookRelationship(userId, verb, textbookId);
 		if (!relationshipDeleted) {
 			throw new RelationshipException(String.format("Could not create Relationship between %s, %s and %s", userId, verb, textbookId));
 		}
-		return relationshipDeleted;
 	}
 
 	public Relationship getTextbookRelationship(String userId,
@@ -159,16 +157,15 @@ public class GraphService {
 		}
 	}
 
-	public boolean transferBook(String owner,
-								String consumer,
-								String textbookId)
+	public void transferBook(String owner,
+							 String consumer,
+							 String textbookId)
 			throws UserDoesNotExistException, TextbookDoesNotExistException, RelationshipException {
 		validateInputsForTransfer(owner, consumer, textbookId);
 		boolean textbookTransferred = graphDao.transferTextbookBetweenUsers(owner, consumer, textbookId);
 		if (!textbookTransferred) {
 			throw new RelationshipException(String.format("Unable to complete tranfer between %s %s and %s", owner, consumer, textbookId));
 		}
-		return textbookTransferred;
 
 	}
 
