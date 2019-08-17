@@ -24,6 +24,8 @@ public class Textbook {
 	@JsonProperty("isbn13")
 	private String isbn13;
 
+	public Textbook(){}
+
 	public Textbook(String uuid,
 					String title,
 					String author,

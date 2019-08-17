@@ -6,6 +6,8 @@ public class Verb {
 	@JsonProperty("name")
 	private String name;
 
+	public Verb(){}
+
 	public String getName() {
 		return name;
 	}

@@ -1,7 +1,6 @@
 package com.strade.dao;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.util.logging.Logger;
 

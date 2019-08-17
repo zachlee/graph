@@ -1,8 +1,6 @@
 package com.strade.resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.strade.dao.GraphDao;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
@@ -39,7 +37,7 @@ public class GraphResource {
 	public static void createTextbook(Context context) throws Exception {
 		Textbook textbook = mapper.readValue(context.body(), Textbook.class);
 		boolean inserted = graphService.addTextbook(textbook);
-		if ( inserted ) {
+		if (inserted) {
 			context.status(STATUS_CODE_CREATED);
 		} else {
 			context.status(STATUS_CODE_SERVER_ERROR);
@@ -47,7 +45,7 @@ public class GraphResource {
 	}
 
 	public static void getTextbookById(Context context) {
-		String textbookId = context.queryParam("textbook");
+		String textbookId = context.pathParam("textbook");
 		Textbook textbook = graphService.getTextbookById(textbookId);
 		if (null != textbook) {
 			context.json(textbook);
@@ -58,16 +56,16 @@ public class GraphResource {
 	}
 
 	public static void deleteTextbook(Context context) {
-		String textbookIdString = context.queryParam("textbook");
+		String textbookIdString = context.pathParam("textbook");
 		boolean removed = graphService.removeTextbook(textbookIdString);
 		context.status(STATUS_CODE_NO_CONTENT);
 
 	}
 
 	public static void createTextbookRelationship(Context context) {
-		String userId = context.queryParam("user");
-		String verb = context.queryParam("verb");
-		String textbookId = context.queryParam("textbook");
+		String userId = context.pathParam("user");
+		String verb = context.pathParam("verb");
+		String textbookId = context.pathParam("textbook");
 		boolean relationshipAdded = graphService.addTextbookRelationship(userId, verb, textbookId);
 		if (relationshipAdded) {
 			context.status(STATUS_CODE_CREATED);
@@ -77,17 +75,17 @@ public class GraphResource {
 	}
 
 	public static void deleteTextbookRelationship(Context context) {
-		String userId = context.queryParam("user");
-		String verb = context.queryParam("verb");
-		String textbookId = context.queryParam("textbook");
+		String userId = context.pathParam("user");
+		String verb = context.pathParam("verb");
+		String textbookId = context.pathParam("textbook");
 		boolean relationshipDeleted = graphService.removeTextbookRelationship(userId, verb, textbookId);
 		context.status(STATUS_CODE_NO_CONTENT);
 	}
 
-	public static void getTextbookRelationship(Context context){
-		String userId = context.queryParam("user");
-		String verb = context.queryParam("verb");
-		String textbookId = context.queryParam("textbook");
+	public static void getTextbookRelationship(Context context) {
+		String userId = context.pathParam("user");
+		String verb = context.pathParam("verb");
+		String textbookId = context.pathParam("textbook");
 		Relationship relationship = graphService.getTextbookRelationship(userId, verb, textbookId);
 		context.json(relationship);
 		context.status(STATUS_CODE_OK);
@@ -103,27 +101,27 @@ public class GraphResource {
 		}
 	}
 
-	public static void deleteUser(Context context){
-		String userId = context.queryParam("user");
+	public static void deleteUser(Context context) {
+		String userId = context.pathParam("user");
 		boolean userRemoved = graphService.removeUser(userId);
 		context.status(STATUS_CODE_NO_CONTENT);
 	}
 
-	public static void getUser(Context context){
-		String userId = context.queryParam("user");
+	public static void getUser(Context context) {
+		String userId = context.pathParam("user");
 		User user = graphService.getUser(userId);
 		context.json(user);
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void findUsersWithTextbook(Context context){
-		String textbookId = context.queryParam("textbook");
+	public static void findUsersWithTextbook(Context context) {
+		String textbookId = context.pathParam("textbook");
 		List<User> usersWithTextbook = graphService.findUsersWithTextbook(textbookId);
 		context.json(usersWithTextbook);
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void getUsersWhoOwnTextbooks(Context context){
+	public static void getUsersWhoOwnTextbooks(Context context) {
 		//todo construct post body
 		List<String> textbookIds = new ArrayList<>();
 		Map<Long, List<User>> usersWhoOwnTextbooks = graphService.getUsersWhoOwnTextbooks(textbookIds);
@@ -139,7 +137,7 @@ public class GraphResource {
 		context.status(STATUS_CODE_OK);
 	}
 
-	public static void transferBook(Context context){
+	public static void transferBook(Context context) {
 		String owningUser = context.pathParam("user");
 		String consumingUser = context.pathParam("consumer");
 		String textbookId = context.pathParam("textbook");

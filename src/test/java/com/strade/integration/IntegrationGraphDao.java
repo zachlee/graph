@@ -11,7 +11,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,9 +22,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.strade.util.TestUtils.*;
 import static com.strade.utils.Labels.*;
-import static com.strade.utils.Labels.SCHOOL;
-import static com.strade.utils.Labels.TYPE;
 
 public class IntegrationGraphDao {
 
@@ -68,7 +66,7 @@ public class IntegrationGraphDao {
 		String userId = UUID.randomUUID().toString();
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
+			createUserTraversalAndAssert(user, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			User daoUser = graphDao.getUser(userId);
 			long endTime = System.currentTimeMillis();
@@ -95,7 +93,7 @@ public class IntegrationGraphDao {
 	public void deleteUserTest() {
 		String userId = UUID.randomUUID().toString();
 		User user = createUser(userId);
-		createUserTraversalAndAssert(user);
+		createUserTraversalAndAssert(user, graphTraversalSource);
 		GraphTraversal<Vertex, Map<Object, Object>> getUserTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has("uuid", userId)
@@ -157,7 +155,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			Textbook textbookRetrieved = graphDao.getTextbook(textbookId);
 			long endTime = System.currentTimeMillis();
@@ -216,7 +214,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			boolean textbookExist = graphDao.doesTextbookExist(textbookId, isbn10, isbn13);
 			long endTime = System.currentTimeMillis();
@@ -233,7 +231,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			boolean textbookExist = graphDao.doesTextbookExistByIsbn10(isbn10);
 			long endTime = System.currentTimeMillis();
@@ -250,7 +248,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			boolean textbookExist = graphDao.doesTextbookExistByIsbn13(isbn13);
 			long endTime = System.currentTimeMillis();
@@ -267,7 +265,7 @@ public class IntegrationGraphDao {
 		String isbn10 = "isbn10";
 		String isbn13 = "isbn13";
 		try {
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
 			boolean textbookExist = graphDao.doesTextbookExistById(textbookId);
 			long endTime = System.currentTimeMillis();
@@ -286,8 +284,8 @@ public class IntegrationGraphDao {
 		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
 			boolean userTextbookRelationship = graphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
@@ -323,9 +321,9 @@ public class IntegrationGraphDao {
 		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-			createRelationshipAndAssert(userId, textbookId, verb);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
+			createRelationshipAndAssert(userId, textbookId, verb, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
 			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
@@ -359,9 +357,9 @@ public class IntegrationGraphDao {
 		String isbn13 = "isbn13";
 		try {
 			User user = createUser(userId);
-			createUserTraversalAndAssert(user);
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-			createRelationshipAndAssert(userId, textbookId, verb);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
+			createRelationshipAndAssert(userId, textbookId, verb, graphTraversalSource);
 
 			GraphTraversal<Vertex, Object> relationshipTraversal = graphTraversalSource.V()
 					.hasLabel(USER_LABEL)
@@ -414,17 +412,17 @@ public class IntegrationGraphDao {
 			User user3 = createUser(userId3);
 			User user4 = createUser(userId4);
 
-			createUserTraversalAndAssert(user);
-			createUserTraversalAndAssert(user2);
-			createUserTraversalAndAssert(user3);
-			createUserTraversalAndAssert(user4);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createUserTraversalAndAssert(user2, graphTraversalSource);
+			createUserTraversalAndAssert(user3, graphTraversalSource);
+			createUserTraversalAndAssert(user4, graphTraversalSource);
 
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 
-			createRelationshipAndAssert(userId, textbookId, verb);
-			createRelationshipAndAssert(userId2, textbookId, verb);
-			createRelationshipAndAssert(userId3, textbookId, verb);
-			createRelationshipAndAssert(userId4, textbookId, verb);
+			createRelationshipAndAssert(userId, textbookId, verb, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId, verb, graphTraversalSource);
+			createRelationshipAndAssert(userId3, textbookId, verb, graphTraversalSource);
+			createRelationshipAndAssert(userId4, textbookId, verb, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
 			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);
@@ -460,20 +458,20 @@ public class IntegrationGraphDao {
 			User user3 = createUser(userId3);
 			User user4 = createUser(userId4);
 
-			createUserTraversalAndAssert(user);
-			createUserTraversalAndAssert(user2);
-			createUserTraversalAndAssert(user3);
-			createUserTraversalAndAssert(user4);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createUserTraversalAndAssert(user2, graphTraversalSource);
+			createUserTraversalAndAssert(user3, graphTraversalSource);
+			createUserTraversalAndAssert(user4, graphTraversalSource);
 
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13, graphTraversalSource);
 
-			createRelationshipAndAssert(userId, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId4, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId, textbookId2, OWNS_VERB);
-			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB);
+			createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId4, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId, textbookId2, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
 			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
@@ -510,20 +508,20 @@ public class IntegrationGraphDao {
 			User user3 = createUser(userId3);
 			User user4 = createUser(userId4);
 
-			createUserTraversalAndAssert(user);
-			createUserTraversalAndAssert(user2);
-			createUserTraversalAndAssert(user3);
-			createUserTraversalAndAssert(user4);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createUserTraversalAndAssert(user2, graphTraversalSource);
+			createUserTraversalAndAssert(user3, graphTraversalSource);
+			createUserTraversalAndAssert(user4, graphTraversalSource);
 
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
-			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13);
-			createTextbookTraversalAndAssert(textbookId3, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId2, isbn10, isbn13, graphTraversalSource);
+			createTextbookTraversalAndAssert(textbookId3, isbn10, isbn13, graphTraversalSource);
 
-			createRelationshipAndAssert(userId, textbookId, WANTS_VERB);
-			createRelationshipAndAssert(userId, textbookId2, WANTS_VERB);
-			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB);
-			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB);
+			createRelationshipAndAssert(userId, textbookId, WANTS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId, textbookId2, WANTS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId3, textbookId, OWNS_VERB, graphTraversalSource);
 
 
 			long startTime = System.currentTimeMillis();
@@ -555,13 +553,13 @@ public class IntegrationGraphDao {
 		try {
 			User user = createUser(userId);
 			User user2 = createUser(userId2);
-			createUserTraversalAndAssert(user);
-			createUserTraversalAndAssert(user2);
+			createUserTraversalAndAssert(user, graphTraversalSource);
+			createUserTraversalAndAssert(user2, graphTraversalSource);
 
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13);
+			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 
-			createRelationshipAndAssert(userId, textbookId, OWNS_VERB);
-			createRelationshipAndAssert(userId2, textbookId, WANTS_VERB);
+			createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
+			createRelationshipAndAssert(userId2, textbookId, WANTS_VERB, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
 			boolean transferredTextbook = graphDao.transferTextbookBetweenUsers(userId, userId2, textbookId);
@@ -608,80 +606,4 @@ public class IntegrationGraphDao {
 		}
 	}
 
-	private void createRelationshipAndAssert(String userId2, String textbookId, String verb) {
-		GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(verb)
-				.from(__.V().hasLabel(USER_LABEL)
-						.has(NODE_UUID, userId2))
-				.to(__.V().hasLabel(TEXTBOOK_LABEL)
-						.has(NODE_UUID, textbookId));
-		Edge edge2 = createEdgeTraversal2.next();
-		assert null != edge2;
-	}
-
-	private void createTextbookTraversalAndAssert(String textbookId, String isbn10, String isbn13) {
-		GraphTraversal<Vertex, Vertex> textbookTraversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
-				.property(NODE_UUID, textbookId)
-				.property(TITLE, "TITLE")
-				.property(AUTHOR, "AUTHOR")
-				.property(GENERAL_SUBJECT, "GENERAL_SUBJECT")
-				.property(SPECIFIC_SUBJECT, "SPECIFIC_SUBJECT")
-				.property(ISBN10, isbn10)
-				.property(ISBN13, isbn13);
-		assert textbookTraversal.hasNext();
-	}
-
-	private void createUserTraversalAndAssert(User user) {
-		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-				.property(NODE_UUID, user.getUuid())
-				.property(SCHOOL, user.getSchool())
-				.property(EMAIL, user.getEmail())
-				.property(USERNAME, user.getUsername())
-				.property(TYPE, user.getType());
-		assert traversal.hasNext();
-	}
-
-	private Textbook createTextbookObject(String textbookId) {
-		return new Textbook(textbookId,
-				"title",
-				"author",
-				"subject",
-				"specificSubject",
-				"isbn10",
-				"isbn13");
-	}
-
-	private Textbook createTextbookFromMap(Map<Object, Object> textbookValueMap) {
-		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
-				getString(textbookValueMap.get(TITLE)),
-				getString(textbookValueMap.get(AUTHOR)),
-				getString(textbookValueMap.get(GENERAL_SUBJECT)),
-				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
-				getString(textbookValueMap.get(ISBN10)),
-				getString(textbookValueMap.get(ISBN13)));
-	}
-
-	private User createUser(String uuid) {
-		return new User(uuid,
-				"username",
-				"email",
-				"school",
-				"type");
-	}
-
-	private User createUserFromMap(Map<Object, Object> userValueMap) {
-		return new User(getString(userValueMap.get(NODE_UUID)),
-				getString(userValueMap.get(USERNAME)),
-				getString(userValueMap.get(EMAIL)),
-				getString(userValueMap.get(SCHOOL)),
-				getString(userValueMap.get(TYPE)));
-	}
-
-	private String getString(Object entry) {
-		ArrayList<String> list = (ArrayList<String>) entry;
-		if (null != list && !list.isEmpty()) {
-			return list.get(0);
-		} else {
-			return "";
-		}
-	}
 }

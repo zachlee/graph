@@ -16,6 +16,8 @@ public class Relationship {
 	@JsonProperty("textbook")
 	private String textbook;
 
+	public Relationship(){}
+
 	public Relationship(String user,
 						String verb,
 						String textbook) {
