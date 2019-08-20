@@ -79,14 +79,14 @@ public class AppFunctional {
 
 	@Test
 	public void getNonExistantUserReturns404() {
-		String nonExistantserId = UUID.randomUUID().toString();
+		String nonExistantUserId = UUID.randomUUID().toString();
 		Response response = given()
 				.log()
 				.everything()
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.get(String.format(host + "/graph/internal/user/%s", nonExistantserId));
+				.get(String.format(host + "/graph/internal/user/%s", nonExistantUserId));
 		response.then().log().everything();
 		logger.log(Level.SEVERE, response.getBody().print());
 		assert response.statusCode() == 404;
@@ -668,17 +668,86 @@ public class AppFunctional {
 
 	@Test
 	public void transferBookReturns201(){
-
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId2), graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId, WANTS_VERB, graphTraversalSource);
+		createRelationshipAndAssert(userId2, textbookId, OWNS_VERB, graphTraversalSource);
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.pathParameter("user", userId2 )
+					.pathParam("textbook", textbookId )
+					.pathParam("consumer", userId )
+					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+			response.then().log().everything();
+			assert response.getStatusCode() == 201;
+			assert getUserTextbookRelationshipExists(userId, OWNS_VERB, textbookId, graphTraversalSource);
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
+		}
 	}
 
 	@Test
 	public void transferBookUserDoesntExistReturns404(){
-
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId, WANTS_VERB, graphTraversalSource);
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.pathParameter("user", userId2 )
+					.pathParam("textbook", textbookId )
+					.pathParam("consumer", userId )
+					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+			response.then().log().everything();
+			assert response.getStatusCode() == 404;
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+		}
 	}
 
 	@Test
 	public void transferBookTextbookDoesntExistReturns404(){
-
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId2), graphTraversalSource);
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.pathParameter("user", userId2 )
+					.pathParam("textbook", textbookId )
+					.pathParam("consumer", userId )
+					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+			response.then().log().everything();
+			assert response.getStatusCode() == 404;
+		} finally {
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
+		}
 	}
 
 	@Test
@@ -688,11 +757,6 @@ public class AppFunctional {
 
 	@Test
 	public void getUsersWhoOwnTextbooksReturns200(){
-
-	}
-
-	@Test
-	public void getUsersWhoOwnTextbooksTextbookDoesntExistReturns404(){
 
 	}
 }
