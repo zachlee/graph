@@ -2,7 +2,6 @@ package com.strade.functional;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.response.ResponseBody;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
@@ -15,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
