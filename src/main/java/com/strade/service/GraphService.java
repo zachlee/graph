@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.strade.utils.Labels.OWNS_VERB;
+import static com.strade.utils.Labels.WANTS_VERB;
+
 public class GraphService {
 
 	private static GraphDao graphDao = GraphDao.getInstance();
@@ -141,10 +144,10 @@ public class GraphService {
 				existingTextbooks.add(textbookId);
 			}
 		}
-		if (existingTextbooks.size() > 0) {
-			return graphDao.getUsersWhoOwnTextbooks(existingTextbooks);
-		} else {
+		if (existingTextbooks.size() == 0) {
 			throw new TextbookDoesNotExistException("No textbooks were returned");
+		} else {
+			return graphDao.getUsersWhoOwnTextbooks(existingTextbooks);
 		}
 	}
 
@@ -160,11 +163,17 @@ public class GraphService {
 	public void transferBook(String owner,
 							 String consumer,
 							 String textbookId)
-			throws UserDoesNotExistException, TextbookDoesNotExistException, RelationshipException {
+			throws UserDoesNotExistException, TextbookDoesNotExistException, RelationshipException, UserDoesntOwnTextbookException {
 		validateInputsForTransfer(owner, consumer, textbookId);
-		boolean textbookTransferred = graphDao.transferTextbookBetweenUsers(owner, consumer, textbookId);
-		if (!textbookTransferred) {
-			throw new RelationshipException(String.format("Unable to complete tranfer between %s %s and %s", owner, consumer, textbookId));
+		Relationship relationship = graphDao.getTextbookRelationship(owner, OWNS_VERB, textbookId);
+		if (null == relationship) {
+			throw new UserDoesntOwnTextbookException(String.format("Unable to complete transfer. User %s does not own textbook %s", owner, textbookId));
+		}
+		boolean deleteOwnsRelationship = graphDao.deleteTextbookRelationship(owner, OWNS_VERB, textbookId);
+		boolean deleteWantsRelationship = graphDao.deleteTextbookRelationship(consumer, WANTS_VERB, textbookId);
+		boolean textbookRelationship = graphDao.createTextbookRelationship(consumer, OWNS_VERB, textbookId);
+		if (!deleteOwnsRelationship || !deleteWantsRelationship || !textbookRelationship) {
+			throw new RelationshipException(String.format("Unable to complete tranfer between owner %s, consumer %s and textbook %s", owner, consumer, textbookId));
 		}
 
 	}

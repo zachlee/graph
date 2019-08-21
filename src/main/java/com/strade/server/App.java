@@ -22,6 +22,7 @@ public class App {
 			});
 			path("graph", () -> {
 				path("textbooks", () -> {
+					post(GraphResource::getUsersWhoOwnTextbooks);
 					path(":textbook", () -> {
 						get(GraphResource::getTextbookById);
 						post(GraphResource::createTextbook);
@@ -29,9 +30,6 @@ public class App {
 						path("users", () -> {
 							get(GraphResource::findUsersWithTextbook);
 						});
-					});
-					path("users", () -> {
-						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
 				});
 				path("users/:user", () -> {

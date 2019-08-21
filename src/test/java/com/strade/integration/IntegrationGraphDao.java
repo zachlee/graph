@@ -546,67 +546,67 @@ public class IntegrationGraphDao {
 		}
 	}
 
-	@Test
-	public void transferTextbook() {
-		String userId = UUID.randomUUID().toString();
-		String userId2 = UUID.randomUUID().toString();
-		String textbookId = UUID.randomUUID().toString();
-		String isbn10 = "isbn10";
-		String isbn13 = "isbn13";
-		try {
-			User user = createUser(userId);
-			User user2 = createUser(userId2);
-			createUserTraversalAndAssert(user, graphTraversalSource);
-			createUserTraversalAndAssert(user2, graphTraversalSource);
-
-			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
-
-			createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
-			createRelationshipAndAssert(userId2, textbookId, WANTS_VERB, graphTraversalSource);
-
-			long startTime = System.currentTimeMillis();
-			boolean transferredTextbook = graphDao.transferTextbookBetweenUsers(userId, userId2, textbookId);
-			long endTime = System.currentTimeMillis();
-			logger.log(Level.INFO, "transfer one textbook between two users = " + (endTime - startTime) + "ms");
-			assert transferredTextbook;
-
-			GraphTraversal<Vertex, Object> userTwoOwnsTheTextbook = graphTraversalSource.V()
-					.hasLabel(USER_LABEL)
-					.has(NODE_UUID, userId2)
-					.outE(OWNS_VERB)
-					.as(RELATIONSHIP_ALIAS)
-					.inV()
-					.hasLabel(TEXTBOOK_LABEL)
-					.has(NODE_UUID, textbookId)
-					.select(RELATIONSHIP_ALIAS);
-			assert userTwoOwnsTheTextbook.hasNext();
-
-			GraphTraversal<Vertex, Object> userTwoWantsTheTextbook = graphTraversalSource.V()
-					.hasLabel(USER_LABEL)
-					.has(NODE_UUID, userId2)
-					.outE(WANTS_VERB)
-					.as(RELATIONSHIP_ALIAS)
-					.inV()
-					.hasLabel(TEXTBOOK_LABEL)
-					.has(NODE_UUID, textbookId)
-					.select(RELATIONSHIP_ALIAS);
-			assert !userTwoWantsTheTextbook.hasNext();
-
-			GraphTraversal<Vertex, Object> userOneHasNoRelationship = graphTraversalSource.V()
-					.hasLabel(USER_LABEL)
-					.has(NODE_UUID, userId)
-					.outE(OWNS_VERB)
-					.as(RELATIONSHIP_ALIAS)
-					.inV()
-					.hasLabel(TEXTBOOK_LABEL)
-					.has(NODE_UUID, textbookId)
-					.select(RELATIONSHIP_ALIAS);
-			assert !userOneHasNoRelationship.hasNext();
-		} finally {
-			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
-			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId2).drop().iterate();
-			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
-		}
-	}
+//	@Test
+//	public void transferTextbook() {
+//		String userId = UUID.randomUUID().toString();
+//		String userId2 = UUID.randomUUID().toString();
+//		String textbookId = UUID.randomUUID().toString();
+//		String isbn10 = "isbn10";
+//		String isbn13 = "isbn13";
+//		try {
+//			User user = createUser(userId);
+//			User user2 = createUser(userId2);
+//			createUserTraversalAndAssert(user, graphTraversalSource);
+//			createUserTraversalAndAssert(user2, graphTraversalSource);
+//
+//			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
+//
+//			createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
+//			createRelationshipAndAssert(userId2, textbookId, WANTS_VERB, graphTraversalSource);
+//
+//			long startTime = System.currentTimeMillis();
+//			boolean transferredTextbook = graphDao.transferTextbookBetweenUsers(userId, userId2, textbookId);
+//			long endTime = System.currentTimeMillis();
+//			logger.log(Level.INFO, "transfer one textbook between two users = " + (endTime - startTime) + "ms");
+//			assert transferredTextbook;
+//
+//			GraphTraversal<Vertex, Object> userTwoOwnsTheTextbook = graphTraversalSource.V()
+//					.hasLabel(USER_LABEL)
+//					.has(NODE_UUID, userId2)
+//					.outE(OWNS_VERB)
+//					.as(RELATIONSHIP_ALIAS)
+//					.inV()
+//					.hasLabel(TEXTBOOK_LABEL)
+//					.has(NODE_UUID, textbookId)
+//					.select(RELATIONSHIP_ALIAS);
+//			assert userTwoOwnsTheTextbook.hasNext();
+//
+//			GraphTraversal<Vertex, Object> userTwoWantsTheTextbook = graphTraversalSource.V()
+//					.hasLabel(USER_LABEL)
+//					.has(NODE_UUID, userId2)
+//					.outE(WANTS_VERB)
+//					.as(RELATIONSHIP_ALIAS)
+//					.inV()
+//					.hasLabel(TEXTBOOK_LABEL)
+//					.has(NODE_UUID, textbookId)
+//					.select(RELATIONSHIP_ALIAS);
+//			assert !userTwoWantsTheTextbook.hasNext();
+//
+//			GraphTraversal<Vertex, Object> userOneHasNoRelationship = graphTraversalSource.V()
+//					.hasLabel(USER_LABEL)
+//					.has(NODE_UUID, userId)
+//					.outE(OWNS_VERB)
+//					.as(RELATIONSHIP_ALIAS)
+//					.inV()
+//					.hasLabel(TEXTBOOK_LABEL)
+//					.has(NODE_UUID, textbookId)
+//					.select(RELATIONSHIP_ALIAS);
+//			assert !userOneHasNoRelationship.hasNext();
+//		} finally {
+//			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId).drop().iterate();
+//			graphTraversalSource.V().hasLabel(USER_LABEL).has("uuid", userId2).drop().iterate();
+//			graphTraversalSource.V().hasLabel(TEXTBOOK_LABEL).has("uuid", textbookId).drop().iterate();
+//		}
+//	}
 
 }

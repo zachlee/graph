@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
+import com.strade.domain.request.GetUsersWithTextbookRequest;
 import com.strade.exceptions.*;
 import com.strade.service.GraphService;
 import io.javalin.Context;
@@ -196,9 +197,10 @@ public class GraphResource {
 		}
 	}
 
-	public static void getUsersWhoOwnTextbooks(Context context) {
+	public static void getUsersWhoOwnTextbooks(Context context) throws IOException {
 		//todo construct post body
-		List<String> textbookIds = new ArrayList<>();
+		GetUsersWithTextbookRequest request = mapper.readValue(context.body(), GetUsersWithTextbookRequest.class);
+		List<String> textbookIds = request.getTextbooks();
 		try {
 			Map<Long, List<User>> usersWhoOwnTextbooks = graphService.getUsersWhoOwnTextbooks(textbookIds);
 			context.status(STATUS_CODE_OK)
@@ -236,7 +238,7 @@ public class GraphResource {
 		} catch (UserDoesNotExistException | TextbookDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
-		} catch (IOException e) {
+		} catch (IOException | UserDoesntOwnTextbookException e) {
 			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		} catch (RelationshipException e) {

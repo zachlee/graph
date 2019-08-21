@@ -1,5 +1,8 @@
 package com.strade.functional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.POJONode;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import com.strade.domain.Relationship;
@@ -789,6 +792,7 @@ public class AppFunctional {
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 404;
+			assert !getUserTextbookRelationshipExists(userId, OWNS_VERB, textbookId, graphTraversalSource);
 		} finally {
 			graphTraversalSource.V().has("uuid", userId).drop().iterate();
 			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
@@ -797,11 +801,84 @@ public class AppFunctional {
 
 	@Test
 	public void transferBookOwnerDoesntHaveOwningRelationship(){
-
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId2), graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId, WANTS_VERB, graphTraversalSource);
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.pathParameter("user", userId2 )
+					.pathParam("textbook", textbookId )
+					.pathParam("consumer", userId )
+					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
+			response.then().log().everything();
+			assert response.getStatusCode() == 400;
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
+		}
 	}
 
 	@Test
 	public void getUsersWhoOwnTextbooksReturns200(){
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String userId3 = UUID.randomUUID().toString();
+		String userId4 = UUID.randomUUID().toString();
 
+		String textbookId = "textbook";
+		String textbookId2 = "textbook2";
+		String textbookId3 = "textbook3";
+		String textbookId4 = "textbook4";
+
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId2), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId3), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId4), graphTraversalSource);
+
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId2, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId3, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId4, "isbn10", "isbn13", graphTraversalSource);
+
+		createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId2, OWNS_VERB, graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId3, OWNS_VERB, graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId4, OWNS_VERB, graphTraversalSource);
+		createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB, graphTraversalSource);
+
+		String body = "{ \"textbooks\": [\"textbook1\", \"textbook2\", \"textbook3\", \"textbook4\"] }";
+//		Strings body = "";
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.body(body)
+					.post(host + "/graph/textbooks");
+			response.then().log().everything();
+			assert response.getStatusCode() == 200;
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId2).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId3).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId4).drop().iterate();
+
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId3).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId4).drop().iterate();
+		}
 	}
 }
