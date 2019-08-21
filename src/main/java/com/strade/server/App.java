@@ -21,45 +21,37 @@ public class App {
 				get(GraphResource::aboutPage);
 			});
 			path("graph", () -> {
-				path("textbook/:textbook", () -> {
-					get(GraphResource::getTextbookById);
-					path("add", () -> {
+				path("textbooks", () -> {
+					path(":textbook", () -> {
+						get(GraphResource::getTextbookById);
 						post(GraphResource::createTextbook);
-					});
-					path("delete", () -> {
 						delete(GraphResource::deleteTextbook);
+						path("users", () -> {
+							get(GraphResource::findUsersWithTextbook);
+						});
+					});
+					path("users", () -> {
+						post(GraphResource::getUsersWhoOwnTextbooks);
 					});
 				});
-				path("user/:user", () -> {
-					path("verb/:verb/textbook/:textbook", () -> {
+				path("users/:user", () -> {
+					path("verbs/:verb/textbooks/:textbook", () -> {
 						get(GraphResource::getTextbookRelationship);
 						post(GraphResource::createTextbookRelationship);
 						delete(GraphResource::deleteTextbookRelationship);
 					});
-					path("textbook/:textbook/consumer/:consumer/transfer", () -> {
+					path("textbooks/:textbook/users/:consumer/transfer", () -> {
 						post(GraphResource::transferBook);
 					});
-				});
-				path("find", () -> {
-					path("textbook/:textbook/users", () -> {
-						get(GraphResource::findUsersWithTextbook);
-					});
-					path("textbook/users", () -> {
-						post(GraphResource::getUsersWhoOwnTextbooks);
-					});
-					path("user/:user/wishlist", () -> {
+					path("wishlist", () -> {
 						get(GraphResource::searchWishList);
 					});
 				});
 				path("internal", () -> {
-					path("user/:user", () -> {
+					path("users/:user", () -> {
 						get(GraphResource::getUser);
-						path("add", () -> {
-							post(GraphResource::addUser);
-						});
-						path("delete", () -> {
-							delete(GraphResource::deleteUser);
-						});
+						post(GraphResource::addUser);
+						delete(GraphResource::deleteUser);
 					});
 				});
 			});

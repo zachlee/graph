@@ -67,7 +67,7 @@ public class AppFunctional {
 					.when()
 					.with()
 					.pathParameter("user", userId)
-					.get(host + "/graph/internal/user/{user}");
+					.get(host + "/graph/internal/users/{user}");
 			response.then().log().everything();
 			User returnedUser = response.getBody().as(User.class);
 			assert null != returnedUser;
@@ -86,7 +86,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.get(String.format(host + "/graph/internal/user/%s", nonExistantUserId));
+				.get(String.format(host + "/graph/internal/users/%s", nonExistantUserId));
 		response.then().log().everything();
 		logger.log(Level.SEVERE, response.getBody().print());
 		assert response.statusCode() == 404;
@@ -104,7 +104,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(user)
-					.post(String.format(host + "/graph/internal/user/%s/add", userId));
+					.post(String.format(host + "/graph/internal/users/%s", userId));
 			response.then().log().everything();
 			assert response.statusCode() == 201;
 			assert doesUserExist(userId, graphTraversalSource);
@@ -126,7 +126,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(user)
-					.post(String.format(host + "/graph/internal/user/%s/add", userId));
+					.post(String.format(host + "/graph/internal/users/%s", userId));
 			response.then().log().everything();
 			logger.log(Level.SEVERE, response.getBody().print());
 			assert response.statusCode() == 400;
@@ -146,7 +146,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.body(invalidBody)
-				.post(String.format(host + "/graph/internal/user/%s/add", userId));
+				.post(String.format(host + "/graph/internal/users/%s", userId));
 		response.then().log().everything();
 		logger.log(Level.INFO, String.valueOf(response.getStatusCode()));
 		assert response.statusCode() == 400;
@@ -162,7 +162,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.delete(String.format(host + "/graph/internal/user/%s/delete", userId));
+				.delete(String.format(host + "/graph/internal/users/%s", userId));
 		response.then().log().everything();
 		assert !doesUserExist(userId, graphTraversalSource);
 		assert response.statusCode() == 204;
@@ -176,7 +176,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.delete(String.format(host + "/graph/internal/user/%s/delete", "doesntExist"));
+				.delete(String.format(host + "/graph/internal/users/%s", "doesntExist"));
 		response.then().log().everything();
 		assert response.statusCode() == 204;
 	}
@@ -194,7 +194,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(textbook)
-					.post(String.format(host + "/graph/textbook/%s/add", textbookId));
+					.post(String.format(host + "/graph/textbooks/%s", textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 201;
 			assert doesTextbookExist(textbookId, graphTraversalSource);
@@ -213,7 +213,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.body("invalidBody")
-				.post(String.format(host + "/graph/textbook/%s/add", textbookId));
+				.post(String.format(host + "/graph/textbooks/%s", textbookId));
 		response.then().log().everything();
 		assert response.statusCode() == 400;
 	}
@@ -231,7 +231,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(textbook)
-					.post(String.format(host + "/graph/textbook/%s/add", textbookId));
+					.post(String.format(host + "/graph/textbooks/%s", textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 400;
 		} finally {
@@ -250,7 +250,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/textbook/%s", textbookId));
+					.get(String.format(host + "/graph/textbooks/%s", textbookId));
 			response.then().log().everything();
 			Textbook returnedTextbook = response.getBody().as(Textbook.class);
 			assert response.statusCode() == 200;
@@ -269,7 +269,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.get(String.format(host + "/graph/textbook/%s", textbookId));
+				.get(String.format(host + "/graph/textbooks/%s", textbookId));
 		response.then().log().everything();
 		assert response.statusCode() == 404;
 	}
@@ -285,7 +285,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.delete(String.format(host + "/graph/textbook/%s/delete", textbookId));
+				.delete(String.format(host + "/graph/textbooks/%s", textbookId));
 		response.then().log().everything();
 		assert response.statusCode() == 204;
 		assert !doesTextbookExist(textbookId, graphTraversalSource);
@@ -304,7 +304,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.post(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.post(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 201;
 			assert getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -326,7 +326,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.post(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.post(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 			assert !getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -347,7 +347,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.post(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.post(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 			assert !getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -371,7 +371,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.delete(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.delete(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 204;
 			assert !getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -394,7 +394,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.delete(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.delete(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 			assert !getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -416,7 +416,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.delete(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.delete(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 			assert !getUserTextbookRelationshipExists(userId, WANTS_VERB, textbookId, graphTraversalSource);
@@ -439,7 +439,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.get(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			Relationship relationship = response.getBody().as(Relationship.class);
 			assert response.statusCode() == 200;
@@ -464,7 +464,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.get(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 		} finally {
@@ -484,7 +484,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/user/%s/verb/%s/textbook/%s", userId, WANTS_VERB, textbookId));
+					.get(String.format(host + "/graph/users/%s/verbs/%s/textbooks/%s", userId, WANTS_VERB, textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 		} finally {
@@ -509,7 +509,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/textbook/%s/users", textbookId));
+					.get(String.format(host + "/graph/textbooks/%s/users", textbookId));
 			response.then().log().everything();
 			User[] users = response.getBody().as(User[].class);
 			assert users.length == 2;
@@ -535,7 +535,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/textbook/%s/users", textbookId));
+					.get(String.format(host + "/graph/textbooks/%s/users", textbookId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 		} finally {
@@ -559,7 +559,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/textbook/%s/users", textbookId));
+					.get(String.format(host + "/graph/textbooks/%s/users", textbookId));
 			response.then().log().everything();
 			User[] users = response.getBody().as(User[].class);
 			assert users.length == 0;
@@ -595,7 +595,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/user/%s/wishlist", userId));
+					.get(String.format(host + "/graph/users/%s/wishlist", userId));
 			response.then().log().everything();
 			Map map = response.getBody().as(Map.class);
 			assert map.size() == 2;
@@ -630,7 +630,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/user/%s/wishlist", userId));
+					.get(String.format(host + "/graph/users/%s/wishlist", userId));
 			response.then().log().everything();
 			assert response.statusCode() == 404;
 		} finally {
@@ -655,7 +655,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.get(String.format(host + "/graph/find/user/%s/wishlist", userId));
+					.get(String.format(host + "/graph/users/%s/wishlist", userId));
 			response.then().log().everything();
 			Map map = response.getBody().as(Map.class);
 			assert map.size() == 0;
@@ -686,7 +686,7 @@ public class AppFunctional {
 					.pathParameter("user", userId2 )
 					.pathParam("textbook", textbookId )
 					.pathParam("consumer", userId )
-					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 201;
 			assert getUserTextbookRelationshipExists(userId, OWNS_VERB, textbookId, graphTraversalSource);
@@ -715,7 +715,7 @@ public class AppFunctional {
 					.pathParameter("user", userId2 )
 					.pathParam("textbook", textbookId )
 					.pathParam("consumer", userId )
-					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 404;
 		} finally {
@@ -741,7 +741,7 @@ public class AppFunctional {
 					.pathParameter("user", userId2 )
 					.pathParam("textbook", textbookId )
 					.pathParam("consumer", userId )
-					.post(host + "/graph/user/{user}/textbook/{textbook}/consumer/{consumer}/transfer");
+					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 404;
 		} finally {
