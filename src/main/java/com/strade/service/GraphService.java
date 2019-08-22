@@ -145,7 +145,7 @@ public class GraphService {
 			}
 		}
 		if (existingTextbooks.size() == 0) {
-			throw new TextbookDoesNotExistException("No textbooks were returned");
+			throw new TextbookDoesNotExistException("None of the supplied textbook ids exist");
 		} else {
 			return graphDao.getUsersWhoOwnTextbooks(existingTextbooks);
 		}

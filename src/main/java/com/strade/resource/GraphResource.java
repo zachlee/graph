@@ -198,7 +198,6 @@ public class GraphResource {
 	}
 
 	public static void getUsersWhoOwnTextbooks(Context context) throws IOException {
-		//todo construct post body
 		GetUsersWithTextbookRequest request = mapper.readValue(context.body(), GetUsersWithTextbookRequest.class);
 		List<String> textbookIds = request.getTextbooks();
 		try {

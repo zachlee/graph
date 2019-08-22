@@ -1,8 +1,5 @@
 package com.strade.functional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.POJONode;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import com.strade.domain.Relationship;
@@ -80,8 +77,8 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void getNonExistantUserReturns404() {
-		String nonExistantUserId = UUID.randomUUID().toString();
+	public void getNonExistentUserReturns404() {
+		String nonExistentUser = UUID.randomUUID().toString();
 		Response response = given()
 				.log()
 				.everything()
@@ -89,7 +86,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.with()
-				.pathParameter("user", nonExistantUserId)
+				.pathParameter("user", nonExistentUser)
 				.get(host + "/graph/internal/users/{user}");
 		response.then().log().everything();
 		logger.log(Level.SEVERE, response.getBody().print());
@@ -857,7 +854,73 @@ public class AppFunctional {
 		createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB, graphTraversalSource);
 
 		String body = "{ \"textbooks\": [\"textbook1\", \"textbook2\", \"textbook3\", \"textbook4\"] }";
-//		Strings body = "";
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.body(body)
+					.post(host + "/graph/textbooks");
+			response.then().log().everything();
+			assert response.getStatusCode() == 200;
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId2).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId3).drop().iterate();
+			graphTraversalSource.V().has("uuid", textbookId4).drop().iterate();
+
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId3).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId4).drop().iterate();
+		}
+	}
+
+	@Test
+	public void getUsersWhoOwnTextbooksNoTextbooksFoundReturns404(){
+		String userId = UUID.randomUUID().toString();
+		String body = "{ \"textbooks\": [\"textbook1\", \"textbook2\", \"textbook3\", \"textbook4\"] }";
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.body(body)
+					.post(host + "/graph/textbooks");
+			response.then().log().everything();
+			assert response.getStatusCode() == 404;
+		} finally {
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
+		}
+	}
+
+	@Test
+	public void getUsersWhoOwnTextbooksNoUsersFoundReturns200() {
+		String userId = UUID.randomUUID().toString();
+		String userId2 = UUID.randomUUID().toString();
+		String userId3 = UUID.randomUUID().toString();
+		String userId4 = UUID.randomUUID().toString();
+
+		String textbookId = "textbook";
+		String textbookId2 = "textbook2";
+		String textbookId3 = "textbook3";
+		String textbookId4 = "textbook4";
+
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId2), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId3), graphTraversalSource);
+		createUserTraversalAndAssert(createUser(userId4), graphTraversalSource);
+
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId2, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId3, "isbn10", "isbn13", graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId4, "isbn10", "isbn13", graphTraversalSource);
+
+		String body = "{ \"textbooks\": [\"textbook1\", \"textbook2\", \"textbook3\", \"textbook4\"] }";
 		try {
 			Response response = given()
 					.log()
