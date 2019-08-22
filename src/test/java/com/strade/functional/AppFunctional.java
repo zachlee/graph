@@ -5,7 +5,6 @@ import com.jayway.restassured.response.Response;
 import com.strade.domain.Relationship;
 import com.strade.domain.Textbook;
 import com.strade.domain.User;
-
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
@@ -21,7 +20,8 @@ import java.util.logging.Logger;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.strade.util.TestUtils.*;
-import static com.strade.utils.Labels.*;
+import static com.strade.utils.Labels.OWNS_VERB;
+import static com.strade.utils.Labels.WANTS_VERB;
 
 public class AppFunctional {
 	private Logger logger = Logger.getLogger(AppFunctional.class.getName());
@@ -330,7 +330,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void createRelationshipTextbookDoesntExistReturns404(){
+	public void createRelationshipTextbookDoesntExistReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
@@ -509,7 +509,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void getTextbookRelationshipUserDoesntExistReturns404(){
+	public void getTextbookRelationshipUserDoesntExistReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
@@ -532,7 +532,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void findUsersWithTextbookReturns200(){
+	public void findUsersWithTextbookReturns200() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -586,7 +586,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void findUsersWithTextbookReturnsEmptyList(){
+	public void findUsersWithTextbookReturnsEmptyList() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -614,7 +614,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void searchWishListReturns200(){
+	public void searchWishListReturns200() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String userId3 = UUID.randomUUID().toString();
@@ -653,7 +653,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void searchWishListUserDoesntExistReturns404(){
+	public void searchWishListUserDoesntExistReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String userId3 = UUID.randomUUID().toString();
@@ -686,7 +686,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void searchWishListReturnsEmptyList(){
+	public void searchWishListReturnsEmptyList() {
 		String userId = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
 		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
@@ -712,7 +712,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void transferBookReturns201(){
+	public void transferBookReturns201() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -728,9 +728,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2 )
-					.pathParam("textbook", textbookId )
-					.pathParam("consumer", userId )
+					.pathParameter("user", userId2)
+					.pathParam("textbook", textbookId)
+					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 201;
@@ -743,7 +743,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void transferBookUserDoesntExistReturns404(){
+	public void transferBookUserDoesntExistReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -757,9 +757,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2 )
-					.pathParam("textbook", textbookId )
-					.pathParam("consumer", userId )
+					.pathParameter("user", userId2)
+					.pathParam("textbook", textbookId)
+					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 404;
@@ -770,7 +770,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void transferBookTextbookDoesntExistReturns404(){
+	public void transferBookTextbookDoesntExistReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -783,9 +783,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2 )
-					.pathParam("textbook", textbookId )
-					.pathParam("consumer", userId )
+					.pathParameter("user", userId2)
+					.pathParam("textbook", textbookId)
+					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 404;
@@ -797,7 +797,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void transferBookOwnerDoesntHaveOwningRelationship(){
+	public void transferBookOwnerDoesntHaveOwningRelationship() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String textbookId = UUID.randomUUID().toString();
@@ -812,9 +812,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2 )
-					.pathParam("textbook", textbookId )
-					.pathParam("consumer", userId )
+					.pathParameter("user", userId2)
+					.pathParam("textbook", textbookId)
+					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
 			response.then().log().everything();
 			assert response.getStatusCode() == 400;
@@ -826,7 +826,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void getUsersWhoOwnTextbooksReturns200(){
+	public void getUsersWhoOwnTextbooksReturns200() {
 		String userId = UUID.randomUUID().toString();
 		String userId2 = UUID.randomUUID().toString();
 		String userId3 = UUID.randomUUID().toString();
@@ -879,7 +879,7 @@ public class AppFunctional {
 	}
 
 	@Test
-	public void getUsersWhoOwnTextbooksNoTextbooksFoundReturns404(){
+	public void getUsersWhoOwnTextbooksNoTextbooksFoundReturns404() {
 		String userId = UUID.randomUUID().toString();
 		String body = "{ \"textbooks\": [\"textbook1\", \"textbook2\", \"textbook3\", \"textbook4\"] }";
 		try {

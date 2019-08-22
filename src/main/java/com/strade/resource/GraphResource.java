@@ -10,7 +10,6 @@ import com.strade.service.GraphService;
 import io.javalin.Context;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -60,7 +59,7 @@ public class GraphResource {
 			Textbook textbook = graphService.getTextbookById(textbookId);
 			context.status(STATUS_CODE_OK);
 			context.json(textbook);
-		} catch ( TextbookDoesNotExistException e) {
+		} catch (TextbookDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (TextbookException e) {
@@ -86,7 +85,7 @@ public class GraphResource {
 			validateInputs(userId, verb, textbookId);
 			graphService.addTextbookRelationship(userId, verb, textbookId);
 			context.status(STATUS_CODE_CREATED);
-		} catch ( TextbookDoesNotExistException | UserDoesNotExistException e ) {
+		} catch (TextbookDoesNotExistException | UserDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (VerbException | IOException e) {
@@ -106,7 +105,7 @@ public class GraphResource {
 			validateInputs(userId, verb, textbookId);
 			graphService.removeTextbookRelationship(userId, verb, textbookId);
 			context.status(STATUS_CODE_NO_CONTENT);
-		} catch ( TextbookDoesNotExistException | UserDoesNotExistException e ) {
+		} catch (TextbookDoesNotExistException | UserDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (VerbException | IOException e) {
@@ -127,7 +126,7 @@ public class GraphResource {
 			Relationship relationship = graphService.getTextbookRelationship(userId, verb, textbookId);
 			context.json(relationship)
 					.status(STATUS_CODE_OK);
-		} catch (TextbookDoesNotExistException | UserDoesNotExistException e ) {
+		} catch (TextbookDoesNotExistException | UserDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (VerbException | IOException e) {
@@ -217,7 +216,7 @@ public class GraphResource {
 			Map<Long, List<User>> usersWhoOwnTextbooksFromWishList = graphService.getUsersWhoOwnTextbooksFromWishList(userId);
 			context.status(STATUS_CODE_OK)
 					.json(usersWhoOwnTextbooksFromWishList);
-		} catch ( UserDoesNotExistException e ) {
+		} catch (UserDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
 					.json(e.getMessage());
 		} catch (IOException e) {

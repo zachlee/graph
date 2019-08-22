@@ -98,7 +98,7 @@ public class GraphService {
 
 		validateInputsForRelationship(userId, verb, textbookId);
 		boolean created = graphDao.createTextbookRelationship(userId, verb, textbookId);
-		if ( !created ) {
+		if (!created) {
 			throw new RelationshipException(String.format("Could not create Relationship between %s, %s and %s", userId, verb, textbookId));
 		}
 	}

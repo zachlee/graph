@@ -61,8 +61,8 @@ public class GraphDao {
 	public boolean doesTextbookExist(String textbookId, String isbn10, String isbn13) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.V()
 				.or(__.V().hasLabel(TEXTBOOK_LABEL).has(NODE_UUID, textbookId),
-					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN10, isbn10),
-					__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN13, isbn13));
+						__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN10, isbn10),
+						__.V().hasLabel(TEXTBOOK_LABEL).has(ISBN13, isbn13));
 		return traversal.hasNext();
 	}
 
@@ -76,7 +76,7 @@ public class GraphDao {
 				.has(NODE_UUID, textbookId)
 				.limit(1)
 				.valueMap(true);
-		if ( traversal.hasNext() ) {
+		if (traversal.hasNext()) {
 			Map<Object, Object> textbookValueMap = traversal.next();
 			return createTextbookFromMap(textbookValueMap);
 		} else {
@@ -196,7 +196,7 @@ public class GraphDao {
 				.select(RELATIONSHIP_ALIAS)
 				.path()
 				.by(__.valueMap(true));
-		if (relationshipTraversal.hasNext()){
+		if (relationshipTraversal.hasNext()) {
 			Path relationshipMap = relationshipTraversal.next();
 			return createRelationshipFromPath(relationshipMap);
 		} else {
@@ -269,16 +269,16 @@ public class GraphDao {
 		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
 		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
 		Map<Long, List<User>> orderedUserMap = new HashMap<>();
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Map.Entry<Object, Long> entry = iterator.next();
 			iterateAndAddUserToMap(orderedUserMap, entry);
 		}
 		return orderedUserMap;
 	}
 
-	private void iterateAndAddUserToMap(Map<Long, List<User>> orderedUserMap, Map.Entry<Object, Long> entry ) {
+	private void iterateAndAddUserToMap(Map<Long, List<User>> orderedUserMap, Map.Entry<Object, Long> entry) {
 		Object userMap = entry.getKey();
-		User user = createUserFromMap((Map<Object,Object>)userMap);
+		User user = createUserFromMap((Map<Object, Object>) userMap);
 		Long numberOfRelationships = entry.getValue();
 		buildOrderedUserMap(orderedUserMap, user, numberOfRelationships);
 	}
@@ -330,13 +330,13 @@ public class GraphDao {
 	}
 
 	private String extractEdgeLabelFromPathObject(Object edgeObjectFromPath) {
-		HashMap<T,String> edgeMap = (HashMap<T,String>) edgeObjectFromPath;
+		HashMap<T, String> edgeMap = (HashMap<T, String>) edgeObjectFromPath;
 		boolean labelFound = false;
 		Iterator<Map.Entry<T, String>> iterator = edgeMap.entrySet().iterator();
 		String verbLabel = "";
-		while ( !labelFound && iterator.hasNext() ) {
+		while (!labelFound && iterator.hasNext()) {
 			Object value = iterator.next().getValue();
-			if ( value instanceof String) {
+			if (value instanceof String) {
 				labelFound = true;
 				verbLabel = (String) value;
 			}

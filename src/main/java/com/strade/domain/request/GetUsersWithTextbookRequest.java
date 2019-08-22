@@ -9,7 +9,8 @@ public class GetUsersWithTextbookRequest {
 	@JsonProperty("textbooks")
 	List<String> textbooks;
 
-	public GetUsersWithTextbookRequest(){}
+	public GetUsersWithTextbookRequest() {
+	}
 
 	public List<String> getTextbooks() {
 		return textbooks;

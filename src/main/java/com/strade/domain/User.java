@@ -18,7 +18,8 @@ public class User {
 	@JsonProperty("type")
 	private String type;
 
-	public User(){};
+	public User() {
+	}
 
 	public User(String uuid,
 				String username,

@@ -1,3 +1,4 @@
 package com.strade.exceptions.util;
 
-public class ExceptionUtils { }
+public class ExceptionUtils {
+}

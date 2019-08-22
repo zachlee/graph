@@ -16,12 +16,10 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import static com.strade.utils.Labels.*;
-import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GraphServiceTest {
@@ -144,7 +142,7 @@ public class GraphServiceTest {
 		doReturn(textbook).when(graphDaoMock).getTextbook(TEXTBOOK_ONE);
 		try {
 			graphServiceUnderTest.getTextbookById(TEXTBOOK_ONE);
-		} catch (Exception e){
+		} catch (Exception e) {
 			fail("Should not have thrown exception.");
 		}
 	}
@@ -200,7 +198,7 @@ public class GraphServiceTest {
 	}
 
 	@Test
-	public void addTextbookRelationshipVerbNotValid(){
+	public void addTextbookRelationshipVerbNotValid() {
 		doReturn(true).when(graphDaoMock).doesUserExist(anyString());
 		doReturn(false).when(graphDaoMock).isVerbValid(anyString());
 		try {
@@ -352,7 +350,7 @@ public class GraphServiceTest {
 	}
 
 	@Test
-	public void removeTextbookRelationshipVerbNotValid(){
+	public void removeTextbookRelationshipVerbNotValid() {
 		doReturn(true).when(graphDaoMock).doesUserExist(anyString());
 		doReturn(false).when(graphDaoMock).isVerbValid(anyString());
 		try {
@@ -400,11 +398,11 @@ public class GraphServiceTest {
 	}
 
 	@Test
-	public void findUsersWithTextbookHappyPath(){
+	public void findUsersWithTextbookHappyPath() {
 		doReturn(true).when(graphDaoMock).doesTextbookExistById(anyString());
 		try {
 			graphServiceUnderTest.findUsersWithTextbook(TEXTBOOK_ONE);
-		} catch (Exception e){
+		} catch (Exception e) {
 			fail("Should not have thrown exception");
 		}
 	}
@@ -415,7 +413,7 @@ public class GraphServiceTest {
 		try {
 			graphServiceUnderTest.findUsersWithTextbook(TEXTBOOK_ONE);
 			fail("Should hve thrown TextbookDoesntExistException");
-		} catch (Exception e){
+		} catch (Exception e) {
 			assert e instanceof TextbookDoesNotExistException;
 		}
 	}
@@ -524,7 +522,7 @@ public class GraphServiceTest {
 	}
 
 	@Test
-	public void transferBookUserDoesntOwnTextbook(){
+	public void transferBookUserDoesntOwnTextbook() {
 		doReturn(true).when(graphDaoMock).doesUserExist(anyString());
 		doReturn(true).when(graphDaoMock).doesTextbookExistById(anyString());
 		doReturn(null).when(graphDaoMock)

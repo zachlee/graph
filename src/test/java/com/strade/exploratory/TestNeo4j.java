@@ -14,7 +14,10 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import static com.strade.utils.Labels.*;
@@ -56,7 +59,7 @@ public class TestNeo4j {
 				.limit(1)
 				.valueMap(true);
 		boolean textbookRead = traversalRead.hasNext();
-		assert(textbookRead);
+		assert (textbookRead);
 
 		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
 				.hasLabel(TEXTBOOK_LABEL)
@@ -186,7 +189,7 @@ public class TestNeo4j {
 			Map<String, List<String>> textbookMap = (HashMap<String, List<String>>) objects.get(2);
 			List<String> textbookList = textbookMap.get("uuid");
 			String textbookIdFromList = textbookList.get(0);
-			HashMap<T,String> edgeMap = (HashMap<T,String>) objects.get(1);
+			HashMap<T, String> edgeMap = (HashMap<T, String>) objects.get(1);
 			String edgeLabel = edgeMap.entrySet().iterator().next().getValue();
 			assert null != relationship;
 		} finally {
@@ -204,7 +207,7 @@ public class TestNeo4j {
 		String textbookId = UUID.randomUUID().toString();
 		String textbookId2 = UUID.randomUUID().toString();
 		try {
-			for ( int i = 0; i < 1000; i++) {
+			for (int i = 0; i < 1000; i++) {
 
 				User user = createUser(userId);
 				GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)

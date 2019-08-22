@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static com.strade.utils.Labels.*;
-import static com.strade.utils.Labels.SCHOOL;
-import static com.strade.utils.Labels.TYPE;
 
 public class TestUtils {
 
@@ -50,7 +48,7 @@ public class TestUtils {
 		assert traversal.hasNext();
 	}
 
-	public static boolean getUserTextbookRelationshipExists(String userId, String verb, String textbookId, GraphTraversalSource graphTraversalSource){
+	public static boolean getUserTextbookRelationshipExists(String userId, String verb, String textbookId, GraphTraversalSource graphTraversalSource) {
 		GraphTraversal<Vertex, Path> relationshipTraversal = graphTraversalSource.V()
 				.hasLabel(USER_LABEL)
 				.has(NODE_UUID, userId)
