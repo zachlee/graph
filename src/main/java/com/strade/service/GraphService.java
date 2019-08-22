@@ -74,10 +74,7 @@ public class GraphService {
 	}
 
 	public void removeTextbook(String textbookId) {
-		boolean doesTextbookExist = graphDao.doesTextbookExistById(textbookId);
-		if (doesTextbookExist) {
-			graphDao.deleteTextbook(textbookId);
-		}
+		graphDao.deleteTextbook(textbookId);
 	}
 
 	public Textbook getTextbookById(String textbookId) throws TextbookException {
@@ -172,7 +169,7 @@ public class GraphService {
 		boolean deleteOwnsRelationship = graphDao.deleteTextbookRelationship(owner, OWNS_VERB, textbookId);
 		boolean deleteWantsRelationship = graphDao.deleteTextbookRelationship(consumer, WANTS_VERB, textbookId);
 		boolean textbookRelationship = graphDao.createTextbookRelationship(consumer, OWNS_VERB, textbookId);
-		if (!deleteOwnsRelationship || !deleteWantsRelationship || !textbookRelationship) {
+		if (!textbookRelationship) {
 			throw new RelationshipException(String.format("Unable to complete tranfer between owner %s, consumer %s and textbook %s", owner, consumer, textbookId));
 		}
 
