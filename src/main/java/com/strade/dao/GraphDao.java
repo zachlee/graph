@@ -66,8 +66,8 @@ public class GraphDao {
 		return traversal.hasNext();
 	}
 
-	public boolean isVerbValid(String verbId) {
-		return true;
+	public boolean isVerbValid(String verb) {
+		return verb.equals(OWNS_VERB) || verb.equals(WANTS_VERB);
 	}
 
 	public Textbook getTextbook(String textbookId) {
