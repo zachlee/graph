@@ -85,7 +85,8 @@ public class GraphServiceTest {
 	public void getUserHappyPath() {
 		doReturn(user).when(graphDaoMock).getUser(anyString());
 		try {
-			graphServiceUnderTest.getUser(USER_ONE);
+			User user = graphServiceUnderTest.getUser(USER_ONE);
+			assert null != user;
 		} catch (Exception e) {
 			fail("Should not have thrown an exception");
 		}

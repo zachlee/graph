@@ -39,7 +39,7 @@ public class TestNeo4j {
 
 	@Test
 	public void insertReadDropVertexTest() {
-		String textbookId = UUID.randomUUID().toString() + "_test";
+		String textbookId = UUID.randomUUID().toString();
 		GraphTraversal<Vertex, Map<Object, Object>> vertexInsert = graphTraversalSource.addV(TEXTBOOK_LABEL)
 				.property(NODE_UUID, textbookId)
 				.property(TITLE, "TITLE")
