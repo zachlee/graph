@@ -14,7 +14,7 @@ public class App {
 		Javalin app = Javalin
 				.create()
 				//todo this should read from a properties file based on environment
-				.enableCorsForOrigin("http://localhost:8080")
+				.enableCorsForOrigin("http://localhost:7000")
 				.start(7000);
 		app.routes(() -> {
 			path("about", () -> {
