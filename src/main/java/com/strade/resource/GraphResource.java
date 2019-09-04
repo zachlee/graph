@@ -196,15 +196,18 @@ public class GraphResource {
 		}
 	}
 
-	public static void getUsersWhoOwnTextbooks(Context context) throws IOException {
-		GetUsersWithTextbookRequest request = mapper.readValue(context.body(), GetUsersWithTextbookRequest.class);
-		List<String> textbookIds = request.getTextbooks();
+	public static void getUsersWhoOwnTextbooks(Context context){
 		try {
+			GetUsersWithTextbookRequest request = mapper.readValue(context.body(), GetUsersWithTextbookRequest.class);
+			List<String> textbookIds = request.getTextbooks();
 			Map<Long, List<User>> usersWhoOwnTextbooks = graphService.getUsersWhoOwnTextbooks(textbookIds);
 			context.status(STATUS_CODE_OK)
 					.json(usersWhoOwnTextbooks);
 		} catch (TextbookDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (IOException e) {
+			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		}
 	}
