@@ -13,6 +13,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -259,6 +260,7 @@ public class IntegrationGraphDao {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void doesTextbookExistByIdReturnsTrue() {
 		String textbookId = UUID.randomUUID().toString();
