@@ -61,8 +61,13 @@ public class GraphService {
 	}
 
 	public void addTextbook(Textbook textbook) throws TextbookException {
-		String textbookId = textbook.getUuid();
-		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
+		//todo!!! create books by isbn
+		String isbn10 = textbook.getIsbn10();
+		boolean textbookExists = false;
+		if (null != isbn10) {
+			textbookExists = graphDao.doesTextbookExistByIsbn10(isbn10);
+		}
+		String isbn13 = textbook.getIsbn13();
 		if (textbookExists) {
 			throw new TextbookAlreadyExistsException(String.format("Textbook with id %s already exists.", textbookId));
 		} else {
@@ -87,6 +92,34 @@ public class GraphService {
 			}
 		} else {
 			throw new TextbookDoesNotExistException(String.format("Textbook with id %s doesn't exist", textbookId));
+		}
+		return textbook;
+	}
+
+	public Textbook getTextbookByIsbn10(String isbn10) throws TextbookException {
+		boolean doesTextbookExist = graphDao.doesTextbookExistByIsbn10(isbn10);
+		Textbook textbook;
+		if (doesTextbookExist) {
+			textbook = graphDao.getTextbookIsbn10(isbn10);
+			if (null == textbook) {
+				throw new TextbookException(String.format("Textbook with id %s could not be retrieved", isbn10));
+			}
+		} else {
+			throw new TextbookDoesNotExistException(String.format("Textbook with id %s doesn't exist", isbn10));
+		}
+		return textbook;
+	}
+
+	public Textbook getTextbookByIsbn13(String isbn13) throws TextbookException {
+		boolean doesTextbookExist = graphDao.doesTextbookExistByIsbn10(isbn13);
+		Textbook textbook;
+		if (doesTextbookExist) {
+			textbook = graphDao.getTextbookIsbn13(isbn13);
+			if (null == textbook) {
+				throw new TextbookException(String.format("Textbook with id %s could not be retrieved", isbn13));
+			}
+		} else {
+			throw new TextbookDoesNotExistException(String.format("Textbook with id %s doesn't exist", isbn13));
 		}
 		return textbook;
 	}

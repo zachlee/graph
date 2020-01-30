@@ -11,11 +11,10 @@ public class App {
 	Logger logger = Logger.getLogger(App.class.getName());
 
 	public static void main(String[] args) {
-		Javalin app = Javalin
-				.create()
-				//todo this should read from a properties file based on environment
-				.enableCorsForOrigin("http://localhost:7000")
-				.start(7000);
+		Javalin app = Javalin.create();
+		app.config.enableCorsForOrigin("http://localhost:7000");
+		app.start(7000);
+
 		app.routes(() -> {
 			path("about", () -> {
 				get(GraphResource::aboutPage);

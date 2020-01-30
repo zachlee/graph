@@ -1,7 +1,7 @@
 package com.strade.resource;
 
 import com.strade.service.GraphService;
-import io.javalin.Context;
+import io.javalin.http.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

@@ -84,6 +84,34 @@ public class GraphDao {
 		}
 	}
 
+	public Textbook getTextbookIsbn10(String isbn10) {
+		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(ISBN10, isbn10)
+				.limit(1)
+				.valueMap(true);
+		if (traversal.hasNext()) {
+			Map<Object, Object> textbookValueMap = traversal.next();
+			return createTextbookFromMap(textbookValueMap);
+		} else {
+			return null;
+		}
+	}
+
+	public Textbook getTextbookIsbn13(String isbn13) {
+		GraphTraversal<Vertex, Map<Object, Object>> traversal = graphTraversalSource.V()
+				.hasLabel(TEXTBOOK_LABEL)
+				.has(ISBN13, isbn13)
+				.limit(1)
+				.valueMap(true);
+		if (traversal.hasNext()) {
+			Map<Object, Object> textbookValueMap = traversal.next();
+			return createTextbookFromMap(textbookValueMap);
+		} else {
+			return null;
+		}
+	}
+
 	public boolean createTextbook(Textbook textbook) {
 		GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(TEXTBOOK_LABEL)
 				.property(NODE_UUID, textbook.getUuid())

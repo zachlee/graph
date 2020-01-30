@@ -7,7 +7,7 @@ import com.strade.domain.User;
 import com.strade.domain.request.GetUsersWithTextbookRequest;
 import com.strade.exceptions.*;
 import com.strade.service.GraphService;
-import io.javalin.Context;
+import io.javalin.http.Context;
 
 import java.io.IOException;
 import java.util.List;
