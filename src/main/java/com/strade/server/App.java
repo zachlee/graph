@@ -12,7 +12,7 @@ public class App {
 
 	public static void main(String[] args) {
 		Javalin app = Javalin.create();
-		app.config.enableCorsForOrigin("http://localhost:7000");
+		app.config.enableCorsForAllOrigins();
 		app.start(7000);
 
 		app.routes(() -> {

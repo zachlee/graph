@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.javalin:javalin:3.2.0'
+    compile 'io.javalin:javalin:3.7.0'
     compile group: 'org.apache.tinkerpop', name: 'gremlin-driver', version: '3.3.7'
     compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.538'
     compile "com.fasterxml.jackson.core:jackson-databind:2.9.8"

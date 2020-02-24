@@ -45,8 +45,6 @@ public class GraphServiceTest {
 		textbook = new Textbook(NODE_UUID,
 				TITLE,
 				AUTHOR,
-				GENERAL_SUBJECT,
-				SPECIFIC_SUBJECT,
 				ISBN10,
 				ISBN13);
 		user = new User(NODE_UUID,

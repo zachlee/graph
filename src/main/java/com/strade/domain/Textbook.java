@@ -12,12 +12,6 @@ public class Textbook {
 	@JsonProperty("author")
 	private String author;
 
-	@JsonProperty("general_subject")
-	private String generalSubject;
-
-	@JsonProperty("specific_subject")
-	private String specificSubject;
-
 	@JsonProperty("isbn10")
 	private String isbn10;
 
@@ -30,15 +24,11 @@ public class Textbook {
 	public Textbook(String uuid,
 					String title,
 					String author,
-					String generalSubject,
-					String specificSubject,
 					String isbn10,
 					String isbn13) {
 		this.setUuid(uuid);
 		this.setTitle(title);
 		this.setAuthor(author);
-		this.setGeneralSubject(generalSubject);
-		this.setSpecificSubject(specificSubject);
 		this.setIsbn10(isbn10);
 		this.setIsbn13(isbn13);
 	}
@@ -65,22 +55,6 @@ public class Textbook {
 
 	public void setAuthor(String author) {
 		this.author = author;
-	}
-
-	public String getGeneralSubject() {
-		return generalSubject;
-	}
-
-	public void setGeneralSubject(String generalSubject) {
-		this.generalSubject = generalSubject;
-	}
-
-	public String getSpecificSubject() {
-		return specificSubject;
-	}
-
-	public void setSpecificSubject(String specificSubject) {
-		this.specificSubject = specificSubject;
 	}
 
 	public String getIsbn10() {

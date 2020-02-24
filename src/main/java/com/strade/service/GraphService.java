@@ -62,12 +62,8 @@ public class GraphService {
 
 	public void addTextbook(Textbook textbook) throws TextbookException {
 		//todo!!! create books by isbn
-		String isbn10 = textbook.getIsbn10();
-		boolean textbookExists = false;
-		if (null != isbn10) {
-			textbookExists = graphDao.doesTextbookExistByIsbn10(isbn10);
-		}
-		String isbn13 = textbook.getIsbn13();
+		String textbookId = textbook.getUuid();
+		boolean textbookExists = graphDao.doesTextbookExistById(textbookId);
 		if (textbookExists) {
 			throw new TextbookAlreadyExistsException(String.format("Textbook with id %s already exists.", textbookId));
 		} else {

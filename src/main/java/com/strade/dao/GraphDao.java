@@ -117,8 +117,6 @@ public class GraphDao {
 				.property(NODE_UUID, textbook.getUuid())
 				.property(TITLE, textbook.getTitle())
 				.property(AUTHOR, textbook.getAuthor())
-				.property(GENERAL_SUBJECT, textbook.getGeneralSubject())
-				.property(SPECIFIC_SUBJECT, textbook.getSpecificSubject())
 				.property(ISBN10, textbook.getIsbn10())
 				.property(ISBN13, textbook.getIsbn13());
 		return traversal.hasNext();
@@ -324,8 +322,6 @@ public class GraphDao {
 		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
-				getString(textbookValueMap.get(GENERAL_SUBJECT)),
-				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
 				getString(textbookValueMap.get(ISBN10)),
 				getString(textbookValueMap.get(ISBN13)));
 	}

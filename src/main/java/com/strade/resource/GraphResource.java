@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import static com.google.api.client.http.HttpStatusCodes.*;
 
-
 public class GraphResource {
 
 	Logger logger = Logger.getLogger(GraphResource.class.getName());

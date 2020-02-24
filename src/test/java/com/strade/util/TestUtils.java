@@ -67,8 +67,6 @@ public class TestUtils {
 		return new Textbook(textbookId,
 				"title",
 				"author",
-				"subject",
-				"specificSubject",
 				"isbn10",
 				"isbn13");
 	}
@@ -77,8 +75,6 @@ public class TestUtils {
 		return new Textbook(getString(textbookValueMap.get(NODE_UUID)),
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
-				getString(textbookValueMap.get(GENERAL_SUBJECT)),
-				getString(textbookValueMap.get(SPECIFIC_SUBJECT)),
 				getString(textbookValueMap.get(ISBN10)),
 				getString(textbookValueMap.get(ISBN13)));
 	}
