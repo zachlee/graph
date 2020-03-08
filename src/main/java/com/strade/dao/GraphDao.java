@@ -118,7 +118,8 @@ public class GraphDao {
 				.property(TITLE, textbook.getTitle())
 				.property(AUTHOR, textbook.getAuthor())
 				.property(ISBN10, textbook.getIsbn10())
-				.property(ISBN13, textbook.getIsbn13());
+				.property(ISBN13, textbook.getIsbn13())
+				.property(IMAGE_LINK, textbook.getImageLink());
 		return traversal.hasNext();
 	}
 
@@ -291,6 +292,27 @@ public class GraphDao {
 		}
 	}
 
+	public List<Textbook> getTextbooksByVerb(String userId, String verb) {
+		GraphTraversal<Vertex, List<Map<Object, Object>>> traversal = graphTraversalSource.V()
+				.hasLabel(USER_LABEL)
+				.has(NODE_UUID, userId)
+				.out(verb)
+				.hasLabel(TEXTBOOK_LABEL)
+				.valueMap(true)
+				.fold();
+		if (traversal.hasNext()) {
+			List<Textbook> textbooks = new ArrayList<>();
+			List<Map<Object, Object>> textbooksValueMapList = traversal.next();
+			for (Map<Object, Object> textbookValueMap : textbooksValueMapList) {
+				Textbook textbookFromValueMap = createTextbookFromMap(textbookValueMap);
+				textbooks.add(textbookFromValueMap);
+			}
+			return textbooks;
+		} else {
+			return null;
+		}
+	}
+
 	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
 		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
 		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
@@ -323,7 +345,8 @@ public class GraphDao {
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
 				getString(textbookValueMap.get(ISBN10)),
-				getString(textbookValueMap.get(ISBN13)));
+				getString(textbookValueMap.get(ISBN13)),
+				getString(textbookValueMap.get(IMAGE_LINK)));
 	}
 
 	private Relationship createRelationshipFromPath(Path relationshipPath) {

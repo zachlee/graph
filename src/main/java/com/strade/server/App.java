@@ -2,6 +2,7 @@ package com.strade.server;
 
 import com.strade.resource.GraphResource;
 import io.javalin.Javalin;
+import io.javalin.core.JavalinConfig;
 
 import java.util.logging.Logger;
 
@@ -11,8 +12,7 @@ public class App {
 	Logger logger = Logger.getLogger(App.class.getName());
 
 	public static void main(String[] args) {
-		Javalin app = Javalin.create();
-		app.config.enableCorsForAllOrigins();
+		Javalin app = Javalin.create(JavalinConfig::enableCorsForAllOrigins);
 		app.start(7000);
 
 		app.routes(() -> {
@@ -32,10 +32,13 @@ public class App {
 					});
 				});
 				path("users/:user", () -> {
-					path("verbs/:verb/textbooks/:textbook", () -> {
-						get(GraphResource::getTextbookRelationship);
-						post(GraphResource::createTextbookRelationship);
-						delete(GraphResource::deleteTextbookRelationship);
+					path("verbs/:verb/textbooks", () -> {
+						get(GraphResource::getAllRelationshipsByVerb);
+						path(":textbook", () -> {
+							get(GraphResource::getTextbookRelationship);
+							post(GraphResource::createTextbookRelationship);
+							delete(GraphResource::deleteTextbookRelationship);
+						});
 					});
 					path("textbooks/:textbook/users/:consumer/transfer", () -> {
 						post(GraphResource::transferBook);

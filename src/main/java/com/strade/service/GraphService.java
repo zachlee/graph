@@ -204,6 +204,20 @@ public class GraphService {
 
 	}
 
+	public List<Textbook> getTextbooksByRelationship(String user, String verb) throws UserDoesNotExistException, VerbException {
+		validateInputsForUserAndVerb(user, verb);
+		return graphDao.getTextbooksByVerb(user, verb);
+	}
+
+	private void validateInputsForUserAndVerb(String user, String verb) throws VerbException, UserDoesNotExistException {
+		if (!graphDao.doesUserExist(user)) {
+			throw new UserDoesNotExistException(String.format("User with id %s doesn't exist", user));
+		}
+		if (!graphDao.isVerbValid(verb)) {
+			throw new VerbException(String.format("Verb %s is not valid", verb));
+		}
+	}
+
 	private void validateInputsForTransfer(String owner, String consumer, String textbookId) throws TextbookDoesNotExistException, UserDoesNotExistException {
 		if (!graphDao.doesUserExist(owner)) {
 			throw new UserDoesNotExistException(String.format("User with id %s doesn't exist", owner));

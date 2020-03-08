@@ -18,6 +18,9 @@ public class Textbook {
 	@JsonProperty("isbn13")
 	private String isbn13;
 
+	@JsonProperty("image_link")
+	private String imageLink;
+
 	public Textbook() {
 	}
 
@@ -25,12 +28,14 @@ public class Textbook {
 					String title,
 					String author,
 					String isbn10,
-					String isbn13) {
+					String isbn13,
+					String imageLink) {
 		this.setUuid(uuid);
 		this.setTitle(title);
 		this.setAuthor(author);
 		this.setIsbn10(isbn10);
 		this.setIsbn13(isbn13);
+		this.setImageLink(imageLink);
 	}
 
 	public String getUuid() {
@@ -71,5 +76,13 @@ public class Textbook {
 
 	public void setIsbn13(String isbn13) {
 		this.isbn13 = isbn13;
+	}
+
+	public String getImageLink() {
+		return imageLink;
+	}
+
+	public void setImageLink(String imageLink) {
+		this.imageLink = imageLink;
 	}
 }

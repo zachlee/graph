@@ -46,7 +46,8 @@ public class GraphServiceTest {
 				TITLE,
 				AUTHOR,
 				ISBN10,
-				ISBN13);
+				ISBN13,
+				IMAGE_LINK);
 		user = new User(NODE_UUID,
 				USERNAME,
 				EMAIL,

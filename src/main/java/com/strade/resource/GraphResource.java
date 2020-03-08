@@ -19,6 +19,9 @@ import static com.google.api.client.http.HttpStatusCodes.*;
 public class GraphResource {
 
 	Logger logger = Logger.getLogger(GraphResource.class.getName());
+
+	private static final String ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static GraphService graphService = GraphService.getInstance();
 
@@ -28,6 +31,7 @@ public class GraphResource {
 	}
 
 	public static void aboutPage(Context context) throws IOException {
+		context.header(ALLOW_ORIGIN, "*");
 		String aboutReturn = graphService.aboutPage();
 		context.contentType("application/json")
 				.status(STATUS_CODE_OK)
@@ -35,10 +39,12 @@ public class GraphResource {
 	}
 
 	public static void createTextbook(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		try {
 			Textbook textbook = mapper.readValue(context.body(), Textbook.class);
 			graphService.addTextbook(textbook);
-			context.status(STATUS_CODE_CREATED);
+			context.status(STATUS_CODE_CREATED)
+					.header(ALLOW_ORIGIN, "*");
 		} catch (IOException e) {
 			context.status(STATUS_CODE_BAD_REQUEST);
 		} catch (TextbookException e) {
@@ -52,11 +58,13 @@ public class GraphResource {
 	}
 
 	public static void getTextbookById(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String textbookId = context.pathParam("textbook");
 		try {
 			validateInputs(textbookId);
 			Textbook textbook = graphService.getTextbookById(textbookId);
 			context.status(STATUS_CODE_OK);
+			context.header(ALLOW_ORIGIN, "*");
 			context.json(textbook);
 		} catch (TextbookDoesNotExistException e) {
 			context.status(STATUS_CODE_NOT_FOUND)
@@ -71,6 +79,7 @@ public class GraphResource {
 	}
 
 	public static void deleteTextbook(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String textbookIdString = context.pathParam("textbook");
 		graphService.removeTextbook(textbookIdString);
 		context.status(STATUS_CODE_NO_CONTENT);
@@ -97,6 +106,7 @@ public class GraphResource {
 	}
 
 	public static void deleteTextbookRelationship(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String userId = context.pathParam("user");
 		String verb = context.pathParam("verb");
 		String textbookId = context.pathParam("textbook");
@@ -117,6 +127,7 @@ public class GraphResource {
 	}
 
 	public static void getTextbookRelationship(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String userId = context.pathParam("user");
 		String verb = context.pathParam("verb");
 		String textbookId = context.pathParam("textbook");
@@ -138,6 +149,7 @@ public class GraphResource {
 	}
 
 	public static void addUser(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		try {
 			User user = mapper.readValue(context.body(), User.class);
 			graphService.addUser(user);
@@ -152,6 +164,7 @@ public class GraphResource {
 	}
 
 	public static void deleteUser(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String userId = context.pathParam("user");
 		try {
 			validateInputs(userId);
@@ -164,6 +177,7 @@ public class GraphResource {
 	}
 
 	public static void getUser(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String userId = context.pathParam("user");
 		try {
 			validateInputs(userId);
@@ -180,6 +194,7 @@ public class GraphResource {
 	}
 
 	public static void findUsersWithTextbook(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String textbookId = context.pathParam("textbook");
 		try {
 			validateInputs(textbookId);
@@ -196,6 +211,7 @@ public class GraphResource {
 	}
 
 	public static void getUsersWhoOwnTextbooks(Context context){
+		context.header(ALLOW_ORIGIN, "*");
 		try {
 			GetUsersWithTextbookRequest request = mapper.readValue(context.body(), GetUsersWithTextbookRequest.class);
 			List<String> textbookIds = request.getTextbooks();
@@ -212,6 +228,7 @@ public class GraphResource {
 	}
 
 	public static void searchWishList(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String userId = context.pathParam("user");
 		try {
 			validateInputs(userId);
@@ -228,6 +245,7 @@ public class GraphResource {
 	}
 
 	public static void transferBook(Context context) {
+		context.header(ALLOW_ORIGIN, "*");
 		String owningUser = context.pathParam("user");
 		String consumingUser = context.pathParam("consumer");
 		String textbookId = context.pathParam("textbook");
@@ -243,6 +261,22 @@ public class GraphResource {
 					.json(e.getMessage());
 		} catch (RelationshipException e) {
 			context.status(STATUS_CODE_SERVER_ERROR)
+					.json(e.getMessage());
+		}
+	}
+
+	public static void getAllRelationshipsByVerb(Context context) {
+		String user = context.pathParam("user");
+		String verb = context.pathParam("verb");
+		try {
+			List<Textbook> textbookList = graphService.getTextbooksByRelationship(user, verb);
+			context.status(STATUS_CODE_OK)
+					.json(textbookList);
+		} catch (UserDoesNotExistException e) {
+			context.status(STATUS_CODE_NOT_FOUND)
+					.json(e.getMessage());
+		} catch (VerbException e) {
+			context.status(STATUS_CODE_BAD_REQUEST)
 					.json(e.getMessage());
 		}
 	}

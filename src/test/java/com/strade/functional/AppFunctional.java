@@ -13,6 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -942,6 +944,32 @@ public class AppFunctional {
 			graphTraversalSource.V().has("uuid", userId2).drop().iterate();
 			graphTraversalSource.V().has("uuid", userId3).drop().iterate();
 			graphTraversalSource.V().has("uuid", userId4).drop().iterate();
+		}
+	}
+
+	@Test
+	public void findAllOwnedTextbook() {
+		String userId = UUID.randomUUID().toString();
+		String textbookId = UUID.randomUUID().toString();
+		createUserTraversalAndAssert(createUser(userId), graphTraversalSource);
+		createTextbookTraversalAndAssert(textbookId, "isbn10", "isbn13", graphTraversalSource);
+		createRelationshipAndAssert(userId, textbookId, OWNS_VERB, graphTraversalSource);
+		try {
+			Response response = given()
+					.log()
+					.everything()
+					.and()
+					.contentType(ContentType.JSON)
+					.when()
+					.pathParameter("user", userId)
+					.get(host + "/graph/users/{user}/verbs/owns/textbooks");
+			response.then().log().everything();
+			List list = response.getBody().as(List.class);
+			assert list.size() == 1;
+			assert response.statusCode() == 200;
+		} finally {
+			graphTraversalSource.V().has("uuid", textbookId).drop().iterate();
+			graphTraversalSource.V().has("uuid", userId).drop().iterate();
 		}
 	}
 }

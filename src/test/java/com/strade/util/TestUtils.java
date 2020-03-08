@@ -68,7 +68,8 @@ public class TestUtils {
 				"title",
 				"author",
 				"isbn10",
-				"isbn13");
+				"isbn13",
+				"imageLink");
 	}
 
 	public static Textbook createTextbookFromMap(Map<Object, Object> textbookValueMap) {
@@ -76,7 +77,8 @@ public class TestUtils {
 				getString(textbookValueMap.get(TITLE)),
 				getString(textbookValueMap.get(AUTHOR)),
 				getString(textbookValueMap.get(ISBN10)),
-				getString(textbookValueMap.get(ISBN13)));
+				getString(textbookValueMap.get(ISBN13)),
+				getString(textbookValueMap.get(IMAGE_LINK)));
 	}
 
 	public static User createUser(String uuid) {
