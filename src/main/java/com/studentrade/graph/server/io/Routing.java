@@ -1,4 +1,4 @@
-package com.studentrade.base.server.io;
+package com.studentrade.graph.server.io;
 
 import com.google.inject.Injector;
 

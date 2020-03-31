@@ -1,11 +1,11 @@
-package com.studentrade.base.resource;
+package com.studentrade.graph.resource;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
-import com.studentrade.base.dao.GraphDaoModule;
-import com.studentrade.base.routing.GraphRouting;
-import com.studentrade.base.service.GraphServiceModule;
-import com.studentrade.base.server.io.Routing;
+import com.studentrade.graph.dao.GraphDaoModule;
+import com.studentrade.graph.routing.GraphRouting;
+import com.studentrade.graph.service.GraphServiceModule;
+import com.studentrade.graph.server.io.Routing;
 
 public class GraphResourceModule extends AbstractModule {
 

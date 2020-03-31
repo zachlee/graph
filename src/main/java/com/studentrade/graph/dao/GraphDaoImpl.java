@@ -1,4 +1,4 @@
-package com.studentrade.base.dao;
+package com.studentrade.graph.dao;
 
 public class GraphDaoImpl implements GraphDao {
 

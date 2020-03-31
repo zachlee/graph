@@ -1,4 +1,4 @@
-package com.studentrade.base.auth;
+package com.studentrade.graph.auth;
 
 import io.javalin.core.security.Role;
 

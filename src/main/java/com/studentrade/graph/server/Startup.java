@@ -1,11 +1,11 @@
-package com.studentrade.base.server;
+package com.studentrade.graph.server;
 
 import com.google.inject.Inject;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
-import com.studentrade.base.server.io.AppEntrypoint;
-import com.studentrade.base.server.io.EntryPointType;
+import com.studentrade.graph.server.io.AppEntrypoint;
+import com.studentrade.graph.server.io.EntryPointType;
 
 import javax.inject.Singleton;
 import java.io.IOException;

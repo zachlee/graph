@@ -1,10 +1,10 @@
-package com.studentrade.base.server.io.web;
+package com.studentrade.graph.server.io.web;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
-import com.studentrade.base.auth.GraphAccessManager;
-import com.studentrade.base.server.io.AppEntrypoint;
-import com.studentrade.base.server.io.EntryPointType;
+import com.studentrade.graph.auth.GraphAccessManager;
+import com.studentrade.graph.server.io.AppEntrypoint;
+import com.studentrade.graph.server.io.EntryPointType;
 import io.javalin.Javalin;
 import org.jetbrains.annotations.NotNull;
 

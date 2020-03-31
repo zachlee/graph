@@ -1,7 +1,7 @@
-package com.studentrade.base.server;
+package com.studentrade.graph.server;
 
 import com.google.inject.AbstractModule;
-import com.studentrade.base.modules.GraphModule;
+import com.studentrade.graph.modules.GraphModule;
 
 public class AppModule extends AbstractModule {
 

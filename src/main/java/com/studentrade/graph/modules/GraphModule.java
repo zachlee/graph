@@ -1,8 +1,8 @@
-package com.studentrade.base.modules;
+package com.studentrade.graph.modules;
 
 import com.google.inject.AbstractModule;
-import com.studentrade.base.resource.GraphResourceModule;
-import com.studentrade.base.server.io.web.WebModule;
+import com.studentrade.graph.resource.GraphResourceModule;
+import com.studentrade.graph.server.io.web.WebModule;
 
 public class GraphModule extends AbstractModule {
 

@@ -1,7 +1,7 @@
-package com.studentrade.base.routing;
+package com.studentrade.graph.routing;
 
-import com.studentrade.base.resource.GraphResource;
-import com.studentrade.base.server.io.Routing;
+import com.studentrade.graph.resource.GraphResource;
+import com.studentrade.graph.server.io.Routing;
 import io.javalin.Javalin;
 
 import javax.inject.Inject;

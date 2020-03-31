@@ -1,8 +1,8 @@
-package com.studentrade.base.server;
+package com.studentrade.graph.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.studentrade.base.server.io.EntryPointType;
+import com.studentrade.graph.server.io.EntryPointType;
 
 import java.io.IOException;
 

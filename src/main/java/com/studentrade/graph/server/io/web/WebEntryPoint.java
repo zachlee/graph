@@ -1,10 +1,10 @@
-package com.studentrade.base.server.io.web;
+package com.studentrade.graph.server.io.web;
 
 import com.google.inject.Inject;
 import com.netflix.config.DynamicIntProperty;
 import com.netflix.config.DynamicPropertyFactory;
-import com.studentrade.base.server.io.AppEntrypoint;
-import com.studentrade.base.server.io.Routing;
+import com.studentrade.graph.server.io.AppEntrypoint;
+import com.studentrade.graph.server.io.Routing;
 import io.javalin.Javalin;
 
 import javax.inject.Singleton;

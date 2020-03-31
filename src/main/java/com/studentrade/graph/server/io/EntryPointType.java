@@ -1,4 +1,4 @@
-package com.studentrade.base.server.io;
+package com.studentrade.graph.server.io;
 
 public enum EntryPointType {
     REST

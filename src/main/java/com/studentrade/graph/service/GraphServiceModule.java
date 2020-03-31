@@ -1,4 +1,4 @@
-package com.studentrade.base.service;
+package com.studentrade.graph.service;
 
 import com.google.inject.AbstractModule;
 

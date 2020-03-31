@@ -1,8 +1,8 @@
-package com.studentrade.base.resource;
+package com.studentrade.graph.resource;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.studentrade.base.service.GraphService;
+import com.studentrade.graph.service.GraphService;
 
 @Singleton
 public class GraphResource {
