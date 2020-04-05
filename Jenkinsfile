@@ -11,7 +11,7 @@ node {
         }
         stage('Test') {
             steps {
-                echo 'Testing.. to trigger change'
+                echo 'Testing.. to trigger change1'
             }
         }
         stage('Deploy') {
