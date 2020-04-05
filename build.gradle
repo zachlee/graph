@@ -37,6 +37,10 @@ dependencies {
 }
 
 test {
+    testLogging {
+        showStandardStreams = true
+        events = ["passed", "failed", "skipped"]
+    }
     exclude 'com/studentrade/graph/functional'
     exclude 'com/studentrade/graph/integration'
     exclude 'com/studentrade/graph/exploratory'
