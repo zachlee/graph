@@ -16,6 +16,7 @@ import java.util.Optional;
 @Singleton
 class Startup {
 
+	private static final String DEFAULT_APP_NAME = "GRAPH";
 	private static final String ARCHAIUS_APP_PROPERTY = "archaius.deployment.applicationId";
 	private static final DynamicStringProperty APP_NAME = DynamicPropertyFactory.getInstance()
 			.getStringProperty(ARCHAIUS_APP_PROPERTY, "graph");
