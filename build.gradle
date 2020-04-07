@@ -6,7 +6,6 @@ group 'com.studentrade'
 version '1.0'
 
 sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
@@ -44,4 +43,15 @@ test {
     exclude 'com/studentrade/graph/functional'
     exclude 'com/studentrade/graph/integration'
     exclude 'com/studentrade/graph/exploratory'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.studentrade.graph.server.App'
+    }
+    baseName = 'graph'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from('src/main') {
+        include 'resources/graph.properties'
+    }
 }

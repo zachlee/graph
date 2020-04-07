@@ -18,7 +18,7 @@ class Startup {
 
 	private static final String ARCHAIUS_APP_PROPERTY = "archaius.deployment.applicationId";
 	private static final DynamicStringProperty APP_NAME = DynamicPropertyFactory.getInstance()
-			.getStringProperty(ARCHAIUS_APP_PROPERTY, "");
+			.getStringProperty(ARCHAIUS_APP_PROPERTY, "graph");
 
     @Inject(optional = true)
     private Map<EntryPointType, AppEntrypoint> entrypoints = Collections.emptyMap();
