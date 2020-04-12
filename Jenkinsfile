@@ -15,7 +15,7 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                sh 'packer build -var \'aws_access_key=AKIAJGSHQ7KZQBQQDKOA\' -var \'aws_secret_key=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\' -var \'jenkins_build_version=${BUILD_NUMBER}\' ./infrastructure/packer/build.json \'
+                sh 'packer build -var \'aws_access_key=AKIAJGSHQ7KZQBQQDKOA\' -var \'aws_secret_key=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\' -var \'jenkins_build_version=${BUILD_NUMBER}\' ./infrastructure/packer/build.json '
             }
         }
     }
