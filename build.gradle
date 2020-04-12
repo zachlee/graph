@@ -54,4 +54,7 @@ jar {
     from('src/main') {
         include 'resources/graph.properties'
     }
+    from('.') {
+        include 'infrastructure/packer/build.json'
+    }
 }
