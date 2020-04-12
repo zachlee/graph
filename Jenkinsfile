@@ -12,7 +12,7 @@ pipeline {
                 sh 'docker push 54.184.253.228:5000/graph'
                 sh 'docker images'
             }
-        },
+        }
         stage('Deploy') {
             steps {
                 sh './packer build \
