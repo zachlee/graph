@@ -13,13 +13,14 @@
     "source_ami": "ami-0fc39028f3050b0d8",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
-    "ami_name": "AMI Running Graph on Docker"
+    "ami_name": "Refresh Build Version"
   }],
   "provisioners":[
     {
       "type":"shell",
       "inline":[
         "sleep 30",
+        "docker stop $(sudo docker ps -aq)",
         "docker pull 54.184.253.228:5000/graph:{{user `jenkins_build_version`}}",
         "docker run -d -p 7000:7000 54.184.253.228:5000/graph:{{user `jenkins_build_version`}}"
       ]
