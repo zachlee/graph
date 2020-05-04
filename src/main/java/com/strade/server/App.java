@@ -13,10 +13,10 @@ public class App {
 		app.start(7000);
 
 		app.routes(() -> {
-			path("about", () -> {
-				get(GraphResource::aboutPage);
-			});
 			path("graph", () -> {
+				path("about", () -> {
+					get(GraphResource::aboutPage);
+				});
 				path("textbooks", () -> {
 					post(GraphResource::getUsersWhoOwnTextbooks);
 					path(":textbook", () -> {
