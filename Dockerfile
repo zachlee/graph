@@ -6,4 +6,4 @@ WORKDIR /usr/app
 
 EXPOSE 7000
 
-ENTRYPOINT ["java", "-jar", "graph-1.0.jar"]
+ENTRYPOINT ["java", "-jar", "graph-1.0.jar", "-Darchaius.deployment.applicationId=graph", "-Darchaius.deployment.environment=prod"]

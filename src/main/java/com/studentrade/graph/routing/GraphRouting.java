@@ -26,6 +26,9 @@ public class GraphRouting extends Routing<GraphResource> {
 	public void bindRoutes() {
 		javalin.routes(() -> {
 			path(APP_BASE_PATH, () -> {
+				path("about", () -> {
+					get(ctx -> getResource().healthcheck(ctx));
+				});
 				path("textbooks", () -> {
 					post(ctx -> getResource().getUsersWhoOwnTextbooks(ctx));
 					path(":textbook", () -> {
