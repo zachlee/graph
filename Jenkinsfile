@@ -11,7 +11,7 @@ pipeline {
                 sh 'docker info'
                 sh 'docker build -t graph .'
                 sh 'docker tag graph 438205058935.dkr.ecr.us-west-2.amazonaws.com/graph-repository:latest'
-                sh 'docker push 438205058935.dkr.ecr.us-west-2.amazonaws.com/graph-repository'
+                sh 'docker push 438205058935.dkr.ecr.us-west-2.amazonaws.com/graph-repository:latest'
                 sh 'docker images'
             }
         }

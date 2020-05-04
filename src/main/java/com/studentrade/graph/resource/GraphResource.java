@@ -30,6 +30,11 @@ public class GraphResource {
 		this.mapper = new ObjectMapper();
 	}
 
+	public void healthcheck(Context context) {
+		context.status(STATUS_CODE_OK)
+				.json("graph");
+	}
+
 	public void createTextbook(Context context) {
 		try {
 			Textbook textbook = mapper.readValue(context.body(), Textbook.class);
