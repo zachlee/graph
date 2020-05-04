@@ -17,8 +17,11 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static com.strade.utils.Labels.*;
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.stream.Collectors.toMap;
 
 public class GraphDao {
 
@@ -316,11 +319,18 @@ public class GraphDao {
 	private Map<Long, List<User>> extractOrderedUserMapFromTraversal(Map<Object, Long> objectMap) {
 		Set<Map.Entry<Object, Long>> returnedUserMapSet = objectMap.entrySet();
 		Iterator<Map.Entry<Object, Long>> iterator = returnedUserMapSet.iterator();
-		Map<Long, List<User>> orderedUserMap = new HashMap<>();
+		Map<Long, List<User>> unOrderedUserMap = new HashMap<>();
 		while (iterator.hasNext()) {
 			Map.Entry<Object, Long> entry = iterator.next();
-			iterateAndAddUserToMap(orderedUserMap, entry);
+			iterateAndAddUserToMap(unOrderedUserMap, entry);
 		}
+		LinkedHashMap<Long, List<User>> orderedUserMap = new LinkedHashMap<>();
+
+		unOrderedUserMap.entrySet()
+				.stream()
+				.sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+				.forEachOrdered(x -> orderedUserMap.put(x.getKey(), x.getValue()));
+
 		return orderedUserMap;
 	}
 

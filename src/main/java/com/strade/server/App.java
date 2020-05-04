@@ -4,12 +4,9 @@ import com.strade.resource.GraphResource;
 import io.javalin.Javalin;
 import io.javalin.core.JavalinConfig;
 
-import java.util.logging.Logger;
-
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class App {
-	Logger logger = Logger.getLogger(App.class.getName());
 
 	public static void main(String[] args) {
 		Javalin app = Javalin.create(JavalinConfig::enableCorsForAllOrigins);
