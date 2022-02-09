@@ -1,7 +1,7 @@
 package com.studentrade.graph.functional;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import com.studentrade.graph.domain.Relationship;
 import com.studentrade.graph.domain.Textbook;
 import com.studentrade.graph.domain.User;
@@ -9,17 +9,16 @@ import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static com.studentrade.graph.util.TestUtils.*;
 import static com.studentrade.graph.util.Labels.OWNS_VERB;
 import static com.studentrade.graph.util.Labels.WANTS_VERB;
@@ -33,7 +32,7 @@ public class AppFunctional {
 
 	private static GraphTraversalSource graphTraversalSource;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setup() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
@@ -52,7 +51,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.with()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.get(host + "/graph/internal/users/{user}");
 			response.then().log().everything();
 			User returnedUser = response.getBody().as(User.class);
@@ -73,7 +72,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.with()
-				.pathParameter("user", nonExistentUser)
+				.pathParam("user", nonExistentUser)
 				.get(host + "/graph/internal/users/{user}");
 		response.then().log().everything();
 		logger.log(Level.SEVERE, response.getBody().print());
@@ -91,7 +90,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.body(user)
 					.post(host + "/graph/internal/users/{user}");
 			response.then().log().everything();
@@ -114,7 +113,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.body(user)
 					.post(host + "/graph/internal/users/{user}");
 			response.then().log().everything();
@@ -136,7 +135,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.body(invalidBody)
-				.pathParameter("user", userId)
+				.pathParam("user", userId)
 				.post(host + "/graph/internal/users/{user}");
 		response.then().log().everything();
 		logger.log(Level.INFO, String.valueOf(response.getStatusCode()));
@@ -153,7 +152,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.pathParameter("user", userId)
+				.pathParam("user", userId)
 				.delete(host + "/graph/internal/users/{user}");
 		response.then().log().everything();
 		assert !doesUserExist(userId, graphTraversalSource);
@@ -168,7 +167,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.pathParameter("user", "doesntExist")
+				.pathParam("user", "doesntExist")
 				.delete(host + "/graph/internal/users/{user}");
 		response.then().log().everything();
 		assert response.statusCode() == 204;
@@ -187,7 +186,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(textbook)
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.post(host + "/graph/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 201;
@@ -207,7 +206,7 @@ public class AppFunctional {
 				.contentType(ContentType.JSON)
 				.when()
 				.body("invalidBody")
-				.pathParameter("textbook", textbookId)
+				.pathParam("textbook", textbookId)
 				.post(host + "/graph/textbooks/{textbook}");
 		response.then().log().everything();
 		assert response.statusCode() == 400;
@@ -226,7 +225,7 @@ public class AppFunctional {
 					.contentType(ContentType.JSON)
 					.when()
 					.body(textbook)
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.post(host + "/graph/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 400;
@@ -246,7 +245,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/textbooks/{textbook}");
 			response.then().log().everything();
 			Textbook returnedTextbook = response.getBody().as(Textbook.class);
@@ -266,7 +265,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.pathParameter("textbook", textbookId)
+				.pathParam("textbook", textbookId)
 				.get(host + "/graph/textbooks/{textbook}");
 		response.then().log().everything();
 		assert response.statusCode() == 404;
@@ -283,7 +282,7 @@ public class AppFunctional {
 				.and()
 				.contentType(ContentType.JSON)
 				.when()
-				.pathParameter("textbook", textbookId)
+				.pathParam("textbook", textbookId)
 				.delete(host + "/graph/textbooks/{textbook}");
 		response.then().log().everything();
 		assert response.statusCode() == 204;
@@ -303,9 +302,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.post(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 201;
@@ -328,9 +327,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.post(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -352,9 +351,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.post(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -379,9 +378,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.delete(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 204;
@@ -405,9 +404,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.delete(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -430,9 +429,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.delete(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -456,9 +455,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			Relationship relationship = response.getBody().as(Relationship.class);
@@ -484,9 +483,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -507,9 +506,9 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
-					.pathParameter("verb", WANTS_VERB)
-					.pathParameter("textbook", textbookId)
+					.pathParam("user", userId)
+					.pathParam("verb", WANTS_VERB)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/users/{user}/verbs/{verb}/textbooks/{textbook}");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -535,7 +534,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/textbooks/{textbook}/users");
 			response.then().log().everything();
 			User[] users = response.getBody().as(User[].class);
@@ -562,7 +561,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/textbooks/{textbook}/users");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -587,7 +586,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("textbook", textbookId)
+					.pathParam("textbook", textbookId)
 					.get(host + "/graph/textbooks/{textbook}/users");
 			response.then().log().everything();
 			User[] users = response.getBody().as(User[].class);
@@ -624,7 +623,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.get(host + "/graph/users/{user}/wishlist");
 			response.then().log().everything();
 			Map map = response.getBody().as(Map.class);
@@ -660,7 +659,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.get(host + "/graph/users/{user}/wishlist");
 			response.then().log().everything();
 			assert response.statusCode() == 404;
@@ -686,7 +685,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.get(host + "/graph/users/{user}/wishlist");
 			response.then().log().everything();
 			Map map = response.getBody().as(Map.class);
@@ -715,7 +714,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2)
+					.pathParam("user", userId2)
 					.pathParam("textbook", textbookId)
 					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
@@ -744,7 +743,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2)
+					.pathParam("user", userId2)
 					.pathParam("textbook", textbookId)
 					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
@@ -770,7 +769,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2)
+					.pathParam("user", userId2)
 					.pathParam("textbook", textbookId)
 					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
@@ -799,7 +798,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId2)
+					.pathParam("user", userId2)
 					.pathParam("textbook", textbookId)
 					.pathParam("consumer", userId)
 					.post(host + "/graph/users/{user}/textbooks/{textbook}/users/{consumer}/transfer");
@@ -946,7 +945,7 @@ public class AppFunctional {
 					.and()
 					.contentType(ContentType.JSON)
 					.when()
-					.pathParameter("user", userId)
+					.pathParam("user", userId)
 					.get(host + "/graph/users/{user}/verbs/owns/textbooks");
 			response.then().log().everything();
 			List list = response.getBody().as(List.class);

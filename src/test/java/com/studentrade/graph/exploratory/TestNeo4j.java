@@ -13,7 +13,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -97,49 +97,49 @@ public class TestNeo4j {
 		Edge next = edgeTraversal.next();
 		assert null != next;
 
-		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
-				.hasLabel(TEXTBOOK_LABEL)
-				.has(NODE_UUID, idOne)
-				.outE(OWNS_VERB)
-				.as(OWNS_ALIAS)
-				.inV()
-				.hasLabel(TEXTBOOK_LABEL)
-				.has(NODE_UUID, idTwo)
-				.valueMap(true)
-				.store(DROPPED_ALIAS)
-				.select(OWNS_ALIAS)
-				.drop()
-				.cap(DROPPED_ALIAS)
-				.unfold();
-
-		boolean droppedEdge = dropEdgeTraversal.hasNext();
-		assert droppedEdge;
-
-		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
-				.hasLabel(TEXTBOOK_LABEL)
-				.has(NODE_UUID, idOne)
-				.as(TEXTBOOK_ALIAS)
-				.valueMap(true)
-				.store(DROPPED_ALIAS)
-				.select(TEXTBOOK_ALIAS)
-				.drop()
-				.cap(DROPPED_ALIAS)
-				.unfold();
-		boolean droppedOne = dropTraversal.hasNext();
-		assert droppedOne;
-
-		GraphTraversal<Vertex, Vertex> dropTraversalTwo = graphTraversalSource.V()
-				.hasLabel(TEXTBOOK_LABEL)
-				.has(NODE_UUID, idTwo)
-				.as(TEXTBOOK_ALIAS)
-				.valueMap(true)
-				.store(DROPPED_ALIAS)
-				.select(TEXTBOOK_ALIAS)
-				.drop()
-				.cap(DROPPED_ALIAS)
-				.unfold();
-		boolean droppedTwo = dropTraversalTwo.hasNext();
-		assert droppedTwo;
+//		GraphTraversal<Vertex, Object> dropEdgeTraversal = graphTraversalSource.V()
+//				.hasLabel(TEXTBOOK_LABEL)
+//				.has(NODE_UUID, idOne)
+//				.outE(OWNS_VERB)
+//				.as(OWNS_ALIAS)
+//				.inV()
+//				.hasLabel(TEXTBOOK_LABEL)
+//				.has(NODE_UUID, idTwo)
+//				.valueMap(true)
+//				.store(DROPPED_ALIAS)
+//				.select(OWNS_ALIAS)
+//				.drop()
+//				.cap(DROPPED_ALIAS)
+//				.unfold();
+//
+//		boolean droppedEdge = dropEdgeTraversal.hasNext();
+//		assert droppedEdge;
+//
+//		GraphTraversal<Vertex, Vertex> dropTraversal = graphTraversalSource.V()
+//				.hasLabel(TEXTBOOK_LABEL)
+//				.has(NODE_UUID, idOne)
+//				.as(TEXTBOOK_ALIAS)
+//				.valueMap(true)
+//				.store(DROPPED_ALIAS)
+//				.select(TEXTBOOK_ALIAS)
+//				.drop()
+//				.cap(DROPPED_ALIAS)
+//				.unfold();
+//		boolean droppedOne = dropTraversal.hasNext();
+//		assert droppedOne;
+//
+//		GraphTraversal<Vertex, Vertex> dropTraversalTwo = graphTraversalSource.V()
+//				.hasLabel(TEXTBOOK_LABEL)
+//				.has(NODE_UUID, idTwo)
+//				.as(TEXTBOOK_ALIAS)
+//				.valueMap(true)
+//				.store(DROPPED_ALIAS)
+//				.select(TEXTBOOK_ALIAS)
+//				.drop()
+//				.cap(DROPPED_ALIAS)
+//				.unfold();
+//		boolean droppedTwo = dropTraversalTwo.hasNext();
+//		assert droppedTwo;
 	}
 
 	@Test
@@ -211,12 +211,7 @@ public class TestNeo4j {
 			for (int i = 0; i < 1000; i++) {
 
 				User user = createUser(userId);
-				GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL)
-						.property(NODE_UUID, UUID.randomUUID().toString())
-						.property(SCHOOL, user.getSchool())
-						.property(EMAIL, user.getEmail())
-						.property(USERNAME, "zach")
-						.property(TYPE, user.getType());
+				GraphTraversal<Vertex, Vertex> traversal = graphTraversalSource.addV(USER_LABEL);
 				traversal.hasNext();
 
 				User user2 = createUser(userId2);
@@ -278,56 +273,56 @@ public class TestNeo4j {
 						.property(ISBN13, isbn13);
 				textbookTraversal3.hasNext();
 
-//				GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId));
-//				Edge edge = createEdgeTraversal.next();
-////				assert null != edge;
-//
-//
-//				GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId2))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId));
-//				Edge edge2 = createEdgeTraversal2.next();
-////				assert null != edge2;
-//
-//				GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId3))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId));
-//				Edge edge3 = createEdgeTraversal3.next();
-////				assert null != edge3;
-//
-//
-//				GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId4))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId));
-//				Edge edge4 = createEdgeTraversal4.next();
-////				assert null != edge4;
-//
-//				GraphTraversal<Edge, Edge> createEdgeTraversal5 = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId2));
-//				Edge edge5 = createEdgeTraversal5.next();
-////				assert null != edge;
-//
-//
-//				GraphTraversal<Edge, Edge> createEdgeTraversal6 = graphTraversalSource.addE(OWNS_VERB)
-//						.from(__.V().hasLabel(USER_LABEL)
-//								.has(NODE_UUID, userId2))
-//						.to(__.V().hasLabel(TEXTBOOK_LABEL)
-//								.has(NODE_UUID, textbookId2));
-//				Edge edge6 = createEdgeTraversal6.next();
+				GraphTraversal<Edge, Edge> createEdgeTraversal = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId));
+				Edge edge = createEdgeTraversal.next();
+//				assert null != edge;
+
+
+				GraphTraversal<Edge, Edge> createEdgeTraversal2 = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId2))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId));
+				Edge edge2 = createEdgeTraversal2.next();
 //				assert null != edge2;
+
+				GraphTraversal<Edge, Edge> createEdgeTraversal3 = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId3))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId));
+				Edge edge3 = createEdgeTraversal3.next();
+//				assert null != edge3;
+
+
+				GraphTraversal<Edge, Edge> createEdgeTraversal4 = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId4))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId));
+				Edge edge4 = createEdgeTraversal4.next();
+//				assert null != edge4;
+
+				GraphTraversal<Edge, Edge> createEdgeTraversal5 = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId2));
+				Edge edge5 = createEdgeTraversal5.next();
+//				assert null != edge;
+
+
+				GraphTraversal<Edge, Edge> createEdgeTraversal6 = graphTraversalSource.addE(OWNS_VERB)
+						.from(__.V().hasLabel(USER_LABEL)
+								.has(NODE_UUID, userId2))
+						.to(__.V().hasLabel(TEXTBOOK_LABEL)
+								.has(NODE_UUID, textbookId2));
+				Edge edge6 = createEdgeTraversal6.next();
+				assert null != edge2;
 			}
 
 //			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);

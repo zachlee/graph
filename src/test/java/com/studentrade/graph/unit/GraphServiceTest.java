@@ -7,26 +7,21 @@ import com.studentrade.graph.domain.User;
 import com.studentrade.graph.exception.*;
 import com.studentrade.graph.service.GraphService;
 import com.studentrade.graph.service.GraphServiceImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import static com.studentrade.graph.util.Labels.*;
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GraphServiceTest {
 
-	@Mock
 	private GraphDao graphDaoMock;
 
 	private GraphService graphServiceUnderTest;
@@ -41,8 +36,9 @@ public class GraphServiceTest {
 	private static String VERB = "verb";
 
 
-	@Before
+	@BeforeEach
 	public void setup() {
+		graphDaoMock = mock(GraphDao.class);
 		textbook = new Textbook(NODE_UUID,
 				TITLE,
 				AUTHOR,

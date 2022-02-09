@@ -24,7 +24,7 @@ public class GraphDaoImpl implements GraphDao {
 	private static GraphTraversalSource graphTraversalSource;
 
 	public GraphDaoImpl() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("54.184.253.228").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 

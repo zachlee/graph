@@ -13,9 +13,9 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class IntegrationGraphDao {
 	private GraphDao graphDao = new GraphDaoImpl();
 	private static GraphTraversalSource graphTraversalSource;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setup() {
 		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
@@ -261,7 +261,7 @@ public class IntegrationGraphDao {
 		}
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void doesTextbookExistByIdReturnsTrue() {
 		String textbookId = UUID.randomUUID().toString();

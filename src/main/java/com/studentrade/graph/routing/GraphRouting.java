@@ -31,7 +31,7 @@ public class GraphRouting extends Routing<GraphResource> {
 				});
 				path("textbooks", () -> {
 					post(ctx -> getResource().getUsersWhoOwnTextbooks(ctx));
-					path(":textbook", () -> {
+					path("{textbook}", () -> {
 						get(ctx -> getResource().getTextbookById(ctx));
 						post(ctx -> getResource().createTextbook(ctx));
 						delete(ctx -> getResource().deleteTextbook(ctx));
@@ -40,16 +40,16 @@ public class GraphRouting extends Routing<GraphResource> {
 						});
 					});
 				});
-				path("users/:user", () -> {
-					path("verbs/:verb/textbooks", () -> {
+				path("users/{user}", () -> {
+					path("verbs/{verb}/textbooks", () -> {
 						get(ctx -> getResource().getAllRelationshipsByVerb(ctx));
-						path(":textbook", () -> {
+						path("{textbook}", () -> {
 							get(ctx -> getResource().getTextbookRelationship(ctx));
 							post(ctx -> getResource().createTextbookRelationship(ctx));
 							delete(ctx -> getResource().deleteTextbookRelationship(ctx));
 						});
 					});
-					path("textbooks/:textbook/users/:consumer/transfer", () -> {
+					path("textbooks/{textbook}/users/{consumer}/transfer", () -> {
 						post(ctx -> getResource().transferBook(ctx));
 					});
 					path("wishlist", () -> {
@@ -57,7 +57,7 @@ public class GraphRouting extends Routing<GraphResource> {
 					});
 				});
 				path("internal", () -> {
-					path("users/:user", () -> {
+					path("users/{user}", () -> {
 						get(ctx -> getResource().getUser(ctx));
 						post(ctx -> getResource().addUser(ctx));
 						delete(ctx -> getResource().deleteUser(ctx));
