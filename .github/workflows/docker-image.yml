@@ -42,7 +42,7 @@ jobs:
           java-version: 8
 
       - name: Build with Gradle
-        run: ./gradlew jar
+        run: ./gradlew shadowJar
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
