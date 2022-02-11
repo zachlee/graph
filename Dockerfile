@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre-alpine
 
 COPY ./build/libs/graph-1.0.jar /usr/app/
 

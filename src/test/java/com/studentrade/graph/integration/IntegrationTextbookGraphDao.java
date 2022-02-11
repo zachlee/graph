@@ -1,7 +1,7 @@
 package com.studentrade.graph.integration;
 
-import com.studentrade.graph.dao.GraphDao;
-import com.studentrade.graph.dao.GraphDaoImpl;
+import com.studentrade.graph.dao.TextbookGraphDao;
+import com.studentrade.graph.dao.TextbookGraphDaoImpl;
 import com.studentrade.graph.domain.Relationship;
 import com.studentrade.graph.domain.Textbook;
 import com.studentrade.graph.domain.User;
@@ -27,15 +27,15 @@ import java.util.logging.Logger;
 import static com.studentrade.graph.util.TestUtils.*;
 import static com.studentrade.graph.util.Labels.*;
 
-public class IntegrationGraphDao {
+public class IntegrationTextbookGraphDao {
 
-	private Logger logger = Logger.getLogger(IntegrationGraphDao.class.getName());
-	private GraphDao graphDao = new GraphDaoImpl();
+	private Logger logger = Logger.getLogger(IntegrationTextbookGraphDao.class.getName());
+	private TextbookGraphDao textbookGraphDao = new TextbookGraphDaoImpl();
 	private static GraphTraversalSource graphTraversalSource;
 
 	@BeforeAll
 	public static void setup() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
@@ -45,7 +45,7 @@ public class IntegrationGraphDao {
 		try {
 			User user = createUser(userId);
 			long startTime = System.currentTimeMillis();
-			boolean addUser = graphDao.createUser(user);
+			boolean addUser = textbookGraphDao.createUser(user);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "create new user = " + (endTime - startTime) + "ms");
 			assert addUser;
@@ -70,7 +70,7 @@ public class IntegrationGraphDao {
 			User user = createUser(userId);
 			createUserTraversalAndAssert(user, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			User daoUser = graphDao.getUser(userId);
+			User daoUser = textbookGraphDao.getUser(userId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get existing user = " + (endTime - startTime) + "ms");
 			assert null != daoUser;
@@ -85,7 +85,7 @@ public class IntegrationGraphDao {
 	@Test
 	public void getNonExistingUserReturnsNull() {
 		long startTime = System.currentTimeMillis();
-		User nonExistentUser = graphDao.getUser("DoesntExist");
+		User nonExistentUser = textbookGraphDao.getUser("DoesntExist");
 		long endTime = System.currentTimeMillis();
 		logger.log(Level.INFO, "get nonexisting user = " + (endTime - startTime) + "ms");
 		assert null == nonExistentUser;
@@ -107,7 +107,7 @@ public class IntegrationGraphDao {
 		assert null != getUser;
 
 		long startTime = System.currentTimeMillis();
-		graphDao.deleteUser(userId);
+		textbookGraphDao.deleteUser(userId);
 		long endTime = System.currentTimeMillis();
 		logger.log(Level.INFO, "delete existing user = " + (endTime - startTime) + "ms");
 
@@ -123,7 +123,7 @@ public class IntegrationGraphDao {
 	@Test
 	public void deleteNonExistingUserIdempotent() {
 		long startTime = System.currentTimeMillis();
-		graphDao.deleteUser("DoesntExist");
+		textbookGraphDao.deleteUser("DoesntExist");
 		long endTime = System.currentTimeMillis();
 		logger.log(Level.INFO, "delete nonexising user = " + (endTime - startTime) + "ms");
 	}
@@ -134,7 +134,7 @@ public class IntegrationGraphDao {
 		try {
 			Textbook textbook = createTextbookObject(textbookId);
 			long startTime = System.currentTimeMillis();
-			boolean createdTextbook = graphDao.createTextbook(textbook);
+			boolean createdTextbook = textbookGraphDao.createTextbook(textbook);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "create new textbook = " + (endTime - startTime) + "ms");
 			assert createdTextbook;
@@ -159,7 +159,7 @@ public class IntegrationGraphDao {
 		try {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			Textbook textbookRetrieved = graphDao.getTextbook(textbookId);
+			Textbook textbookRetrieved = textbookGraphDao.getTextbook(textbookId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get textbook = " + (endTime - startTime) + "ms");
 			assert null != textbookRetrieved;
@@ -172,7 +172,7 @@ public class IntegrationGraphDao {
 	@Test
 	public void getTextbookNonExistingTextbookReturnsNull() {
 		long startTime = System.currentTimeMillis();
-		Textbook doesntExist = graphDao.getTextbook("doesntExist");
+		Textbook doesntExist = textbookGraphDao.getTextbook("doesntExist");
 		long endTime = System.currentTimeMillis();
 		logger.log(Level.INFO, "get nonexisting textbook = " + (endTime - startTime) + "ms");
 		assert null == doesntExist;
@@ -197,7 +197,7 @@ public class IntegrationGraphDao {
 		assert null != getTextbook;
 
 		long startTime = System.currentTimeMillis();
-		graphDao.deleteTextbook(textbookId);
+		textbookGraphDao.deleteTextbook(textbookId);
 		long endTime = System.currentTimeMillis();
 		logger.log(Level.INFO, "delete existing textbook = " + (endTime - startTime) + "ms");
 
@@ -218,7 +218,7 @@ public class IntegrationGraphDao {
 		try {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			boolean textbookExist = graphDao.doesTextbookExist(textbookId, isbn10, isbn13);
+			boolean textbookExist = textbookGraphDao.doesTextbookExist(textbookId, isbn10, isbn13);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "does textbook exist by textbookid, isbn10, isbn13 = " + (endTime - startTime) + "ms");
 			assert textbookExist;
@@ -235,7 +235,7 @@ public class IntegrationGraphDao {
 		try {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			boolean textbookExist = graphDao.doesTextbookExistByIsbn10(isbn10);
+			boolean textbookExist = textbookGraphDao.doesTextbookExistByIsbn10(isbn10);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "does textbook exist by isbn10 = " + (endTime - startTime) + "ms");
 			assert textbookExist;
@@ -252,7 +252,7 @@ public class IntegrationGraphDao {
 		try {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			boolean textbookExist = graphDao.doesTextbookExistByIsbn13(isbn13);
+			boolean textbookExist = textbookGraphDao.doesTextbookExistByIsbn13(isbn13);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "does textbook exist by isbn13 = " + (endTime - startTime) + "ms");
 			assert textbookExist;
@@ -270,7 +270,7 @@ public class IntegrationGraphDao {
 		try {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 			long startTime = System.currentTimeMillis();
-			boolean textbookExist = graphDao.doesTextbookExistById(textbookId);
+			boolean textbookExist = textbookGraphDao.doesTextbookExistById(textbookId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "does textbook exist by id = " + (endTime - startTime) + "ms");
 			assert textbookExist;
@@ -291,7 +291,7 @@ public class IntegrationGraphDao {
 			createTextbookTraversalAndAssert(textbookId, isbn10, isbn13, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
-			boolean userTextbookRelationship = graphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
+			boolean userTextbookRelationship = textbookGraphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "create textbook relationship = " + (endTime - startTime) + "ms");
 			assert userTextbookRelationship;
@@ -329,7 +329,7 @@ public class IntegrationGraphDao {
 			createRelationshipAndAssert(userId, textbookId, verb, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
-			Relationship userTextbookRelationship = graphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
+			Relationship userTextbookRelationship = textbookGraphDao.getTextbookRelationship(userId, OWNS_VERB, textbookId);
 			assert userTextbookRelationship.getUser().equals(userId);
 			assert userTextbookRelationship.getTextbook().equals(textbookId);
 			assert userTextbookRelationship.getVerb().equals(OWNS_VERB);
@@ -380,7 +380,7 @@ public class IntegrationGraphDao {
 			assert null != relationship;
 
 			long startTime = System.currentTimeMillis();
-			boolean deletedRelationship = graphDao.deleteTextbookRelationship(userId, verb, textbookId);
+			boolean deletedRelationship = textbookGraphDao.deleteTextbookRelationship(userId, verb, textbookId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "delete existing textbook relationship = " + (endTime - startTime) + "ms");
 			assert deletedRelationship;
@@ -431,7 +431,7 @@ public class IntegrationGraphDao {
 			createRelationshipAndAssert(userId4, textbookId, verb, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
-			List<User> userList = graphDao.getUsersWhoOwnTextbook(textbookId);
+			List<User> userList = textbookGraphDao.getUsersWhoOwnTextbook(textbookId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get users who own one textbook = " + (endTime - startTime) + "ms");
 			assert null != userList;
@@ -480,7 +480,7 @@ public class IntegrationGraphDao {
 			createRelationshipAndAssert(userId2, textbookId2, OWNS_VERB, graphTraversalSource);
 
 			long startTime = System.currentTimeMillis();
-			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnTextbooks(textbookIds);
+			Map<Long, List<User>> orderedUserMap = textbookGraphDao.getUsersWhoOwnTextbooks(textbookIds);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get users who own a list of textbooks = " + (endTime - startTime) + "ms");
 			assert null != orderedUserMap;
@@ -531,7 +531,7 @@ public class IntegrationGraphDao {
 
 
 			long startTime = System.currentTimeMillis();
-			Map<Long, List<User>> orderedUserMap = graphDao.getUsersWhoOwnWantedTextbooks(userId);
+			Map<Long, List<User>> orderedUserMap = textbookGraphDao.getUsersWhoOwnWantedTextbooks(userId);
 			long endTime = System.currentTimeMillis();
 			logger.log(Level.INFO, "get users who own textbooks that are wanted by user = " + (endTime - startTime) + "ms");
 			assert null != orderedUserMap;

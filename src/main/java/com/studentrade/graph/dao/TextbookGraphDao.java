@@ -7,7 +7,7 @@ import com.studentrade.graph.domain.User;
 import java.util.List;
 import java.util.Map;
 
-public interface GraphDao {
+public interface TextbookGraphDao {
 	boolean doesTextbookExistById(String textbookId);
 	boolean doesTextbookExistByIsbn10(String isbn10);
 	boolean doesTextbookExistByIsbn13(String isbn13);

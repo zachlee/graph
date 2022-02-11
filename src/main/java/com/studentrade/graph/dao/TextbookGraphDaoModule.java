@@ -2,10 +2,10 @@ package com.studentrade.graph.dao;
 
 import com.google.inject.AbstractModule;
 
-public class GraphDaoModule extends AbstractModule {
+public class TextbookGraphDaoModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(GraphDao.class).to(GraphDaoImpl.class);
+		bind(TextbookGraphDao.class).to(TextbookGraphDaoImpl.class);
 	}
 }

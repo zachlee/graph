@@ -19,12 +19,12 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import static com.studentrade.graph.util.Labels.*;
 
-public class GraphDaoImpl implements GraphDao {
+public class TextbookGraphDaoImpl implements TextbookGraphDao {
 
 	private static GraphTraversalSource graphTraversalSource;
 
-	public GraphDaoImpl() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
+	public TextbookGraphDaoImpl() {
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 

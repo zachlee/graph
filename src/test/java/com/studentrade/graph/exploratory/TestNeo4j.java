@@ -1,8 +1,8 @@
 package com.studentrade.graph.exploratory;
 
-import com.studentrade.graph.dao.GraphDao;
+import com.studentrade.graph.dao.TextbookGraphDao;
 import com.studentrade.graph.domain.User;
-import com.studentrade.graph.dao.GraphDaoImpl;
+import com.studentrade.graph.dao.TextbookGraphDaoImpl;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
@@ -29,12 +29,12 @@ public class TestNeo4j {
 
 	Logger logger = Logger.getLogger(TestNeo4j.class.getName());
 	private static GraphTraversalSource graphTraversalSource;
-	private static GraphDao graphDao = new GraphDaoImpl();
+	private static TextbookGraphDao textbookGraphDao = new TextbookGraphDaoImpl();
 	private static final String TEXTBOOK_LABEL = "textbook";
 	private static final String USER_LABEL = "user";
 
 	public TestNeo4j() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
@@ -168,7 +168,7 @@ public class TestNeo4j {
 					.property(ISBN13, isbn13);
 			assert textbookTraversal.hasNext();
 
-			boolean userTextbookRelationship = graphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
+			boolean userTextbookRelationship = textbookGraphDao.createTextbookRelationship(userId, OWNS_VERB, textbookId);
 			assert userTextbookRelationship;
 
 			GraphTraversal<Vertex, Path> relationshipTraversal = graphTraversalSource.V()
