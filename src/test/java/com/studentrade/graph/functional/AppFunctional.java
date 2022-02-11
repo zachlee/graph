@@ -25,7 +25,7 @@ import static com.studentrade.graph.util.Labels.WANTS_VERB;
 
 public class AppFunctional {
 	private Logger logger = Logger.getLogger(AppFunctional.class.getName());
-	private String host = "http://localhost:7000";
+	private String host = "http://34.223.94.142:7000";
 
 	public AppFunctional() {
 	}
@@ -34,7 +34,7 @@ public class AppFunctional {
 
 	@BeforeAll
 	public static void setup() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("localhost").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
