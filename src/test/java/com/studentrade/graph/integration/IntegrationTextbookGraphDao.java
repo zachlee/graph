@@ -1,5 +1,7 @@
 package com.studentrade.graph.integration;
 
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.studentrade.graph.dao.TextbookGraphDao;
 import com.studentrade.graph.dao.TextbookGraphDaoImpl;
 import com.studentrade.graph.domain.Relationship;
@@ -33,9 +35,12 @@ public class IntegrationTextbookGraphDao {
 	private TextbookGraphDao textbookGraphDao = new TextbookGraphDaoImpl();
 	private static GraphTraversalSource graphTraversalSource;
 
+	private static final DynamicStringProperty GREMLIN_DOMAIN = DynamicPropertyFactory.getInstance()
+			.getStringProperty("gremlin.server.domain", "localhost");
+
 	@BeforeAll
 	public static void setup() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint(GREMLIN_DOMAIN.get()).create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 

@@ -1,5 +1,7 @@
 package com.studentrade.graph.exploratory;
 
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.studentrade.graph.dao.TextbookGraphDao;
 import com.studentrade.graph.domain.User;
 import com.studentrade.graph.dao.TextbookGraphDaoImpl;
@@ -33,8 +35,11 @@ public class TestNeo4j {
 	private static final String TEXTBOOK_LABEL = "textbook";
 	private static final String USER_LABEL = "user";
 
+	private static final DynamicStringProperty GREMLIN_DOMAIN = DynamicPropertyFactory.getInstance()
+			.getStringProperty("gremlin.server.domain", "localhost");
+
 	public TestNeo4j() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("44.235.91.136").create();
+		Cluster cluster = Cluster.build().port(8182).addContactPoint(GREMLIN_DOMAIN.get()).create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
