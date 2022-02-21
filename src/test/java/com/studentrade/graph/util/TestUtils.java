@@ -10,6 +10,8 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static com.studentrade.graph.util.Labels.*;
@@ -116,7 +118,7 @@ public class TestUtils {
 	}
 
 	public static String getString(Object entry) {
-		ArrayList<String> list = (ArrayList<String>) entry;
+		List<String> list = (LinkedList<String>) entry;
 		if (null != list && !list.isEmpty()) {
 			return list.get(0);
 		} else {

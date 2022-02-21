@@ -9,6 +9,7 @@ import com.studentrade.graph.domain.Textbook;
 import com.studentrade.graph.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
+import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
@@ -26,10 +27,15 @@ public class TextbookGraphDaoImpl implements TextbookGraphDao {
 	private static GraphTraversalSource graphTraversalSource;
 
 	private static final DynamicStringProperty GREMLIN_DOMAIN = DynamicPropertyFactory.getInstance()
-			.getStringProperty("gremlin.server.domain", "localhost");
+			.getStringProperty("gremlin.server.domain", "");
 
 	public TextbookGraphDaoImpl() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint("54.184.253.228").create();
+		Cluster cluster = Cluster.build()
+				.port(8182)
+				.addContactPoint(GREMLIN_DOMAIN.get())
+				.serializer(Serializers.GRAPHSON_V3D0)
+				.create();
+
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
 	}
 
@@ -403,7 +409,7 @@ public class TextbookGraphDaoImpl implements TextbookGraphDao {
 	}
 
 	private String getString(Object entry) {
-		ArrayList<String> list = (ArrayList<String>) entry;
+		List<String> list = (LinkedList<String>) entry;
 		if (null != list && !list.isEmpty()) {
 			return list.get(0);
 		} else {

@@ -1,5 +1,6 @@
 package com.studentrade.graph.integration;
 
+import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.studentrade.graph.dao.TextbookGraphDao;
@@ -9,6 +10,7 @@ import com.studentrade.graph.domain.Textbook;
 import com.studentrade.graph.domain.User;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection;
+import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +35,23 @@ import static com.studentrade.graph.util.Labels.*;
 public class IntegrationTextbookGraphDao {
 
 	private Logger logger = Logger.getLogger(IntegrationTextbookGraphDao.class.getName());
-	private TextbookGraphDao textbookGraphDao = new TextbookGraphDaoImpl();
+	private static TextbookGraphDao textbookGraphDao;
 	private static GraphTraversalSource graphTraversalSource;
 
 	private static final DynamicStringProperty GREMLIN_DOMAIN = DynamicPropertyFactory.getInstance()
-			.getStringProperty("gremlin.server.domain", "localhost");
+			.getStringProperty("gremlin.server.domain", "");
 
 	@BeforeAll
-	public static void setup() {
-		Cluster cluster = Cluster.build().port(8182).addContactPoint(GREMLIN_DOMAIN.get()).create();
+	public static void setup() throws IOException {
+		//todo set up functional.properties flow
+		//ConfigurationManager.getConfigInstance().setProperty("gremlin.server.domain", "54.184.253.228");
+		Cluster cluster = Cluster.build()
+				.port(8182)
+				.addContactPoint(GREMLIN_DOMAIN.get())
+				.serializer(Serializers.GRAPHSON_V3D0)
+				.create();
 		graphTraversalSource = AnonymousTraversalSource.traversal().withRemote(DriverRemoteConnection.using(cluster));
+		textbookGraphDao = new TextbookGraphDaoImpl();
 	}
 
 	@Test
