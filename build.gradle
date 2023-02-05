@@ -34,6 +34,7 @@ dependencies {
 
     implementation 'io.javalin:javalin:4.3.0'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
     testImplementation 'io.rest-assured:rest-assured:4.5.0'
 
