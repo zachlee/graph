@@ -70,6 +70,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-task.outputs.task-definition }}
-          service: graph-service
+          service: graph-service-v1-80
           cluster: studentrade-cluster
           wait-for-service-stability: true
